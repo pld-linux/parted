@@ -1,8 +1,8 @@
 Summary:	Flexible partitioning tool
 Summary(pl):	GNU Parted - narzêdzie do zarz±dzania partycjami na dyskach
 Name:		parted
-Version:	1.1.2
-Release:	2
+Version:	1.1.3
+Release:	1
 License:	GPL
 Group:		Utilities/System
 Group(pl):	Narzêdzia/System
@@ -56,7 +56,8 @@ rm -rf $RPM_BUILD_ROOT
 
 make install DESTDIR=$RPM_BUILD_ROOT
 
-gzip -9nf API AUTHORS BUGS ChangeLog HACKING NEWS README THANKS TODO
+gzip -9nf doc/{API,FAT,USER} AUTHORS BUGS ChangeLog NEWS README THANKS TODO \
+	$RPM_BUILD_ROOT%{_mandir}/man*/*
 
 %find_lang %{name}
 
@@ -65,8 +66,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc *.gz
+%doc *.gz doc/*.gz
 %attr(755,root,root) %{_sbindir}/parted
+%{_mandir}/man*/*
 
 %files devel
 %defattr(644,root,root,755)
