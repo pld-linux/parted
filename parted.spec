@@ -12,7 +12,7 @@ URL:		http://www.gnu.org/software/parted/
 BuildPrereq:	e2fsprogs-devel
 BuildPrereq:	readline-devel >= 4.1
 BuildPrereq:	ncurses-devel >= 5.0
-Buildroot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 GNU Parted is a program that allows you to create, destroy, resize, move
