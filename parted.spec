@@ -12,6 +12,7 @@ URL:		http://www.gnu.org/software/parted/
 BuildPrereq:	e2fsprogs-devel
 BuildPrereq:	readline-devel >= 4.1
 BuildPrereq:	ncurses-devel >= 5.0
+Requires:	iconv
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
