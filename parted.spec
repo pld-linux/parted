@@ -1,10 +1,10 @@
 #
 # Conditional build:
-#  --with static
-#  --without nls
-#  --without readline
-#  --with uClibc -- add somewhat nasty uClibc patch, that shouldn't cause
-#                   problems, but who knows...
+#  --with static	-
+#  --without nls	- 
+#  --without readline	-
+#  --with uClibc	- add somewhat nasty uClibc patch, that shouldn't
+#			cause problems, but who knows...
 #
 Summary:	Flexible partitioning tool
 Summary(es):	Herramienta de particionamiento flexible
@@ -14,7 +14,7 @@ Summary(ru):	Программа GNU манипуляции дисковыми разделами
 Summary(uk):	Програма GNU ман╕пуляц╕╖ дисковими розд╕лами
 Name:		parted
 Version:	1.6.6
-Release:	0.1
+Release:	1
 License:	GPL
 Group:		Applications/System
 Vendor:		Andrew Clausen <clausen@gnu.org>
