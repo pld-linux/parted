@@ -1,0 +1,23 @@
+--- parted-1.4.14/libparted/disk_dos.c.wiget	Thu Jun 28 20:10:08 2001
++++ parted-1.4.14/libparted/disk_dos.c	Thu Jun 28 20:15:53 2001
+@@ -514,6 +514,7 @@
+ 		if (ped_exception_throw (
+ 			PED_EXCEPTION_ERROR,
+ 			PED_EXCEPTION_IGNORE_CANCEL,
++#ifndef NO_BIOS_GEOMETRY_WARNING
+ 			_("The partition table on %s is inconsistent.  "
+ 			"There are many reasons why this might be the case.  "
+ 			"However, the most likely reason is that Linux "
+@@ -539,7 +540,11 @@
+ 			disk->dev->path + strlen ("/dev/"),
+ 			(int) disk->dev->cylinders,
+ 			(int) disk->dev->heads,
+-			(int) disk->dev->sectors)
++			(int) disk->dev->sectors
++#else
++			""
++#endif
++			)
+ 				== PED_EXCEPTION_CANCEL) {
+ 			disk->dev->cylinders = old_c;
+ 			disk->dev->heads = old_h;
