@@ -1,37 +1,43 @@
---- parted-1.6.19/po/pl.po.orig	2004-11-28 15:44:17.702711464 +0100
-+++ parted-1.6.19/po/pl.po	2004-11-28 15:55:08.850721920 +0100
+--- parted-1.6.20/po/pl.po.orig	2004-12-23 00:32:00.844440000 +0100
++++ parted-1.6.20/po/pl.po	2004-12-23 00:33:48.160125536 +0100
 @@ -4,10 +4,10 @@
  #
  msgid ""
  msgstr ""
 -"Project-Id-Version: parted 1.6.6-pre2\n"
-+"Project-Id-Version: parted 1.6.19\n"
++"Project-Id-Version: parted 1.6.20\n"
  "Report-Msgid-Bugs-To: bug-parted@gnu.org\n"
- "POT-Creation-Date: 2004-11-28 20:55+1100\n"
+ "POT-Creation-Date: 2004-12-18 17:09+1100\n"
 -"PO-Revision-Date: 2003-07-07 10:44+0200\n"
-+"PO-Revision-Date: 2004-11-28 15:50+0100\n"
++"PO-Revision-Date: 2004-12-23 00:31+0100\n"
  "Last-Translator: Wojciech Polak <polak@gnu.org>\n"
  "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
  "MIME-Version: 1.0\n"
-@@ -324,7 +324,7 @@
+@@ -324,12 +324,11 @@
  
  #: libparted/disk.c:1767
  msgid "palo"
 -msgstr ""
 +msgstr "palo"
  
- #: libparted/disk.c:1773
- #, c-format
-@@ -354,7 +354,7 @@
+ #: libparted/disk.c:1769
+-#, fuzzy
+ msgid "prep-boot"
+-msgstr "³adowalna"
++msgstr "prep-boot"
  
- #: libparted/disk_dos.c:1799
+ #: libparted/disk.c:1775
+ #, c-format
+@@ -359,7 +358,7 @@
+ 
+ #: libparted/disk_dos.c:1828
  msgid "Parted can't resize partitions managed by Windows Dynamic Disk."
 -msgstr ""
 +msgstr "Parted nie umie zmieniæ rozmiaru partycji zarz±dzanych przez Windows Dynamic Disk."
  
  #: libparted/disk_dvh.c:199
  #, c-format
-@@ -675,7 +675,7 @@
+@@ -680,7 +679,7 @@
  
  #: libparted/exception.c:55
  msgid "Fix"
@@ -40,7 +46,7 @@
  
  #: libparted/exception.c:56
  msgid "Yes"
-@@ -832,6 +832,7 @@
+@@ -837,6 +836,7 @@
  "the file system if it disables this feature.  You can enable it later by "
  "running 'tune2fs -O dir_index DEVICE' and then 'e2fsck -fD DEVICE'."
  msgstr ""
@@ -48,7 +54,7 @@
  
  #: libparted/fs_ext2/ext2_block_relocator.c:155
  msgid "Cross-linked blocks found! better go run e2fsck first!"
-@@ -1066,6 +1067,7 @@
+@@ -1071,6 +1071,7 @@
  "file system's CHS geometry will be set to match the partition table's CHS "
  "geometry."
  msgstr ""
@@ -56,7 +62,7 @@
  
  #: libparted/fs_fat/bootsector.c:209
  msgid "FAT boot sector says logical sector size is 0.  This is weird. "
-@@ -1167,7 +1169,7 @@
+@@ -1172,7 +1173,7 @@
  #: libparted/fs_linux_swap/linux_swap.c:234
  #, c-format
  msgid "Unrecognised linux swap signature '%10s'."
@@ -65,7 +71,7 @@
  
  #: libparted/fs_linux_swap/linux_swap.c:310
  msgid "Too many bad pages."
-@@ -1246,7 +1248,7 @@
+@@ -1251,7 +1252,7 @@
  msgid ""
  "Partition %s is being used.  You must unmount it before you modify it with "
  "Parted."
@@ -74,7 +80,7 @@
  
  #: parted/parted.c:161
  #, c-format
-@@ -1612,7 +1614,6 @@
+@@ -1617,7 +1618,6 @@
  "Nie zapomnij o aktualizacji /etc/fstab, je¶li istnieje taka potrzeba.\n"
  
  #: parted/ui.c:68
@@ -82,7 +88,7 @@
  msgid ""
  "Copyright (C) 1998 - 2004 Free Software Foundation, Inc.\n"
  "This program is free software, covered by the GNU General Public License.\n"
-@@ -1623,8 +1624,7 @@
+@@ -1628,8 +1628,7 @@
  "more details.\n"
  "\n"
  msgstr ""
@@ -92,7 +98,7 @@
  "Program ten jest wolno dostêpny, zgodnie z Powszechn± Licencj± Publiczn± "
  "GNU.\n"
  "\n"
-@@ -1716,107 +1716,3 @@
+@@ -1721,107 +1720,3 @@
  #, c-format
  msgid "Using %s\n"
  msgstr "U¿ycie %s\n"
