@@ -1,15 +1,46 @@
---- parted-1.6.15/po/pl.po.orig	2004-09-19 03:54:40.000000000 +0200
-+++ parted-1.6.15/po/pl.po	2004-10-21 22:37:32.420431912 +0200
-@@ -329,7 +329,7 @@
+--- parted-1.6.19/po/pl.po.orig	2004-11-28 15:44:17.702711464 +0100
++++ parted-1.6.19/po/pl.po	2004-11-28 15:55:08.850721920 +0100
+@@ -4,10 +4,10 @@
+ #
+ msgid ""
+ msgstr ""
+-"Project-Id-Version: parted 1.6.6-pre2\n"
++"Project-Id-Version: parted 1.6.19\n"
+ "Report-Msgid-Bugs-To: bug-parted@gnu.org\n"
+ "POT-Creation-Date: 2004-11-28 20:55+1100\n"
+-"PO-Revision-Date: 2003-07-07 10:44+0200\n"
++"PO-Revision-Date: 2004-11-28 15:50+0100\n"
+ "Last-Translator: Wojciech Polak <polak@gnu.org>\n"
+ "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
+ "MIME-Version: 1.0\n"
+@@ -324,7 +324,7 @@
  
- #: libparted/disk.c:1765
+ #: libparted/disk.c:1767
  msgid "palo"
 -msgstr ""
 +msgstr "palo"
  
- #: libparted/disk.c:1771
+ #: libparted/disk.c:1773
  #, c-format
-@@ -833,6 +833,7 @@
+@@ -354,7 +354,7 @@
+ 
+ #: libparted/disk_dos.c:1799
+ msgid "Parted can't resize partitions managed by Windows Dynamic Disk."
+-msgstr ""
++msgstr "Parted nie umie zmieniæ rozmiaru partycji zarz±dzanych przez Windows Dynamic Disk."
+ 
+ #: libparted/disk_dvh.c:199
+ #, c-format
+@@ -675,7 +675,7 @@
+ 
+ #: libparted/exception.c:55
+ msgid "Fix"
+-msgstr "Fix"
++msgstr "Popraw"
+ 
+ #: libparted/exception.c:56
+ msgid "Yes"
+@@ -832,6 +832,7 @@
  "the file system if it disables this feature.  You can enable it later by "
  "running 'tune2fs -O dir_index DEVICE' and then 'e2fsck -fD DEVICE'."
  msgstr ""
@@ -17,7 +48,15 @@
  
  #: libparted/fs_ext2/ext2_block_relocator.c:155
  msgid "Cross-linked blocks found! better go run e2fsck first!"
-@@ -1158,7 +1159,7 @@
+@@ -1066,6 +1067,7 @@
+ "file system's CHS geometry will be set to match the partition table's CHS "
+ "geometry."
+ msgstr ""
++"Geometria CHS systemu plików to (%d, %d, %d), co nie jest poprawne. Geometria CHS tablicy partycji to (%d, %d, %d). Wybranie Zignoruj pozostawi geometria CHS systemu plików niezmienion±. Wybranie Popraw spowoduje ustawienie geometrii CHS systemu plików tak, by pasowa³a do geometrii CHS tablicy partycji."
+ 
+ #: libparted/fs_fat/bootsector.c:209
+ msgid "FAT boot sector says logical sector size is 0.  This is weird. "
+@@ -1167,7 +1169,7 @@
  #: libparted/fs_linux_swap/linux_swap.c:234
  #, c-format
  msgid "Unrecognised linux swap signature '%10s'."
@@ -26,7 +65,7 @@
  
  #: libparted/fs_linux_swap/linux_swap.c:310
  msgid "Too many bad pages."
-@@ -1237,7 +1238,7 @@
+@@ -1246,7 +1248,7 @@
  msgid ""
  "Partition %s is being used.  You must unmount it before you modify it with "
  "Parted."
@@ -35,7 +74,7 @@
  
  #: parted/parted.c:161
  #, c-format
-@@ -1603,7 +1604,6 @@
+@@ -1612,7 +1614,6 @@
  "Nie zapomnij o aktualizacji /etc/fstab, je¶li istnieje taka potrzeba.\n"
  
  #: parted/ui.c:68
@@ -43,7 +82,7 @@
  msgid ""
  "Copyright (C) 1998 - 2004 Free Software Foundation, Inc.\n"
  "This program is free software, covered by the GNU General Public License.\n"
-@@ -1614,8 +1614,7 @@
+@@ -1623,8 +1624,7 @@
  "more details.\n"
  "\n"
  msgstr ""
@@ -53,3 +92,111 @@
  "Program ten jest wolno dostêpny, zgodnie z Powszechn± Licencj± Publiczn± "
  "GNU.\n"
  "\n"
+@@ -1716,107 +1716,3 @@
+ #, c-format
+ msgid "Using %s\n"
+ msgstr "U¿ycie %s\n"
+-
+-#~ msgid "Device %s is neither a SCSI nor IDE drive."
+-#~ msgstr "Urz±dzenie %s nie jest ani napêdem SCSI, ani IDE."
+-
+-#~ msgid "Error reading %s (%s) to determine if partition is mounted."
+-#~ msgstr ""
+-#~ "B³±d podczas czytania %s (%s) w celu ustalenia czy partycja jest "
+-#~ "pod³±czona."
+-
+-#~ msgid ""
+-#~ "Unable to determine if partitions are mounted via /proc/mounts or /etc/"
+-#~ "mtab.  Make sure you don't attempt to resize or modify mounted file "
+-#~ "systems.  (Even read-only mounted)"
+-#~ msgstr ""
+-#~ "Nie mo¿na ustaliæ czy partycje s± pod³±czone poprzez /proc/mount czy /etc/"
+-#~ "mtab.  Upewnij siê czy nie zamierzasz zmieniæ rozmiaru lub zmodyfikowaæ "
+-#~ "pod³±czonych systemów plików.  (Nawet pod³±czonych jako tylko-do-odczytu)"
+-
+-#~ msgid ""
+-#~ "Partition %s is being used.  Modifying it while it is in use could cause "
+-#~ "severe corruption."
+-#~ msgstr ""
+-#~ "Partycja %s jest u¿ywana.  Modyfikowanie jej podczas dzia³ania mo¿e "
+-#~ "spowodowaæ jej uszkodzenie."
+-
+-#~ msgid "Could not read geometry of %s - %s."
+-#~ msgstr "Nie mo¿na odczytaæ geometrii %s - %s."
+-
+-#~ msgid "Device %s has dodgey geometry."
+-#~ msgstr "Urz±dzenie %s ma niepoprawn± geometriê."
+-
+-#~ msgid ""
+-#~ "The partition table on %s is inconsistent.  There are many reasons why "
+-#~ "this might be the case.  However, the most likely reason is that Linux "
+-#~ "detected the BIOS geometry for %s incorrectly.  GNU Parted suspects the "
+-#~ "real geometry should be %d/%d/%d (not %d/%d/%d).  You should check with "
+-#~ "your BIOS first, as this may not be correct.  You can inform Linux by "
+-#~ "adding the parameter %s=%d,%d,%d to the command line.  See the LILO or "
+-#~ "GRUB documentation for more information.  If you think Parted's suggested "
+-#~ "geometry is correct, you may select Ignore to continue (and fix Linux "
+-#~ "later).  Otherwise, select Cancel (and fix Linux and/or the BIOS now)."
+-#~ msgstr ""
+-#~ "Tablica partycji na %s jest sprzeczna.  Mo¿e byæ wiele powodów takiego "
+-#~ "stanu rzeczy.  Aczkolwiek, najbardziej prawdopodobny powód jest taki, ¿e "
+-#~ "j±dro Linux wykrywa geometriê BIOS dla %s w sposób nieprawid³owy.  GNU "
+-#~ "Parted podejrzewa, ¿e prawdziwa geometria powinna wynosiæ %d/%d/%d (a nie "
+-#~ "%d/%d/%d).  W takim przypadku nale¿y najpierw sprawdziæ ustawienia BIOS, "
+-#~ "poniewa¿ mo¿e to nie byæ prawd±.  Mo¿esz poinformowaæ o tym j±dro Linux "
+-#~ "poprzez dodanie parametrów %s=%d,%d,%d w linii poleceñ.  Przeczytaj "
+-#~ "dokumentacjê LILO lub GRUB, aby uzyskaæ wiêcej informacji na ten temat.  "
+-#~ "Je¶li my¶lisz, ¿e geometria zasugerowana przez program Parted jest "
+-#~ "prawid³owa, to mo¿esz wybraæ 'Zignoruj', aby kontynuowaæ (i pó¼niej "
+-#~ "naprawiæ Linuxa).  W innym przypadku wybierz 'Poniechaj' (i od razu "
+-#~ "napraw Linuxa i/lub BIOS)."
+-
+-#~ msgid ""
+-#~ "The partition table on %s is inconsistent.  There are many reasons why "
+-#~ "this might be the case.  Often, the reason is that Linux detected the "
+-#~ "BIOS geometry incorrectly.  However, this does not appear to be the case "
+-#~ "here.  It is safe to ignore,but ignoring may cause (fixable) problems "
+-#~ "with some boot loaders, and may cause problems with FAT file systems.  "
+-#~ "Using LBA is recommended."
+-#~ msgstr ""
+-#~ "Tablica partycji na %s jest sprzeczna.  Mo¿e byæ wiele powodów takiego "
+-#~ "stanu rzeczy.  Najczê¶ciej winê ponosi j±dro Linux, które wykrywa "
+-#~ "geometriê BIOS w sposób nieprawid³owy.  Aczkolwiek, w tym przypadku nie "
+-#~ "jest to przyczyn±.  Mo¿na ten problem bezpiecznie zignorowaæ, ale mo¿e to "
+-#~ "spowodowaæ (naprawialne) problemy z niektórymi programami ³aduj±cymi oraz "
+-#~ "z systemem plików FAT.  Zalecane jest u¿ywanie LBA."
+-
+-#~ msgid ""
+-#~ "Unable to align partition properly.  This probably means that another "
+-#~ "partitioning tool generated an incorrect partition table, because it "
+-#~ "didn't have the correct BIOS geometry.  It is safe to ignore,but ignoring "
+-#~ "may cause (fixable) problems with some boot loaders."
+-#~ msgstr ""
+-#~ "Nie mo¿na prawid³owo wyrównaæ partycji.  Oznacza to prawdopodobnie, ¿e "
+-#~ "inne narzêdzie do partycjonowania wytworzy³o nieprawid³ow± tablicê "
+-#~ "partycji, poniewa¿ nie mia³a ona prawid³owej geometrii BIOS.  Bezpiecznie "
+-#~ "jest zignorowaæ, ale mo¿e to spowodowaæ (naprawialne) problemy z "
+-#~ "niektórymi programi ³aduj±cymi (boot loaders)."
+-
+-#~ msgid ""
+-#~ "  You have Windows FAT partition(s) that are not using LBA.  If your BIOS "
+-#~ "supports LBA, then you should switch to LBA by setting the LBA flag on "
+-#~ "all FAT partitions.  Otherwise, make sure the operating system and the "
+-#~ "BIOS have the same geometry before resizing any FAT partitions."
+-#~ msgstr ""
+-#~ "Posiadasz partycjê (partycje) Windows FAT, która nie u¿ywa LBA.  Je¶li "
+-#~ "Twój BIOS wspiera LBA, to wtedy nale¿y ustawiæ flagê LBA na wszystkich "
+-#~ "partycjach FAT. W innym przypadku, upewnij siê, ¿e system operacyjny i "
+-#~ "BIOS maj± tak± sam± geometriê zanim wykonasz zmianê wielko¶ci "
+-#~ "jakiejkolwiek partycji FAT."
+-
+-#~ msgid ""
+-#~ "The operating system thinks the geometry on %s is %d/%d/%d.  Therefore, "
+-#~ "cylinder 1024 ends at %.3fM.%s"
+-#~ msgstr ""
+-#~ "System operacyjny my¶li, ¿e geometri± urz±dzenia %s jest %d/%d/%d. Jednak "
+-#~ "cylinder 1024 koñczy siê na %.3fM.%s"
+-
+-#~ msgid "The operating system thinks the geometry on %s is %d/%d/%d.%s"
+-#~ msgstr ""
+-#~ "System operacyjny my¶li, ¿e geometri± urz±dzenia %s jest %d/%d/%d.%s"
