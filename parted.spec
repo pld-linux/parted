@@ -1,7 +1,7 @@
 Summary:	Flexible partitioning tool
 Summary(pl):	GNU Parted - narzêdzie do zarz±dzania partycjami na dyskach
 Name:		parted
-Version:	1.1.3
+Version:	1.1.4
 Release:	1
 License:	GPL
 Group:		Utilities/System
@@ -83,14 +83,14 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc *.gz doc/*.gz
 %attr(755,root,root) %{_sbindir}/parted
-%attr(755,root,root) %{_libdir}/libparted-*.so
+%attr(755,root,root) %{_libdir}/lib*.so
 %{_mandir}/man*/*
 
 %files devel
 %defattr(644,root,root,755)
 %{_includedir}/parted
-%attr(755,root,root) %{_libdir}/libparted.so
-%attr(755,root,root) %{_libdir}/libparted.la
+%attr(755,root,root) %{_libdir}/lib*.so
+%attr(755,root,root) %{_libdir}/lib*.la
 
 %files static
-%attr(644,root,root) %{_libdir}/libparted.a
+%attr(644,root,root) %{_libdir}/lib*.a
