@@ -10,11 +10,16 @@ Group(pl):	Aplikacje/System
 Vendor:		Andrew Clausen <clausen@gnu.org>
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.gz
 URL:		http://www.gnu.org/software/parted/
-BuildPrereq:	e2fsprogs-devel
-BuildPrereq:	ncurses-devel >= 5.2
-BuildPrereq:	readline-devel >= 4.2
-Requires:	iconv
-Prereq:		/sbin/ldconfig
+BuildRequires:	e2fsprogs-devel
+%if %{?BOOT:1}%{!?BOOT:0}
+BuildRequires:	e2fsprogs-static
+%endif
+BuildRequires:	ncurses-devel >= 5.2
+BuildRequires:	readline-devel >= 4.2
+BuildRequires:	gettext-devel
+BuildRequires:	libtool
+BuildRequires:	automake
+BuildRequires:	autoconf
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -72,6 +77,12 @@ Group:		Applications/System
 %setup -q
 
 %build
+rm missing
+libtoolize --copy --force
+gettextize --copy --force
+aclocal
+autoconf
+automake -a -c
 %if %{?BOOT:1}%{!?BOOT:0}
 %configure --disable-nls --enable-all-static --without-readline
 %{__make}
