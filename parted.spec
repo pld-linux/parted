@@ -28,6 +28,7 @@ Patch5:		%{name}-info.patch
 Patch6:		%{name}-endian.patch
 Patch7:		%{name}-am18.patch
 Patch8:		%{name}-blk.patch
+Patch9:		%{name}-get_sector_size.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -128,6 +129,7 @@ Biblioteka statyczna libparted.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %build
 %{__libtoolize}
