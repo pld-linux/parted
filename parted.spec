@@ -4,8 +4,9 @@ Name:		parted
 Version:	1.3.3
 Release:	1
 License:	GPL
-Group:		Utilities/System
-Group(pl):	Narzêdzia/System
+Group:		Applications/System
+Group(de):	Applikationen/System
+Group(pl):	Aplikacje/System
 Vendor:		Andrew Clausen <clausen@alphalink.com.au>
 Source0:	ftp://ftp.gnu.org/gnu/parted/devel/%{name}-%{version}.tar.gz
 URL:		http://www.gnu.org/software/parted/
@@ -32,6 +33,7 @@ reorganizacji sposobu wykorzystywania dysków, a tak¿e ich kopiowaniu.
 Summary:	Files required to compile software that uses libparted
 Summary(pl):	Pliki wymagane przy kompilacji programów u¿ywaj±cych libparted
 Group:		Development/Libraries
+Group(de):	Entwicklung/Libraries
 Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
 Requires:	%{name} = %{version}
@@ -47,6 +49,7 @@ Pliki wymagane przy kompilacji programów u¿ywaj±cych libparted.
 Summary:	Satic libparted
 Summary(pl):	Biblioteka statyczna libparted
 Group:		Development/Libraries
+Group(de):	Entwicklung/Libraries
 Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
 Requires:	%{name}-devel = %{version}
@@ -61,7 +64,6 @@ Biblioteka statyczna libparted.
 %setup -q
 
 %build
-LDFLAGS="-s"; export LDFLAGS
 gettextize --copy --force
 %configure \
 	--with-readline \
