@@ -13,13 +13,13 @@ Summary(pt_BR):	Ferramenta flexМvel de particionamento
 Summary(ru):	Программа GNU манипуляции дисковыми разделами
 Summary(uk):	Програма GNU ман╕пуляц╕╖ дисковими розд╕лами
 Name:		parted
-Version:	1.6.20
+Version:	1.6.21
 Release:	1
 License:	GPL
 Vendor:		Andrew Clausen <clausen@gnu.org>
 Group:		Applications/System
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.gz
-# Source0-md5:	aba5a1e05c2970ea403a282def212237
+# Source0-md5:	eb1b8d3d74792a74c9fc4cbb0d351737
 Patch0:		%{name}-no_wrap.patch
 Patch1:		%{name}-BIG_FAT_WARNING.patch
 Patch2:		%{name}-uClibc.patch
