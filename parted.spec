@@ -1,7 +1,7 @@
 Summary:	Flexible partitioning tool
 Summary(pl):	GNU Parted - narzêdzie do zarz±dzania partycjami na dyskach
 Name:		parted
-Version:	1.4.10
+Version:	1.4.11
 Release:	1
 License:	GPL
 Group:		Applications/System
@@ -64,7 +64,6 @@ Biblioteka statyczna libparted.
 %setup -q
 
 %build
-gettextize --copy --force
 %configure \
 	--with-readline \
 	--without-included-gettext \
@@ -81,6 +80,9 @@ rm -rf $RPM_BUILD_ROOT
 gzip -9nf doc/{API,FAT,USER} AUTHORS BUGS ChangeLog NEWS README THANKS TODO
 
 %find_lang %{name}
+
+%post   -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -102,6 +104,3 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
-
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
