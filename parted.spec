@@ -2,7 +2,7 @@ Summary:	Flexible partitioning tool
 Summary(pl):	GNU Parted - narzêdzie do zarz±dzania partycjami na dyskach
 Name:		parted
 Version:	1.3.3
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/System
 Group(de):	Applikationen/System
@@ -77,10 +77,7 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT \
 	aclocaldir=%{_aclocaldir}
 
-strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so.*.*
-
-gzip -9nf doc/{API,FAT,USER} AUTHORS BUGS ChangeLog NEWS README THANKS TODO \
-	$RPM_BUILD_ROOT%{_mandir}/man*/*
+gzip -9nf doc/{API,FAT,USER} AUTHORS BUGS ChangeLog NEWS README THANKS TODO
 
 %find_lang %{name}
 
