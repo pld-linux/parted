@@ -1,5 +1,5 @@
---- parted-1.6.0/doc/parted.texi~	Thu May  2 22:31:46 2002
-+++ parted-1.6.0/doc/parted.texi	Thu May  2 22:31:46 2002
+--- parted-1.6.6/doc/parted.texi~	Thu May  2 22:31:46 2002
++++ parted-1.6.6/doc/parted.texi	Thu May  2 22:31:46 2002
 @@ -12,7 +12,8 @@
  @paragraphindent 4
  
@@ -7,6 +7,6 @@
 -* parted: (parted).                         GNU partitioning software
 +@dircategory Miscellaneous:
 +* parted: (parted).			GNU partitioning software
- @c RMK: the following doesn't work.  'info --usage' is improperly documented.
- @c * Invoking parted: (parted)Invoking Parted.          Command line options and commands
  @end direntry
+ 
+ @ifinfo

@@ -104,13 +104,13 @@ cabeçalho e bibliotecas necessários para ligar estaticamente programas
 com a libparted.
 
 %package static
-Summary:	Satic libparted
+Summary:	Static libparted library
 Summary(pl):	Biblioteka statyczna libparted
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}
 
 %description static
-Satic libparted.
+Static libparted library.
 
 %description static -l pl
 Biblioteka statyczna libparted.
