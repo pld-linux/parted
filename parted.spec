@@ -150,8 +150,6 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT \
 	aclocaldir=%{_aclocaldir}
 
-gzip -9nf doc/{API,FAT,FAQ} AUTHORS BUGS ChangeLog NEWS README THANKS TODO
-
 %{!?_without_nls:%find_lang %{name}}
 
 %post
@@ -167,7 +165,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files %{!?_without_nls:-f %{name}.lang}
 %defattr(644,root,root,755)
-%doc *.gz doc/*.gz
+%doc doc/{API,FAT,FAQ} AUTHORS BUGS ChangeLog NEWS README THANKS TODO
 %attr(755,root,root) %{_sbindir}/*
 %{!?_with_static:%attr(755,root,root) %{_libdir}/lib*.so.*.*}
 %{_mandir}/man*/*
