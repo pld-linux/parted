@@ -12,7 +12,7 @@ Summary(pt_BR):	Ferramenta flexМvel de particionamento
 Summary(ru):	Программа GNU манипуляции дисковыми разделами
 Summary(uk):	Програма GNU ман╕пуляц╕╖ дисковими розд╕лами
 Name:		parted
-Version:	1.6.1
+Version:	1.6.3
 Release:	1
 License:	GPL
 Group:		Applications/System
@@ -22,8 +22,8 @@ Patch0:		%{name}-BOOT.patch
 Patch1:		%{name}-no_wrap.patch
 Patch2:		%{name}-BIG_FAT_WARNING.patch
 Patch3:		%{name}-uClibc.patch
-Patch4:		%{name}-DESTDIR.patch
 PAtch5:		%{name}-info.patch
+Patch6:		%{name}-ah.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -119,8 +119,8 @@ Biblioteka statyczna libparted.
 %patch1 -p1
 %patch2 -p1
 %{?_with_uClibc:%patch3 -p1}
-%patch4 -p1
 %patch5 -p1
+%patch6	-p1
 
 %build
 rm -f missing
@@ -172,6 +172,7 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_with_static:%attr(755,root,root) %{_libdir}/lib*.so.*.*}
 %{_mandir}/man*/*
 %lang(pt) %{_mandir}/pt_BR/man*/*
+%{_infodir}/*
 
 %files devel
 %defattr(644,root,root,755)
