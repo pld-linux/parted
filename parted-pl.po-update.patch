@@ -1,15 +1,16 @@
---- parted-1.6.20/po/pl.po.orig	2004-12-23 00:32:00.844440000 +0100
-+++ parted-1.6.20/po/pl.po	2004-12-23 00:33:48.160125536 +0100
+diff -ur parted-1.6.21.orig/po/pl.po parted-1.6.21/po/pl.po
+--- parted-1.6.21.orig/po/pl.po	2005-01-15 23:59:10.000000000 +0000
++++ parted-1.6.21/po/pl.po	2005-01-20 19:08:51.700466592 +0000
 @@ -4,10 +4,10 @@
  #
  msgid ""
  msgstr ""
 -"Project-Id-Version: parted 1.6.6-pre2\n"
-+"Project-Id-Version: parted 1.6.20\n"
++"Project-Id-Version: parted 1.6.21\n"
  "Report-Msgid-Bugs-To: bug-parted@gnu.org\n"
- "POT-Creation-Date: 2004-12-18 17:09+1100\n"
+ "POT-Creation-Date: 2005-01-16 10:59+1100\n"
 -"PO-Revision-Date: 2003-07-07 10:44+0200\n"
-+"PO-Revision-Date: 2004-12-23 00:31+0100\n"
++"PO-Revision-Date: 2003-12-23 00:31+0100\n"
  "Last-Translator: Wojciech Polak <polak@gnu.org>\n"
  "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
  "MIME-Version: 1.0\n"
@@ -22,15 +23,15 @@
  
  #: libparted/disk.c:1769
 -#, fuzzy
- msgid "prep-boot"
+ msgid "prep"
 -msgstr "³adowalna"
-+msgstr "prep-boot"
++msgstr "prep"
  
  #: libparted/disk.c:1775
  #, c-format
 @@ -359,7 +358,7 @@
  
- #: libparted/disk_dos.c:1828
+ #: libparted/disk_dos.c:1850
  msgid "Parted can't resize partitions managed by Windows Dynamic Disk."
 -msgstr ""
 +msgstr "Parted nie umie zmieniæ rozmiaru partycji zarz±dzanych przez Windows Dynamic Disk."
@@ -98,7 +99,7 @@
  "Program ten jest wolno dostêpny, zgodnie z Powszechn± Licencj± Publiczn± "
  "GNU.\n"
  "\n"
-@@ -1721,107 +1720,3 @@
+@@ -1709,107 +1708,3 @@
  #, c-format
  msgid "Using %s\n"
  msgstr "U¿ycie %s\n"
