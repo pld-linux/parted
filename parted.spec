@@ -31,14 +31,27 @@ Summary:	Files required to compile software that uses libparted
 Summary(pl):	Pliki wymagane przy kompilacji programów u¿ywaj±cych libparted
 Group:		Development/Libraries
 Group(pl):	Programowanie/Biblioteki
+Requires:	%{name} = %{version}
 Requires:	e2fsprogs-devel
 
 %description devel
-This package includes the header files and libraries needed to statically
-link software with libparted.
+Files required to compile software that uses libparted.
 
 %description -l pl devel
-Pakiet zawiera pliki nag³ówkowe i bibliotekê statyczn± libparted.
+Pliki wymagane przy kompilacji programów u¿ywaj±cych libparted.
+
+%package static
+Summary:	Satic libparted
+Summary(pl):	Biblioteka statyczna libparted
+Group:		Development/Libraries
+Group(pl):	Programowanie/Biblioteki
+Requires:	%{name}-devel = %{version}
+
+%description static
+Satic libparted.
+
+%description -l pl static
+Biblioteka statyczna libparted.
 
 %prep
 %setup -q
@@ -56,6 +69,8 @@ rm -rf $RPM_BUILD_ROOT
 
 make install DESTDIR=$RPM_BUILD_ROOT
 
+strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so
+
 gzip -9nf doc/{API,FAT,USER} AUTHORS BUGS ChangeLog NEWS README THANKS TODO \
 	$RPM_BUILD_ROOT%{_mandir}/man*/*
 
@@ -68,9 +83,14 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc *.gz doc/*.gz
 %attr(755,root,root) %{_sbindir}/parted
+%attr(755,root,root) %{_libdir}/libparted-*.so
 %{_mandir}/man*/*
 
 %files devel
 %defattr(644,root,root,755)
 %{_includedir}/parted
-%{_libdir}/libparted.a
+%attr(755,root,root) %{_libdir}/libparted.so
+%attr(755,root,root) %{_libdir}/libparted.la
+
+%files static
+%attr(644,root,root) %{_libdir}/libparted.a
