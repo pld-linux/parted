@@ -1,6 +1,6 @@
---- parted-1.6.12/po/pl.po.orig	2004-08-16 00:47:02.000000000 +0200
-+++ parted-1.6.12/po/pl.po	2004-08-29 11:17:35.958181408 +0200
-@@ -345,7 +345,7 @@
+--- parted-1.6.15/po/pl.po.orig	2004-09-19 03:54:40.000000000 +0200
++++ parted-1.6.15/po/pl.po	2004-10-21 22:37:32.420431912 +0200
+@@ -329,7 +329,7 @@
  
  #: libparted/disk.c:1765
  msgid "palo"
@@ -9,7 +9,7 @@
  
  #: libparted/disk.c:1771
  #, c-format
-@@ -849,6 +849,7 @@
+@@ -833,6 +833,7 @@
  "the file system if it disables this feature.  You can enable it later by "
  "running 'tune2fs -O dir_index DEVICE' and then 'e2fsck -fD DEVICE'."
  msgstr ""
@@ -17,7 +17,7 @@
  
  #: libparted/fs_ext2/ext2_block_relocator.c:155
  msgid "Cross-linked blocks found! better go run e2fsck first!"
-@@ -1174,7 +1175,7 @@
+@@ -1158,7 +1159,7 @@
  #: libparted/fs_linux_swap/linux_swap.c:234
  #, c-format
  msgid "Unrecognised linux swap signature '%10s'."
@@ -26,7 +26,16 @@
  
  #: libparted/fs_linux_swap/linux_swap.c:310
  msgid "Too many bad pages."
-@@ -1621,7 +1622,6 @@
+@@ -1237,7 +1238,7 @@
+ msgid ""
+ "Partition %s is being used.  You must unmount it before you modify it with "
+ "Parted."
+-msgstr ""
++msgstr "Partycja %s jest u¿ywana. Przed modyfikowaniem jej Partedem trzeba j± odmontowaæ."
+ 
+ #: parted/parted.c:161
+ #, c-format
+@@ -1603,7 +1604,6 @@
  "Nie zapomnij o aktualizacji /etc/fstab, je¶li istnieje taka potrzeba.\n"
  
  #: parted/ui.c:68
@@ -34,7 +43,7 @@
  msgid ""
  "Copyright (C) 1998 - 2004 Free Software Foundation, Inc.\n"
  "This program is free software, covered by the GNU General Public License.\n"
-@@ -1632,8 +1632,7 @@
+@@ -1614,8 +1614,7 @@
  "more details.\n"
  "\n"
  msgstr ""
