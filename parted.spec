@@ -1,6 +1,7 @@
-Summary:	flexible partitioning tool
+Summary:	Flexible partitioning tool
+Summary(pl):	GNU Parted - narzêdzie do zarz±dzania partycjami na dyskach
 Name:		parted
-Version:	1.0.5
+Version:	1.0.6
 Release:	1
 License:	GPL
 Group:		Utilities/System
@@ -19,15 +20,25 @@ and copy hard disk partitions. This is useful for creating space for new
 operating systems, reorganising disk usage, and copying data to new hard
 disks.
 
+%description -l pl
+GNU Parted jest programem który umo¿liwia teorzenie, usuwanie, zmianê
+rozmiaru, przesuwanie i kopiowanie partycji na dyskach. Mo¿e byæ u¿yteczny 
+przy tworzeniu partycji pod nowy system jak i przy reorganizacji sposobu
+wykorzystywania dysków, a tak¿e ich kopiowaniu.
+
 %package devel
-Summary:	files required to compile software that uses libparted
+Summary:	Files required to compile software that uses libparted
+Summary(pl):	Pliki wymagane przy kompilacji programów u¿ywaj±cych libparted
 Group:		Development/Libraries
 Group(pl):	Programowanie/Biblioteki
 Requires:	e2fsprogs-devel
 
-%description	devel
+%description devel
 This package includes the header files and libraries needed to statically
 link software with libparted.
+
+%description -l pl devel
+Pakiet zawiera pliki nag³ówkowe i bibliotekê statyczn± libparted.
 
 %prep
 %setup -q
