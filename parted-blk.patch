@@ -1,0 +1,11 @@
+--- parted-1.6.6/libparted/linux.c.orig	2003-02-15 22:30:03.000000000 +0100
++++ parted-1.6.6/libparted/linux.c	2003-12-30 04:05:04.294381640 +0100
+@@ -164,7 +164,7 @@
+ #define BLKSSZGET  _IO(0x12,104) /* get block device sector size */
+ #define BLKGETLASTSECT  _IO(0x12,108) /* get last sector of block device */
+ #define BLKSETLASTSECT  _IO(0x12,109) /* set last sector of block device */
+-#define BLKGETSIZE64 _IOR(0x12,114,sizeof(uint64_t))	/* return device size in bytes (u64 *arg) */
++#define BLKGETSIZE64 _IOR(0x12,114,size_t) /* uint64_t after sizeof(sizeof()) breakage */	/* return device size in bytes (u64 *arg) */
+ 
+ struct blkdev_ioctl_param {
+ 	unsigned int block;
