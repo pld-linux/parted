@@ -126,8 +126,8 @@ Biblioteka statyczna libparted.
 rm -f missing
 %{__libtoolize}
 %{__gettextize}
-aclocal
-autoheader
+%{__aclocal}
+%{__autoheader}
 %{__autoconf}
 %{__automake}
 %configure \
