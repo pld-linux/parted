@@ -1,8 +1,10 @@
 Summary:	Flexible partitioning tool
+Summary(es):	Herramienta de particionamiento flexible
 Summary(pl):	GNU Parted - narzêdzie do zarz±dzania partycjami na dyskach
+Summary(pt_BR):	Ferramenta flexível de particionamento
 Name:		parted
-Version:	1.4.19
-Release:	2
+Version:	1.4.20
+Release:	1
 License:	GPL
 Group:		Applications/System
 Group(de):	Applikationen/System
@@ -30,35 +32,69 @@ move and copy hard disk partitions. This is useful for creating space
 for new operating systems, reorganising disk usage, and copying data
 to new hard disks.
 
+%description -l es
+GNU Parted es un programa que permite crear, destruir, redimensionar,
+mover y copiar particiones de discos duros. Es útil para crear espacio
+para nuevos sistemas operacionales, reorganizar el uso del disco, y
+copiar datos para nuevos discos duros.
+
 %description -l pl
 GNU Parted jest programem który umo¿liwia teorzenie, usuwanie, zmianê
 rozmiaru, przesuwanie i kopiowanie partycji na dyskach. Mo¿e byæ
 u¿yteczny przy tworzeniu partycji pod nowy system jak i przy
 reorganizacji sposobu wykorzystywania dysków, a tak¿e ich kopiowaniu.
 
+%description -l pt_BR
+O GNU Parted é um programa que permite criar, destruir, redimensionar,
+mover e copiar partições de discos rígidos. É útil para criar espaço
+para novos sistemas operacionais, reorganizar o uso do disco, e copiar
+dados para novos discos rígidos.
+
 %package devel
 Summary:	Files required to compile software that uses libparted
+Summary(es):	Archivos de desarrollo para libparted
 Summary(pl):	Pliki wymagane przy kompilacji programów u¿ywaj±cych libparted
+Summary(pt_BR):	Arquivos de desenvolvimento para a libparted
 Group:		Development/Libraries
 Group(de):	Entwicklung/Libraries
+Group(es):	Desarrollo/Bibliotecas
 Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
+Group(pt_BR):	Desenvolvimento/Bibliotecas
+Group(ru):	òÁÚÒÁÂÏÔËÁ/âÉÂÌÉÏÔÅËÉ
+Group(uk):	òÏÚÒÏÂËÁ/â¦ÂÌ¦ÏÔÅËÉ
 Requires:	%{name} = %{version}
 Requires:	e2fsprogs-devel
 
 %description devel
 Files required to compile software that uses libparted.
 
+%description -l es devel
+Este paquete incluye los archivos de encabezamiento y bibliotecas
+necesarios para ligar estáticamente programas con libparted.
+
 %description -l pl devel
 Pliki wymagane przy kompilacji programów u¿ywaj±cych libparted.
+
+%description -l pt_BR devel
+O GNU Parted é um programa que permite criar, destruir, redimensionar,
+mover e copiar partições de discos rígidos. É útil para criar espaço
+para novos sistemas operacionais, reorganizar o uso do disco, e copiar
+dados para novos discos rígidos. Este pacote inclui os arquivos de
+cabeçalho e bibliotecas necessários para ligar estaticamente programas
+com a libparted.
 
 %package static
 Summary:	Satic libparted
 Summary(pl):	Biblioteka statyczna libparted
 Group:		Development/Libraries
 Group(de):	Entwicklung/Libraries
+Group(es):	Desarrollo/Bibliotecas
 Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
+Group(pt_BR):	Desenvolvimento/Bibliotecas
+Group(ru):	òÁÚÒÁÂÏÔËÁ/âÉÂÌÉÏÔÅËÉ
+Group(uk):	òÏÚÒÏÂËÁ/â¦ÂÌ¦ÏÔÅËÉ
 Requires:	%{name}-devel = %{version}
 
 %description static
