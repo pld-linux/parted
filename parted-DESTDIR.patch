@@ -1,0 +1,9 @@
+--- parted-1.6.0/doc/Makefile.am~	Thu May  2 22:15:42 2002
++++ parted-1.6.0/doc/Makefile.am	Thu May  2 22:15:42 2002
+@@ -12,5 +12,5 @@
+ 		pt_BR-parted.8
+ 
+ install-data-local:
+-	$(INSTALL) -D $(srcdir)/pt_BR-parted.8 $(mandir)/pt_BR/man8/parted.8
++	$(INSTALL) -D $(srcdir)/pt_BR-parted.8 $(DESTDIR)$(mandir)/pt_BR/man8/parted.8
+ 
