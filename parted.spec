@@ -3,7 +3,7 @@ Summary(es):	Herramienta de particionamiento flexible
 Summary(pl):	GNU Parted - narzêdzie do zarz±dzania partycjami na dyskach
 Summary(pt_BR):	Ferramenta flexível de particionamento
 Name:		parted
-Version:	1.4.23
+Version:	1.4.24
 Release:	1
 License:	GPL
 Group:		Applications/System
