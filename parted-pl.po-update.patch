@@ -1,6 +1,5 @@
-diff -ur parted-1.6.21.orig/po/pl.po parted-1.6.21/po/pl.po
---- parted-1.6.21.orig/po/pl.po	2005-01-15 23:59:10.000000000 +0000
-+++ parted-1.6.21/po/pl.po	2005-01-20 19:08:51.700466592 +0000
+--- parted-1.6.22/po/pl.po.orig	2005-03-23 02:17:28.365274376 +0100
++++ parted-1.6.22/po/pl.po	2005-03-23 02:27:07.842180496 +0100
 @@ -4,10 +4,10 @@
  #
  msgid ""
@@ -10,7 +9,7 @@ diff -ur parted-1.6.21.orig/po/pl.po parted-1.6.21/po/pl.po
  "Report-Msgid-Bugs-To: bug-parted@gnu.org\n"
  "POT-Creation-Date: 2005-03-20 10:24+1100\n"
 -"PO-Revision-Date: 2003-07-07 10:44+0200\n"
-+"PO-Revision-Date: 2003-12-23 00:31+0100\n"
++"PO-Revision-Date: 2005-03-23 02:38+0100\n"
  "Last-Translator: Wojciech Polak <polak@gnu.org>\n"
  "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
  "MIME-Version: 1.0\n"
@@ -38,7 +37,16 @@ diff -ur parted-1.6.21.orig/po/pl.po parted-1.6.21/po/pl.po
  
  #: libparted/disk_dvh.c:199
  #, c-format
-@@ -680,7 +679,7 @@
+@@ -571,7 +570,7 @@
+ #: libparted/disk_sun.c:436
+ #, c-format
+ msgid "The disk has %d cylinders, which is greater than the maximum of 65536."
+-msgstr ""
++msgstr "Dysk ma %d cylindrów, czyli wiêcej, ni¿ maksymalna liczba 65536."
+ 
+ #: libparted/disk_sun.c:732
+ msgid ""
+@@ -685,7 +684,7 @@
  
  #: libparted/exception.c:55
  msgid "Fix"
@@ -47,7 +55,7 @@ diff -ur parted-1.6.21.orig/po/pl.po parted-1.6.21/po/pl.po
  
  #: libparted/exception.c:56
  msgid "Yes"
-@@ -837,6 +836,7 @@
+@@ -843,6 +842,7 @@
  "the file system if it disables this feature.  You can enable it later by "
  "running 'tune2fs -O dir_index DEVICE' and then 'e2fsck -fD DEVICE'."
  msgstr ""
@@ -55,7 +63,7 @@ diff -ur parted-1.6.21.orig/po/pl.po parted-1.6.21/po/pl.po
  
  #: libparted/fs_ext2/ext2_block_relocator.c:155
  msgid "Cross-linked blocks found! better go run e2fsck first!"
-@@ -1071,6 +1071,7 @@
+@@ -1077,6 +1077,7 @@
  "file system's CHS geometry will be set to match the partition table's CHS "
  "geometry."
  msgstr ""
@@ -63,7 +71,7 @@ diff -ur parted-1.6.21.orig/po/pl.po parted-1.6.21/po/pl.po
  
  #: libparted/fs_fat/bootsector.c:209
  msgid "FAT boot sector says logical sector size is 0.  This is weird. "
-@@ -1172,7 +1173,7 @@
+@@ -1178,7 +1179,7 @@
  #: libparted/fs_linux_swap/linux_swap.c:234
  #, c-format
  msgid "Unrecognised linux swap signature '%10s'."
@@ -72,24 +80,137 @@ diff -ur parted-1.6.21.orig/po/pl.po parted-1.6.21/po/pl.po
  
  #: libparted/fs_linux_swap/linux_swap.c:310
  msgid "Too many bad pages."
-@@ -1251,7 +1252,7 @@
+@@ -1186,31 +1187,31 @@
+ 
+ #: libparted/fs_hfs/hfs.c:214 libparted/fs_hfs/hfs.c:901
+ msgid "Sorry, HFS cannot be resized that way yet."
+-msgstr ""
++msgstr "Niestety nie mo¿na jeszcze zmieniæ rozmiaru HFS-a w ten sposób."
+ 
+ #: libparted/fs_hfs/hfs.c:243 libparted/fs_hfs/hfs.c:609
+ msgid "Data relocation has failed."
+-msgstr ""
++msgstr "Przenoszenie danych nie powiod³o siê."
+ 
+ #: libparted/fs_hfs/hfs.c:261 libparted/fs_hfs/hfs.c:639
+ msgid "Data relocation left some data in the end of the volume."
+-msgstr ""
++msgstr "Przenoszenie danych pozostawi³o trochê danych na koñcu wolumenu."
+ 
+ #: libparted/fs_hfs/hfs.c:300
+-#, fuzzy
+ msgid "writing HFS Master Directory Block"
+-msgstr "B³±d podczas zapisu do katalogu g³ównego (root)."
++msgstr "zapisywanie g³ównego bloku katalogu HFS (Master Directory Block)"
+ 
+ #: libparted/fs_hfs/hfs.c:440
+ #, c-format
+ msgid "Version %d of HFS+ isn't supported."
+-msgstr ""
++msgstr "Wersja %d HFS+ nie jest obs³ugiwana."
+ 
+ #: libparted/fs_hfs/hfs.c:449
+ msgid ""
+ "Journaled HFS+ volumes aren't supported, you should desactivate the journal "
+ "before trying any operation on them."
+ msgstr ""
++"Wolumeny HFS+ z kronik± nie s± obs³ugiwane, trzeba wy³±czyæ kronikê przed prób± jakiejkolwiek operacji na nich."
+ 
+ #: libparted/fs_hfs/hfs.c:487
+ msgid ""
+@@ -1219,46 +1220,47 @@
+ "never been tested, so this might be risky. Please email me so I can see how "
+ "it works! <xilun666@libertysurf.fr>"
+ msgstr ""
++"Wykryto system plików HFS+ z cech±, która nie by³a wcze¶niej widziana. Parted mo¿e teoretycznie j± obs³u¿yæ, ale odpowiadaj±cy jej kod nie by³ nigdy testowany, wiêc mo¿e to byæ ryzykowne. Proszê powiadomiæ autora, ¿eby wiedzia³, czy to faktycznie dzia³a! <xilun666@libertysurf.fr>"
+ 
+ #: libparted/fs_hfs/hfs.c:693
+-#, fuzzy
+ msgid "Error while writing the allocation file."
+-msgstr "B³±d podczas zapisu do katalogu g³ównego (root)."
++msgstr "B³±d podczas zapisu pliku alokacji."
+ 
+ #: libparted/fs_hfs/hfs.c:706
+ msgid "Error while writing the compatibility part of the allocation file."
+-msgstr ""
++msgstr "B³±d podczas zapisu czê¶ci kompatybilno¶ci pliku alokacji."
+ 
+ #: libparted/fs_hfs/hfs.c:721
+ msgid "writing HFS+ Volume Header"
+-msgstr ""
++msgstr "zapisywanie nag³ówka wolumenu HFS+ (Volume Header)"
+ 
+ #: libparted/fs_hfs/hfs.c:820
+ msgid "An error occured while looking for the mandatory bad blocs file."
+-msgstr ""
++msgstr "Wyst±pi³ b³±d podczas szukania obowi±zkowego pliku z³ych bloków."
+ 
+ #: libparted/fs_hfs/hfs.c:871
+ msgid ""
+ "It seems there is an error in the HFS wrapper : the bad blocs file doesn't "
+ "contain the embedded HFS+ volume."
+ msgstr ""
++"Wygl±da to na b³±d we wrapperze HFS: plik z³ych bloków nie zawiera osadzonego wolumenu HFS+."
++
+ 
+ #: libparted/fs_hfs/hfs.c:936
+ msgid "shrinking embedded HFS+ volume"
+-msgstr ""
++msgstr "zmniejszanie osadzonego wolumenu HFS+"
+ 
+ #: libparted/fs_hfs/hfs.c:951
+ msgid "Resizing the HFS+ volume has failed."
+-msgstr ""
++msgstr "Zmiana rozmiaru wolumenu HFS+ nie powiod³a siê."
+ 
+ #: libparted/fs_hfs/hfs.c:958
+-#, fuzzy
+ msgid "shrinking HFS wrapper"
+-msgstr "zmniejszanie"
++msgstr "zmniejszanie wrappera HFS"
+ 
+ #: libparted/fs_hfs/hfs.c:966
+ msgid "Updating the HFS wrapper has failed."
+-msgstr ""
++msgstr "Uaktualnianie wrappera HFS nie powiod³o siê."
+ 
+ #: libparted/fs_hfs/hfs.c:1038 libparted/fs_hfs/hfs.c:1092
+ #, c-format
+@@ -1266,6 +1268,7 @@
+ "This is not a real %s check. This is going to extract special low level "
+ "files for debugging purposes."
+ msgstr ""
++"To nie jest prawdziwe sprawdzanie %s. Ma to za zadanie wyci±gn±æ specjalne pliki niskopoziomowe dla celów diagnostycznych."
+ 
+ #: parted/parted.c:69
+ msgid "displays this help message"
+@@ -1332,7 +1335,7 @@
+ 
+ #: parted/parted.c:92
+ msgid "MINOR must have one of the following FS-TYPEs: "
+-msgstr ""
++msgstr "MINOR musi byæ jednym z nastêpuj±cych SYSTEMÓW-PLIKÓW: "
+ 
+ #: parted/parted.c:130
+ #, c-format
+@@ -1344,7 +1347,7 @@
  msgid ""
  "Partition %s is being used.  You must unmount it before you modify it with "
  "Parted."
 -msgstr ""
 +msgstr "Partycja %s jest u¿ywana. Przed modyfikowaniem jej Partedem trzeba j± odmontowaæ."
  
- #: parted/parted.c:161
+ #: parted/parted.c:165
  #, c-format
-@@ -1617,7 +1618,6 @@
+@@ -1710,7 +1713,6 @@
  "Nie zapomnij o aktualizacji /etc/fstab, je¶li istnieje taka potrzeba.\n"
  
  #: parted/ui.c:68
 -#, fuzzy
  msgid ""
- "Copyright (C) 1998 - 2004 Free Software Foundation, Inc.\n"
+ "Copyright (C) 1998 - 2005 Free Software Foundation, Inc.\n"
  "This program is free software, covered by the GNU General Public License.\n"
-@@ -1628,8 +1628,7 @@
+@@ -1721,8 +1723,7 @@
  "more details.\n"
  "\n"
  msgstr ""
@@ -99,7 +220,7 @@ diff -ur parted-1.6.21.orig/po/pl.po parted-1.6.21/po/pl.po
  "Program ten jest wolno dostêpny, zgodnie z Powszechn± Licencj± Publiczn± "
  "GNU.\n"
  "\n"
-@@ -1709,107 +1708,3 @@
+@@ -1814,107 +1815,3 @@
  #, c-format
  msgid "Using %s\n"
  msgstr "U¿ycie %s\n"
