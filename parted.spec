@@ -7,8 +7,6 @@ Version:	1.4.24
 Release:	1
 License:	GPL
 Group:		Applications/System
-Group(de):	Applikationen/System
-Group(pl):	Aplikacje/System
 Vendor:		Andrew Clausen <clausen@gnu.org>
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.gz
 Patch0:		%{name}-BOOT.patch
@@ -58,13 +56,6 @@ Summary(es):	Archivos de desarrollo para libparted
 Summary(pl):	Pliki wymagane przy kompilacji programСw u©ywaj╠cych libparted
 Summary(pt_BR):	Arquivos de desenvolvimento para a libparted
 Group:		Development/Libraries
-Group(de):	Entwicklung/Libraries
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(ru):	Разработка/Библиотеки
-Group(uk):	Розробка/Б╕бл╕отеки
 Requires:	%{name} = %{version}
 Requires:	e2fsprogs-devel
 
@@ -90,13 +81,6 @@ com a libparted.
 Summary:	Satic libparted
 Summary(pl):	Biblioteka statyczna libparted
 Group:		Development/Libraries
-Group(de):	Entwicklung/Libraries
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(ru):	Разработка/Библиотеки
-Group(uk):	Розробка/Б╕бл╕отеки
 Requires:	%{name}-devel = %{version}
 
 %description static
@@ -109,8 +93,6 @@ Biblioteka statyczna libparted.
 %package BOOT
 Summary:	parted for bootdisk
 Group:		Applications/System
-Group(de):	Applikationen/System
-Group(pl):	Aplikacje/System
 
 %description BOOT
 %endif
