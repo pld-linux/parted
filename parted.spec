@@ -1,25 +1,29 @@
-# conditional build
+# conditional build:
 #  --with static
 #  --without nls
 #  --without readline
 #  --with uClibc -- add somewhat nasty uClibc patch, that shouldn't cause
 #                   problems, but who knows...
+#
 Summary:	Flexible partitioning tool
 Summary(es):	Herramienta de particionamiento flexible
 Summary(pl):	GNU Parted - narzЙdzie do zarz╠dzania partycjami na dyskach
 Summary(pt_BR):	Ferramenta flexМvel de particionamento
+Summary(ru):	Программа GNU манипуляции дисковыми разделами
+Summary(uk):	Програма GNU ман╕пуляц╕╖ дисковими розд╕лами
 Name:		parted
-Version:	1.4.24
+Version:	1.6.0
 Release:	1
 License:	GPL
 Group:		Applications/System
 Vendor:		Andrew Clausen <clausen@gnu.org>
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.gz
 Patch0:		%{name}-BOOT.patch
-Patch1:		%{name}-llseek.patch
-Patch2:		%{name}-no_wrap.patch
-Patch3:		%{name}-BIG_FAT_WARNING.patch
-Patch4:		%{name}-uClibc.patch
+Patch1:		%{name}-no_wrap.patch
+Patch2:		%{name}-BIG_FAT_WARNING.patch
+Patch3:		%{name}-uClibc.patch
+Patch4:		%{name}-DESTDIR.patch
+PAtch5:		%{name}-info.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -27,8 +31,10 @@ BuildRequires:	e2fsprogs-devel
 %{?_with_static:BuildRequires:	e2fsprogs-static}
 BuildRequires:	gettext-devel
 BuildRequires:	libtool
+BuildRequires:	texinfo >= 4.2
 %{!?_without_readline:BuildRequires:	ncurses-devel >= 5.2}
 %{!?_without_readline:BuildRequires:	readline-devel >= 4.2}
+Requires(post,postun):	/sbin/ldconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -54,6 +60,19 @@ O GNU Parted И um programa que permite criar, destruir, redimensionar,
 mover e copiar partiГУes de discos rМgidos. и Зtil para criar espaГo
 para novos sistemas operacionais, reorganizar o uso do disco, e copiar
 dados para novos discos rМgidos.
+
+%description -l ru
+GNU Parted - это программа, позволяющая вам создавать, удалять, менять
+размер, перемещать и копировать разделы на жестких дисках. Это полезно
+для создания места для размещения новых операционных систем,
+реорганизации использования диска и копирования данных на новые диски.
+
+%description -l uk
+GNU Parted - це програма, яка дозволя╓ вам створювати, видаляти,
+зм╕нювати розм╕р, перем╕щувати та коп╕ювати розд╕ли на жорстких
+дисках. Це корисно для створення м╕сця для розм╕щення нових
+операц╕йних систем, реорган╕зац╕╖ використання диску та коп╕ювання
+даних на нов╕ диски.
 
 %package devel
 Summary:	Files required to compile software that uses libparted
@@ -99,18 +118,18 @@ Biblioteka statyczna libparted.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%{?_with_uClibc:%patch4 -p1}
+%{?_with_uClibc:%patch3 -p1}
+%patch4 -p1
+%patch5 -p1
 
 %build
 rm -f missing
 libtoolize --copy --force
 gettextize --copy --force
 aclocal
-automake -a -c -f
 autoheader
 autoconf
-
+automake -a -c -f
 %configure \
 	%{?_without_readline:--without-readline} \
 	%{!?_without_readline:--with-readline} \
@@ -131,12 +150,17 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT \
 	aclocaldir=%{_aclocaldir}
 
-gzip -9nf doc/{API,FAT,USER} AUTHORS BUGS ChangeLog NEWS README THANKS TODO
+gzip -9nf doc/{API,FAT,FAQ} AUTHORS BUGS ChangeLog NEWS README THANKS TODO
 
 %{!?_without_nls:%find_lang %{name}}
 
-%post   -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
+%post
+/sbin/ldconfig
+[ ! -x /usr/sbin/fix-info-dir ] || /usr/sbin/fix-info-dir -c %{_infodir} >/dev/null 2>&1
+
+%postun
+/sbin/ldconfig
+[ ! -x /usr/sbin/fix-info-dir ] || /usr/sbin/fix-info-dir -c %{_infodir} >/dev/null 2>&1
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -144,9 +168,10 @@ rm -rf $RPM_BUILD_ROOT
 %files %{!?_without_nls:-f %{name}.lang}
 %defattr(644,root,root,755)
 %doc *.gz doc/*.gz
-%attr(755,root,root) %{_sbindir}/parted
+%attr(755,root,root) %{_sbindir}/*
 %{!?_with_static:%attr(755,root,root) %{_libdir}/lib*.so.*.*}
 %{_mandir}/man*/*
+%lang(pt) %{_mandir}/pt_BR/man*/*
 
 %files devel
 %defattr(644,root,root,755)
