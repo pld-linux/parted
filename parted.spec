@@ -2,7 +2,7 @@ Summary:	Flexible partitioning tool
 Summary(pl):	GNU Parted - narzêdzie do zarz±dzania partycjami na dyskach
 Name:		parted
 Version:	1.4.11
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/System
 Group(de):	Applikationen/System
@@ -11,8 +11,8 @@ Vendor:		Andrew Clausen <clausen@gnu.org>
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.gz
 URL:		http://www.gnu.org/software/parted/
 BuildPrereq:	e2fsprogs-devel
-BuildPrereq:	readline-devel >= 4.1
-BuildPrereq:	ncurses-devel >= 5.0
+BuildPrereq:	ncurses-devel >= 5.2
+BuildPrereq:	readline-devel >= 4.2
 Requires:	iconv
 Prereq:		/sbin/ldconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
