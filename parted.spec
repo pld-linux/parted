@@ -17,13 +17,12 @@ URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	e2fsprogs-devel
-%if %{?BOOT:1}%{!?BOOT:0}
-BuildRequires:	e2fsprogs-static
-%endif
+%{?_with_static:BuildRequires:	e2fsprogs-static}
+%{?_with_static:BuildRequires:	glibc-static}
 BuildRequires:	gettext-devel
 BuildRequires:	libtool
-BuildRequires:	ncurses-devel >= 5.2
-BuildRequires:	readline-devel >= 4.2
+%{!?_without_readline:BuildRequires:	ncurses-devel >= 5.2}
+%{!?_without_readline:BuildRequires:	readline-devel >= 4.2}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -89,14 +88,6 @@ Satic libparted.
 %description static -l pl
 Biblioteka statyczna libparted.
 
-%if %{?BOOT:1}%{!?BOOT:0}
-%package BOOT
-Summary:	parted for bootdisk
-Group:		Applications/System
-
-%description BOOT
-%endif
-
 %prep
 %setup -q
 %patch0 -p1
@@ -112,21 +103,16 @@ aclocal
 automake -a -c
 autoheader
 autoconf
-%if %{?BOOT:1}%{!?BOOT:0}
-%configure \
-	--disable-nls \
-	--enable-all-static \
-	--without-readline \
-	--without-pic
-%{__make} CFLAGS="-DUSE_OWN_LLSEEK -DNO_BIOS_GEOMETRY_WARNING %{rpmcflags}"
-mv -f %{name}/%{name} %{name}-BOOT
-%{__make} distclean
-%endif
 
 %configure \
-	--with-readline \
+	%{?_without_readline:--without-readline} \
+	%{!?_without_readline:--with-readline} \
 	--without-included-gettext \
-	--enable-shared
+	%{?_without_nls:--disable-nls} \
+	%{?_with_static:--without-pic} \
+	%{?_with_static:--enable-all-static} \
+	%{!?_with_static:--enable-shared}
+
 %{__make}
 
 %install
@@ -168,9 +154,3 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
-
-%if %{?BOOT:1}%{!?BOOT:0}
-%files BOOT
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/bootdisk/sbin/*
-%endif
