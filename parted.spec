@@ -77,12 +77,12 @@ Group:		Applications/System
 %setup -q
 
 %build
-rm missing
-libtoolize --copy --force
-gettextize --copy --force
-aclocal
-autoconf
-automake -a -c
+#rm missing
+#libtoolize --copy --force
+#gettextize --copy --force
+#aclocal
+#autoconf
+#automake -a -c
 %if %{?BOOT:1}%{!?BOOT:0}
 %configure --disable-nls --enable-all-static --without-readline
 %{__make}
