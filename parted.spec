@@ -14,7 +14,7 @@ Summary(ru):	Программа GNU манипуляции дисковыми разделами
 Summary(uk):	Програма GNU ман╕пуляц╕╖ дисковими розд╕лами
 Name:		parted
 Version:	1.6.12
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/System
 Vendor:		Andrew Clausen <clausen@gnu.org>
@@ -26,6 +26,8 @@ Patch2:		%{name}-uClibc.patch
 Patch3:		%{name}-info.patch
 Patch4:		%{name}-get_sector_size.patch
 Patch5:		%{name}-pl.po-update.patch
+Patch6:		%{name}-log2.patch
+Patch7:		%{name}-ped_partition_is_active.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -124,6 +126,8 @@ Biblioteka statyczna libparted.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
 
 rm -f po/stamp-po
 
