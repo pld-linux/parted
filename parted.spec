@@ -1,3 +1,9 @@
+# conditional build
+#  --with static
+#  --without nls
+#  --without readline
+#  --with uClibc -- add somewhat nasty uClibc patch, that shouldn't cause
+#                   problems, but who knows...
 Summary:	Flexible partitioning tool
 Summary(es):	Herramienta de particionamiento flexible
 Summary(pl):	GNU Parted - narzêdzie do zarz±dzania partycjami na dyskach
@@ -13,12 +19,12 @@ Patch0:		%{name}-BOOT.patch
 Patch1:		%{name}-llseek.patch
 Patch2:		%{name}-no_wrap.patch
 Patch3:		%{name}-BIG_FAT_WARNING.patch
+Patch4:		%{name}-uClibc.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	e2fsprogs-devel
 %{?_with_static:BuildRequires:	e2fsprogs-static}
-%{?_with_static:BuildRequires:	glibc-static}
 BuildRequires:	gettext-devel
 BuildRequires:	libtool
 %{!?_without_readline:BuildRequires:	ncurses-devel >= 5.2}
@@ -94,6 +100,7 @@ Biblioteka statyczna libparted.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%{?_with_uClibc.spec:%patch4 -p1}
 
 %build
 rm -f missing
@@ -113,15 +120,12 @@ autoconf
 	%{?_with_static:--enable-all-static} \
 	%{!?_with_static:--enable-shared}
 
+%{?_without_nls:touch include/libintl.h}
+
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
-%if %{?BOOT:1}%{!?BOOT:0}
-install -d $RPM_BUILD_ROOT%{_libdir}/bootdisk/sbin
-install %{name}-BOOT $RPM_BUILD_ROOT%{_libdir}/bootdisk/sbin/%{name}
-%endif
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -129,7 +133,7 @@ install %{name}-BOOT $RPM_BUILD_ROOT%{_libdir}/bootdisk/sbin/%{name}
 
 gzip -9nf doc/{API,FAT,USER} AUTHORS BUGS ChangeLog NEWS README THANKS TODO
 
-%find_lang %{name}
+%{!?_without_nls:%find_lang %{name}}
 
 %post   -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -137,17 +141,17 @@ gzip -9nf doc/{API,FAT,USER} AUTHORS BUGS ChangeLog NEWS README THANKS TODO
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files -f %{name}.lang
+%files %{!?_without_nls:-f %{name}.lang}
 %defattr(644,root,root,755)
 %doc *.gz doc/*.gz
 %attr(755,root,root) %{_sbindir}/parted
-%attr(755,root,root) %{_libdir}/lib*.so.*.*
+%{!?_with_static:%attr(755,root,root) %{_libdir}/lib*.so.*.*}
 %{_mandir}/man*/*
 
 %files devel
 %defattr(644,root,root,755)
 %{_includedir}/parted
-%attr(755,root,root) %{_libdir}/lib*.so
+%{!?_with_static:%attr(755,root,root) %{_libdir}/lib*.so}
 %attr(755,root,root) %{_libdir}/lib*.la
 %{_aclocaldir}/*
 
