@@ -100,7 +100,7 @@ Biblioteka statyczna libparted.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%{?_with_uClibc.spec:%patch4 -p1}
+%{?_with_uClibc:%patch4 -p1}
 
 %build
 rm -f missing
