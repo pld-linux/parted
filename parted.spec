@@ -13,6 +13,7 @@ BuildPrereq:	e2fsprogs-devel
 BuildPrereq:	readline-devel >= 4.1
 BuildPrereq:	ncurses-devel >= 5.0
 Requires:	iconv
+Prereq:         /sbin/ldconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -98,3 +99,6 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
+
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
