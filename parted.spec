@@ -87,7 +87,7 @@ Group:		Applications/System
 %configure --disable-nls --enable-all-static --without-readline
 %{__make} CFLAGS="-m386 -O0"
 mv -f %{name}/%{name} %{name}-BOOT
-%{__make} clean
+%{__make} distclean
 %endif
 
 %configure \
