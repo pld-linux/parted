@@ -82,7 +82,7 @@ Group(pl):	Aplikacje/System
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
+#%patch2 -p1
 
 %build
 rm missing
@@ -94,7 +94,7 @@ autoheader
 autoconf
 %if %{?BOOT:1}%{!?BOOT:0}
 %configure --disable-nls --enable-all-static --without-readline
-%{__make} CFLAGS="-DNO_BIOS_GEOMETRY_WARNING -O0"
+%{__make} CFLAGS="-DNO_BIOS_GEOMETRY_WARNING %{rpmcflags}"
 mv -f %{name}/%{name} %{name}-BOOT
 %{__make} distclean
 %endif
