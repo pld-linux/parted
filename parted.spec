@@ -62,14 +62,14 @@ Requires:	e2fsprogs-devel
 %description devel
 Files required to compile software that uses libparted.
 
-%description -l es devel
+%description devel -l es
 Este paquete incluye los archivos de encabezamiento y bibliotecas
 necesarios para ligar estáticamente programas con libparted.
 
-%description -l pl devel
+%description devel -l pl
 Pliki wymagane przy kompilacji programów u¿ywaj±cych libparted.
 
-%description -l pt_BR devel
+%description devel -l pt_BR
 O GNU Parted é um programa que permite criar, destruir, redimensionar,
 mover e copiar partições de discos rígidos. É útil para criar espaço
 para novos sistemas operacionais, reorganizar o uso do disco, e copiar
@@ -86,7 +86,7 @@ Requires:	%{name}-devel = %{version}
 %description static
 Satic libparted.
 
-%description -l pl static
+%description static -l pl
 Biblioteka statyczna libparted.
 
 %if %{?BOOT:1}%{!?BOOT:0}
