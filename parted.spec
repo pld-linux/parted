@@ -12,7 +12,7 @@ Summary(pt_BR):	Ferramenta flexМvel de particionamento
 Summary(ru):	Программа GNU манипуляции дисковыми разделами
 Summary(uk):	Програма GNU ман╕пуляц╕╖ дисковими розд╕лами
 Name:		parted
-Version:	1.6.0
+Version:	1.6.1
 Release:	1
 License:	GPL
 Group:		Applications/System
