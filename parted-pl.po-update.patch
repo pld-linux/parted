@@ -1,0 +1,46 @@
+--- parted-1.6.12/po/pl.po.orig	2004-08-16 00:47:02.000000000 +0200
++++ parted-1.6.12/po/pl.po	2004-08-29 11:17:35.958181408 +0200
+@@ -345,7 +345,7 @@
+ 
+ #: libparted/disk.c:1765
+ msgid "palo"
+-msgstr ""
++msgstr "palo"
+ 
+ #: libparted/disk.c:1771
+ #, c-format
+@@ -849,6 +849,7 @@
+ "the file system if it disables this feature.  You can enable it later by "
+ "running 'tune2fs -O dir_index DEVICE' and then 'e2fsck -fD DEVICE'."
+ msgstr ""
++"Ten system plików ma w³±czon± opcjê 'dir_index'. Parted mo¿e zmieniæ rozmiar systemu plików tylko po wy³±czeniu tej opcji. Mo¿na w³±czyæ j± pó¼niej poprzez uruchomienie 'tune2fs -O dir_index URZ¡DZENIE' i potem 'e2fsck -fD URZ¡DZENIE'."
+ 
+ #: libparted/fs_ext2/ext2_block_relocator.c:155
+ msgid "Cross-linked blocks found! better go run e2fsck first!"
+@@ -1174,7 +1175,7 @@
+ #: libparted/fs_linux_swap/linux_swap.c:234
+ #, c-format
+ msgid "Unrecognised linux swap signature '%10s'."
+-msgstr "Nierozpoznany podpis linuxowej partycji wymiany `%10s'."
++msgstr "Nierozpoznany podpis linuksowej partycji wymiany `%10s'."
+ 
+ #: libparted/fs_linux_swap/linux_swap.c:310
+ msgid "Too many bad pages."
+@@ -1621,7 +1622,6 @@
+ "Nie zapomnij o aktualizacji /etc/fstab, je¶li istnieje taka potrzeba.\n"
+ 
+ #: parted/ui.c:68
+-#, fuzzy
+ msgid ""
+ "Copyright (C) 1998 - 2004 Free Software Foundation, Inc.\n"
+ "This program is free software, covered by the GNU General Public License.\n"
+@@ -1632,8 +1632,7 @@
+ "more details.\n"
+ "\n"
+ msgstr ""
+-"Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003 Free Software Foundation, "
+-"Inc.\n"
++"Copyright (C) 1998-2004 Free Software Foundation, Inc.\n"
+ "Program ten jest wolno dostêpny, zgodnie z Powszechn± Licencj± Publiczn± "
+ "GNU.\n"
+ "\n"
