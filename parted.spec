@@ -174,7 +174,7 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_with_static:%attr(755,root,root) %{_libdir}/lib*.so.*.*}
 %{_mandir}/man*/*
 %lang(pt) %{_mandir}/pt_BR/man*/*
-%{_infodir}/*
+%{_infodir}/parted*
 
 %files devel
 %defattr(644,root,root,755)
