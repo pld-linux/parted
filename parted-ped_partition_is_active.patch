@@ -1,0 +1,12 @@
+diff -urN parted-1.6.12.orig/libparted/disk_dos.c parted-1.6.12/libparted/disk_dos.c
+--- parted-1.6.12.orig/libparted/disk_dos.c	2004-08-15 14:28:00.000000000 +0200
++++ parted-1.6.12/libparted/disk_dos.c	2004-09-21 13:59:18.000000000 +0200
+@@ -484,7 +484,7 @@
+ 	PED_ASSERT (part->disk != NULL, return);
+ 	PED_ASSERT (bios_geom != NULL, return);
+ 
+-	if (ped_partition_is_active) {
++	if (ped_partition_is_active (part)) {
+ 		if (probe_partition_for_geom (part, bios_geom))
+ 			return;
+ 		if (part->type & PED_PARTITION_EXTENDED) {

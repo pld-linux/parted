@@ -1,0 +1,21 @@
+diff -urN parted-1.6.12.orig/libparted/exception.c parted-1.6.12/libparted/exception.c
+--- parted-1.6.12.orig/libparted/exception.c	2002-04-08 12:08:27.000000000 +0200
++++ parted-1.6.12/libparted/exception.c	2004-09-21 13:18:49.000000000 +0200
+@@ -68,7 +68,7 @@
+ }
+ 
+ static int
+-log2 (int n)
++ped_log2 (int n)
+ {
+ 	int	x;
+ 	for (x=0; 1 << x <= n; x++);
+@@ -78,7 +78,7 @@
+ char*
+ ped_exception_get_option_string (PedExceptionOption ex_opt)
+ {
+-	return option_strings [log2 (ex_opt)];
++	return option_strings [ped_log2 (ex_opt)];
+ }
+ 
+ static PedExceptionOption
