@@ -128,8 +128,8 @@ libtoolize --copy --force
 gettextize --copy --force
 aclocal
 autoheader
-autoconf
-automake -a -c -f
+%{__autoconf}
+%{__automake}
 %configure \
 	%{?_without_readline:--without-readline} \
 	%{!?_without_readline:--with-readline} \
