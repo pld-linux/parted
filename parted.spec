@@ -94,7 +94,7 @@ autoheader
 autoconf
 %if %{?BOOT:1}%{!?BOOT:0}
 %configure --disable-nls --enable-all-static --without-readline
-%{__make} CFLAGS="-DNO_BIOS_GEOMETRY_WARNING -m386 -O0"
+%{__make} CFLAGS="-DNO_BIOS_GEOMETRY_WARNING -O0"
 mv -f %{name}/%{name} %{name}-BOOT
 %{__make} distclean
 %endif
