@@ -85,7 +85,7 @@ Group:		Applications/System
 #automake -a -c
 %if %{?BOOT:1}%{!?BOOT:0}
 %configure --disable-nls --enable-all-static --without-readline
-%{__make}
+%{__make} CFLAGS="-m386 -O0"
 mv -f %{name}/%{name} %{name}-BOOT
 %{__make} clean
 %endif
