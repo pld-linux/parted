@@ -18,6 +18,7 @@ License:	GPL
 Group:		Applications/System
 Vendor:		Andrew Clausen <clausen@gnu.org>
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.gz
+# Source0-md5:	8a5be3262685d0854165960d31392a94
 Patch0:		%{name}-BOOT.patch
 Patch1:		%{name}-no_wrap.patch
 Patch2:		%{name}-BIG_FAT_WARNING.patch
