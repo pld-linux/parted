@@ -1,7 +1,7 @@
 Summary:	Flexible partitioning tool
 Summary(pl):	GNU Parted - narzêdzie do zarz±dzania partycjami na dyskach
 Name:		parted
-version:	1.4.5
+Version:	1.4.6
 Release:	1
 License:	GPL
 Group:		Applications/System
@@ -67,7 +67,8 @@ Biblioteka statyczna libparted.
 gettextize --copy --force
 %configure \
 	--with-readline \
-	--without-included-gettext
+	--without-included-gettext \
+	--enable-shared
 %{__make}
 
 %install
