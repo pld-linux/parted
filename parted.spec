@@ -10,6 +10,8 @@ Group(pl):	Aplikacje/System
 Vendor:		Andrew Clausen <clausen@gnu.org>
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.gz
 Patch0:		%{name}-BOOT.patch
+Patch1:		http://domsch.com/linux/parted/%{name}-1.4.11-gpt-010319.patch
+Patch2:		http://domsch.com/linux/parted/%{name}-1.4.11-gpt-pmbralign.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	e2fsprogs-devel
 %if %{?BOOT:1}%{!?BOOT:0}
@@ -70,6 +72,8 @@ Biblioteka statyczna libparted.
 %package BOOT
 Summary:	parted for bootdisk
 Group:		Applications/System
+Group(de):	Applikationen/System
+Group(pl):	Aplikacje/System
 
 %description BOOT
 %endif
@@ -77,6 +81,8 @@ Group:		Applications/System
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
 #rm missing
@@ -102,8 +108,8 @@ mv -f %{name}/%{name} %{name}-BOOT
 rm -rf $RPM_BUILD_ROOT
 
 %if %{?BOOT:1}%{!?BOOT:0}
-install -d $RPM_BUILD_ROOT/usr/lib/bootdisk/sbin
-install -s %{name}-BOOT $RPM_BUILD_ROOT/usr/lib/bootdisk/sbin/%{name}
+install -d $RPM_BUILD_ROOT%{_libdir}/bootdisk/sbin
+install %{name}-BOOT $RPM_BUILD_ROOT%{_libdir}/bootdisk/sbin/%{name}
 %endif
 
 %{__make} install \
@@ -141,5 +147,5 @@ rm -rf $RPM_BUILD_ROOT
 %if %{?BOOT:1}%{!?BOOT:0}
 %files BOOT
 %defattr(644,root,root,755)
-%attr(755,root,root) /usr/lib/bootdisk/sbin/*
+%attr(755,root,root) %{_libdir}/bootdisk/sbin/*
 %endif
