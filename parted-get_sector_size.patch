@@ -1,0 +1,12 @@
+diff -burN parted-1.6.6.orig/libparted/linux.c parted-1.6.6/libparted/linux.c
+--- parted-1.6.6.orig/libparted/linux.c	2004-04-25 23:59:46.730724696 +0200
++++ parted-1.6.6/libparted/linux.c	2004-04-26 00:00:36.065224712 +0200
+@@ -358,6 +358,8 @@
+ 
+ 	PED_ASSERT (dev->open_count, return 0);
+ 
++	if (_get_linux_version() > KERNEL_VERSION (2,4,0))
++		return PED_SECTOR_SIZE;
+ 	if (_get_linux_version() < KERNEL_VERSION (2,3,0))
+ 		return PED_SECTOR_SIZE;
+ 	if (ioctl (arch_specific->fd, BLKSSZGET, &sector_size))
