@@ -107,7 +107,7 @@ rm -f missing
 libtoolize --copy --force
 gettextize --copy --force
 aclocal
-automake -a -c
+automake -a -c -f
 autoheader
 autoconf
 
