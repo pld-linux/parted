@@ -13,19 +13,19 @@ Summary(pt_BR):	Ferramenta flexМvel de particionamento
 Summary(ru):	Программа GNU манипуляции дисковыми разделами
 Summary(uk):	Програма GNU ман╕пуляц╕╖ дисковими розд╕лами
 Name:		parted
-Version:	1.6.11
+Version:	1.6.12
 Release:	1
 License:	GPL
 Group:		Applications/System
 Vendor:		Andrew Clausen <clausen@gnu.org>
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.gz
-# Source0-md5:	5cad5f9fd010da2ee038f0940a43bedb
-Patch0:		%{name}-BOOT.patch
-Patch1:		%{name}-no_wrap.patch
-Patch2:		%{name}-BIG_FAT_WARNING.patch
-Patch3:		%{name}-uClibc.patch
-Patch5:		%{name}-info.patch
-Patch6:		%{name}-get_sector_size.patch
+# Source0-md5:	f3fd0e95e52be0b36c5431231e2621ce
+Patch0:		%{name}-no_wrap.patch
+Patch1:		%{name}-BIG_FAT_WARNING.patch
+Patch2:		%{name}-uClibc.patch
+Patch3:		%{name}-info.patch
+Patch4:		%{name}-get_sector_size.patch
+Patch5:		%{name}-pl.po-update.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -83,7 +83,7 @@ Summary(es):	Archivos de desarrollo para libparted
 Summary(pl):	Pliki wymagane przy kompilacji programСw u©ywaj╠cych libparted
 Summary(pt_BR):	Arquivos de desenvolvimento para a libparted
 Group:		Development/Libraries
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 Requires:	libuuid-devel
 
 %description devel
@@ -108,7 +108,7 @@ com a libparted.
 Summary:	Static libparted library
 Summary(pl):	Biblioteka statyczna libparted
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}
+Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 Static libparted library.
@@ -120,10 +120,12 @@ Biblioteka statyczna libparted.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%{?with_uClibc:%patch3 -p1}
+%{?with_uClibc:%patch2 -p1}
+%patch3 -p1
+%patch4 -p1
 %patch5 -p1
-%patch6 -p1
+
+rm -f po/stamp-po
 
 %build
 %{__libtoolize}
