@@ -1,0 +1,44 @@
+diff -ur parted-1.4.19/libparted/device.c parted-1.4.19--/libparted/device.c
+--- parted-1.4.19/libparted/device.c	Sun Aug 12 07:51:44 2001
++++ parted-1.4.19--/libparted/device.c	Tue Oct  2 14:00:45 2001
+@@ -1035,7 +1035,7 @@
+ 	PED_ASSERT (dev != NULL, return 0);
+ 	PED_ASSERT (!dev->external_mode, return 0);
+ 
+-#if SIZEOF_OFF_T < 8 && defined(linux)
+-	if (sizeof (off_t) < 8) {
++#if defined(USE_OWN_LLSEEK) && defined(linux)
++	if (1) {
+ 		loff_t		pos = sector * 512;
+ 		return ped_llseek (dev->fd, pos, SEEK_SET) == pos;
+diff -ur parted-1.4.19/libparted/llseek.c parted-1.4.19--/libparted/llseek.c
+--- parted-1.4.19/libparted/llseek.c	Sun Apr  8 00:04:37 2001
++++ parted-1.4.19--/libparted/llseek.c	Tue Oct  2 14:07:43 2001
+@@ -43,7 +43,7 @@
+ 
+ #include "config.h"
+ 
+-#if SIZEOF_OFF_T < 8 && defined(linux)
++#if defined(USE_OWN_LLSEEK) && defined(linux)
+ 
+ #include <unistd.h>
+ #include <linux/unistd.h>
+@@ -76,5 +71,5 @@
+ 	return (retval==-1 ? (loff_t) retval : result);
+ }
+ 
+-#endif /* SIZEOF_OFF_T < 8 && defined(linux) */
++#endif /* defined(USE_OWN_LLSEEK) && defined(linux) */
+ 
+diff -ur parted-1.4.19/libparted/llseek.h parted-1.4.19--/libparted/llseek.h
+--- parted-1.4.19/libparted/llseek.h	Sun Apr  8 00:04:37 2001
++++ parted-1.4.19--/libparted/llseek.h	Tue Oct  2 14:18:17 2001
+@@ -22,7 +22,7 @@
+ 
+ #include "config.h"
+ 
+-#if SIZEOF_OFF_T < 8 && defined(linux)
++#if defined(USE_OWN_LLSEEK) && defined(linux)
+ 
+ #include <sys/types.h>
+ 
