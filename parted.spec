@@ -30,6 +30,7 @@ BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	e2fsprogs-devel
 %{?_with_static:BuildRequires:	e2fsprogs-static}
+BuildRequires:	gcc-c++
 BuildRequires:	gettext-devel
 BuildRequires:	libtool
 BuildRequires:	texinfo >= 4.2
