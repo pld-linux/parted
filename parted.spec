@@ -1,13 +1,13 @@
 Summary:	Flexible partitioning tool
 Summary(pl):	GNU Parted - narzêdzie do zarz±dzania partycjami na dyskach
 Name:		parted
-Version:	1.4.7
+Version:	1.4.8
 Release:	1
 License:	GPL
 Group:		Applications/System
 Group(de):	Applikationen/System
 Group(pl):	Aplikacje/System
-Vendor:		Andrew Clausen <clausen@alphalink.com.au>
+Vendor:		Andrew Clausen <clausen@gnu.org>
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.gz
 URL:		http://www.gnu.org/software/parted/
 BuildPrereq:	e2fsprogs-devel
