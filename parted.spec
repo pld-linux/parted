@@ -1,10 +1,10 @@
 #
 # Conditional build:
-#  --with static	-
-#  --without nls	- 
-#  --without readline	-
-#  --with uClibc	- add somewhat nasty uClibc patch, that shouldn't
-#			cause problems, but who knows...
+%bcond_with	static		# link statically
+%bcond_without	nls		# build without NLS
+%bcond_without	readline	# build without readline support
+%bcond_with	uClibc		# add somewhat nasty uClibc patch, that
+#				# shouldn't cause problems, but who knows...
 #
 Summary:	Flexible partitioning tool
 Summary(es):	Herramienta de particionamiento flexible
@@ -14,7 +14,7 @@ Summary(ru):	Программа GNU манипуляции дисковыми разделами
 Summary(uk):	Програма GNU ман╕пуляц╕╖ дисковими розд╕лами
 Name:		parted
 Version:	1.6.6
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/System
 Vendor:		Andrew Clausen <clausen@gnu.org>
@@ -28,14 +28,14 @@ Patch5:		%{name}-info.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
-BuildRequires:	e2fsprogs-devel
-%{?_with_static:BuildRequires:	e2fsprogs-static}
 BuildRequires:	gcc-c++
 BuildRequires:	gettext-devel
 BuildRequires:	libtool
+BuildRequires:	libuuid-devel
+%{?with_static:BuildRequires:	libuuid-static}
+%{?with_readline:BuildRequires:	ncurses-devel >= 5.2}
+%{?with_readline:BuildRequires:	readline-devel >= 4.2}
 BuildRequires:	texinfo >= 4.2
-%{!?_without_readline:BuildRequires:	ncurses-devel >= 5.2}
-%{!?_without_readline:BuildRequires:	readline-devel >= 4.2}
 Requires(post,postun):	/sbin/ldconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -83,7 +83,7 @@ Summary(pl):	Pliki wymagane przy kompilacji programСw u©ywaj╠cych libparted
 Summary(pt_BR):	Arquivos de desenvolvimento para a libparted
 Group:		Development/Libraries
 Requires:	%{name} = %{version}
-Requires:	e2fsprogs-devel
+Requires:	libuuid-devel
 
 %description devel
 Files required to compile software that uses libparted.
@@ -120,11 +120,10 @@ Biblioteka statyczna libparted.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%{?_with_uClibc:%patch3 -p1}
+%{?with_uClibc:%patch3 -p1}
 %patch5 -p1
 
 %build
-rm -f missing
 %{__libtoolize}
 %{__gettextize}
 %{__aclocal}
@@ -132,15 +131,15 @@ rm -f missing
 %{__autoconf}
 %{__automake}
 %configure \
-	%{?_without_readline:--without-readline} \
-	%{!?_without_readline:--with-readline} \
+	%{!?with_readline:--without-readline} \
+	%{?with_readline:--with-readline} \
 	--without-included-gettext \
-	%{?_without_nls:--disable-nls} \
-	%{?_with_static:--without-pic} \
-	%{?_with_static:--enable-all-static} \
-	%{!?_with_static:--enable-shared}
+	%{!?with_nls:--disable-nls} \
+	%{?with_static:--without-pic} \
+	%{?with_static:--enable-all-static} \
+	%{!?with_static:--enable-shared}
 
-%{?_without_nls:touch include/libintl.h}
+%{!?with_nls:touch include/libintl.h}
 
 %{__make}
 
@@ -151,7 +150,7 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT \
 	aclocaldir=%{_aclocaldir}
 
-%{!?_without_nls:%find_lang %{name}}
+%{?with_nls:%find_lang %{name}}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -164,20 +163,20 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/ldconfig
 [ ! -x /usr/sbin/fix-info-dir ] || /usr/sbin/fix-info-dir -c %{_infodir} >/dev/null 2>&1
 
-%files %{!?_without_nls:-f %{name}.lang}
+%files %{?with_nls:-f %{name}.lang}
 %defattr(644,root,root,755)
 %doc doc/{API,FAT,FAQ} AUTHORS BUGS ChangeLog NEWS README THANKS TODO
 %attr(755,root,root) %{_sbindir}/*
-%{!?_with_static:%attr(755,root,root) %{_libdir}/lib*.so.*.*}
+%{!?with_static:%attr(755,root,root) %{_libdir}/lib*.so.*.*}
 %{_mandir}/man*/*
 %lang(pt) %{_mandir}/pt_BR/man*/*
 %{_infodir}/parted*
 
 %files devel
 %defattr(644,root,root,755)
-%{_includedir}/parted
-%{!?_with_static:%attr(755,root,root) %{_libdir}/lib*.so}
+%{!?with_static:%attr(755,root,root) %{_libdir}/lib*.so}
 %{_libdir}/lib*.la
+%{_includedir}/parted
 %{_aclocaldir}/*
 
 %files static
