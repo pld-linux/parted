@@ -1,0 +1,39 @@
+diff -ur parted-1.4.24/libparted/device.c parted-1.4.24-/libparted/device.c
+--- parted-1.4.24/libparted/device.c	Thu Mar 14 23:48:24 2002
++++ parted-1.4.24-/libparted/device.c	Thu Mar 14 23:45:51 2002
+@@ -40,7 +40,8 @@
+ #include <sys/ioctl.h>
+ #include <sys/sysmacros.h>
+ #include <sys/stat.h>
+-#include <scsi/scsi.h>
++//#include <scsi/scsi.h>
++#define SCSI_IOCTL_GET_IDLUN 0x5382
+ 
+ #include <parted/parted.h>
+ 
+diff -ur parted-1.4.24/parted/strlist.h parted-1.4.24-/parted/strlist.h
+--- parted-1.4.24/parted/strlist.h	Sat Apr  7 22:04:39 2001
++++ parted-1.4.24-/parted/strlist.h	Thu Mar 14 23:47:28 2002
+@@ -20,8 +20,22 @@
+ #ifndef STRLIST_H_INCLUDED
+ #define STRLIST_H_INCLUDED
+ 
++#ifdef ENABLE_NLS
++
++#define __USE_GNU
++
+ #include <wchar.h>
+ 
++#else /* ENABLE_NLS */
++
++#ifdef wchar_t
++#undef wchar_t
++#endif
++
++#define wchar_t char
++
++#endif /* !ENABLE_NLS */
++
+ typedef struct _StrList StrList;
+ struct _StrList {
+ 	StrList*	next;
