@@ -81,7 +81,7 @@ Group(pl):	Aplikacje/System
 %patch0 -p1
 
 %build
-rm missing
+rm -f missing
 libtoolize --copy --force
 gettextize --copy --force
 aclocal
