@@ -1,4 +1,5 @@
-# conditional build:
+#
+# Conditional build:
 #  --with static
 #  --without nls
 #  --without readline
@@ -24,8 +25,6 @@ Patch1:		%{name}-no_wrap.patch
 Patch2:		%{name}-BIG_FAT_WARNING.patch
 Patch3:		%{name}-uClibc.patch
 Patch5:		%{name}-info.patch
-Patch6:		%{name}-ah.patch
-Patch7:		%{name}-gcc33-warnings.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -123,8 +122,6 @@ Biblioteka statyczna libparted.
 %patch2 -p1
 %{?_with_uClibc:%patch3 -p1}
 %patch5 -p1
-#%patch6	-p1
-#%patch7	-p1
 
 %build
 rm -f missing
@@ -156,6 +153,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %{!?_without_nls:%find_lang %{name}}
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post
 /sbin/ldconfig
 [ ! -x /usr/sbin/fix-info-dir ] || /usr/sbin/fix-info-dir -c %{_infodir} >/dev/null 2>&1
@@ -163,9 +163,6 @@ rm -rf $RPM_BUILD_ROOT
 %postun
 /sbin/ldconfig
 [ ! -x /usr/sbin/fix-info-dir ] || /usr/sbin/fix-info-dir -c %{_infodir} >/dev/null 2>&1
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files %{!?_without_nls:-f %{name}.lang}
 %defattr(644,root,root,755)
