@@ -4,7 +4,7 @@ Summary(pl):	GNU Parted - narzêdzie do zarz±dzania partycjami na dyskach
 Summary(pt_BR):	Ferramenta flexível de particionamento
 Name:		parted
 Version:	1.4.21
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/System
 Group(de):	Applikationen/System
@@ -14,6 +14,7 @@ Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.gz
 Patch0:		%{name}-BOOT.patch
 Patch1:		%{name}-llseek.patch
 Patch2:		%{name}-no_wrap.patch
+Patch3:		%{name}-BIG_FAT_WARNING.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -119,6 +120,7 @@ Group(pl):	Aplikacje/System
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 rm -f missing
