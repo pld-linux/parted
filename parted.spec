@@ -60,10 +60,25 @@ Satic libparted.
 %description -l pl static
 Biblioteka statyczna libparted.
 
+%if %{?BOOT:1}%{!?BOOT:0}
+%package BOOT
+Summary:	parted for bootdisk
+Group:		Applications/System
+
+%description BOOT
+%endif
+
 %prep
 %setup -q
 
 %build
+%if %{?BOOT:1}%{!?BOOT:0}
+%configure --disable-nls --enable-all-static --without-readline
+%{__make}
+mv -f %{name}/%{name} %{name}-BOOT
+%{__make} clean
+%endif
+
 %configure \
 	--with-readline \
 	--without-included-gettext \
@@ -72,6 +87,11 @@ Biblioteka statyczna libparted.
 
 %install
 rm -rf $RPM_BUILD_ROOT
+
+%if %{?BOOT:1}%{!?BOOT:0}
+install -d $RPM_BUILD_ROOT/usr/lib/bootdisk/sbin
+install -s %{name}-BOOT $RPM_BUILD_ROOT/usr/lib/bootdisk/sbin/%{name}
+%endif
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -104,3 +124,9 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
+
+%if %{?BOOT:1}%{!?BOOT:0}
+%files BOOT
+%defattr(644,root,root,755)
+%attr(755,root,root) /usr/lib/bootdisk/sbin/*
+%endif
