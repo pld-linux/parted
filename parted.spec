@@ -13,7 +13,7 @@ Patch0:		%{name}-BOOT.patch
 Patch1:		http://domsch.com/linux/parted/%{name}-1.4.11-gpt-010319.patch
 Patch2:		http://domsch.com/linux/parted/%{name}-1.4.11-gpt-pmbralign.patch
 URL:		http://www.gnu.org/software/parted/
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	e2fsprogs-devel
 %if %{?BOOT:1}%{!?BOOT:0}
@@ -85,13 +85,13 @@ Group(pl):	Aplikacje/System
 %patch2 -p1
 
 %build
-#rm missing
-#libtoolize --copy --force
-#gettextize --copy --force
-#aclocal
-#autoconf
-#automake -a -c
-#autoheader
+rm missing
+libtoolize --copy --force
+gettextize --copy --force
+aclocal
+automake -a -c
+autoheader
+autoconf
 %if %{?BOOT:1}%{!?BOOT:0}
 %configure --disable-nls --enable-all-static --without-readline
 %{__make} CFLAGS="-DNO_BIOS_GEOMETRY_WARNING -m386 -O0"
