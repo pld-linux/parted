@@ -50,7 +50,7 @@ para nuevos sistemas operacionales, reorganizar el uso del disco, y
 copiar datos para nuevos discos duros.
 
 %description -l pl
-GNU Parted jest programem który umo¿liwia teorzenie, usuwanie, zmianê
+GNU Parted jest programem który umo¿liwia tworzenie, usuwanie, zmianê
 rozmiaru, przesuwanie i kopiowanie partycji na dyskach. Mo¿e byæ
 u¿yteczny przy tworzeniu partycji pod nowy system jak i przy
 reorganizacji sposobu wykorzystywania dysków, a tak¿e ich kopiowaniu.
