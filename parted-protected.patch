@@ -1,0 +1,13 @@
+diff -ruN --minimal parted-1.6.21.orig/include/parted/disk.h parted-1.6.21/include/parted/disk.h
+--- parted-1.6.21.orig/include/parted/disk.h	2005-01-04 11:09:50.000000000 -0500
++++ parted-1.6.21/include/parted/disk.h	2005-01-21 15:00:40.422628505 -0500
+@@ -36,7 +36,8 @@
+ 	PED_PARTITION_LOGICAL		= 0x01,
+ 	PED_PARTITION_EXTENDED		= 0x02,
+ 	PED_PARTITION_FREESPACE		= 0x04,
+-	PED_PARTITION_METADATA		= 0x08
++	PED_PARTITION_METADATA		= 0x08,
++	PED_PARTITION_PROTECTED		= 0x10
+ } PedPartitionType;
+ 
+ typedef enum {
