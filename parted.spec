@@ -14,7 +14,7 @@ Summary(ru):	Программа GNU манипуляции дисковыми разделами
 Summary(uk):	Програма GNU ман╕пуляц╕╖ дисковими розд╕лами
 Name:		parted
 Version:	1.6.22
-Release:	2
+Release:	3
 License:	GPL
 Vendor:		Andrew Clausen <clausen@gnu.org>
 Group:		Applications/System
@@ -25,6 +25,7 @@ Patch1:		%{name}-BIG_FAT_WARNING.patch
 Patch2:		%{name}-uClibc.patch
 Patch3:		%{name}-info.patch
 Patch4:		%{name}-pl.po-update.patch
+Patch5:		%{name}-protected.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -121,6 +122,7 @@ Biblioteka statyczna libparted.
 %{?with_uClibc:%patch2 -p1}
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 rm -f po/stamp-po
 
