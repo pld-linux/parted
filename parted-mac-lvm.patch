@@ -1,0 +1,100 @@
+--- parted-1.6.22.orig/libparted/disk_mac.c	2005-03-23 10:01:59.000000000 -0500
++++ parted-1.6.22/libparted/disk_mac.c	2005-03-21 16:08:28.000000000 -0500
+@@ -129,6 +129,7 @@
+ 	int		is_root;
+ 	int		is_swap;
+ 	int		is_lvm;
++	int		is_raid;
+ 
+ 	PedSector	data_region_length;
+ 	PedSector	boot_region_length;
+@@ -418,7 +419,15 @@
+ static int
+ _rawpart_is_lvm (MacRawPartition* raw_part)
+ {
+-	if (strcmp (raw_part->name, "lvm") != 0)
++	if (strcmp (raw_part->type, "Linux_LVM") != 0)
++		return 0;
++	return 1;
++}
++
++static int
++_rawpart_is_raid (MacRawPartition* raw_part)
++{
++	if (strcmp (raw_part->type, "Linux_RAID") != 0)
+ 		return 0;
+ 	return 1;
+ }
+@@ -502,6 +511,7 @@
+ 	mac_part_data->is_root = _rawpart_is_root (raw_part);
+ 	mac_part_data->is_swap = _rawpart_is_swap (raw_part);
+ 	mac_part_data->is_lvm = _rawpart_is_lvm (raw_part);
++	mac_part_data->is_raid = _rawpart_is_raid (raw_part);
+ 
+ 	/* "data" region */
+ #ifndef DISCOVER_ONLY
+@@ -1025,6 +1035,7 @@
+ 		mac_data->is_root = 0;
+ 		mac_data->is_swap = 0;
+ 		mac_data->is_lvm = 0;
++		mac_data->is_raid = 0;
+ 
+ 		strcpy (mac_data->volume_name, "untitled");
+ 	} else {
+@@ -1117,15 +1128,16 @@
+ 
+ 		if (part->fs_type)
+ 			return mac_partition_set_system (part, part->fs_type);
+-			
+-		strcpy (mac_data->system_name, "Apple_Bootstrap");
+-		mac_data->status = 0x33;
++
++		if (state)
++			strcpy (mac_data->system_name, "Apple_Bootstrap");
++			mac_data->status = 0x33;
+ 		return 1;
+ 
+ 	case PED_PARTITION_ROOT:
+ 		if (state) {
+ 			strcpy (mac_data->volume_name, "root");
+-			mac_data->is_swap = mac_data->is_lvm = 0;
++			mac_data->is_swap = 0;
+ 		} else {
+ 			if (mac_data->is_root)
+ 				strcpy (mac_data->volume_name, "untitled");
+@@ -1136,7 +1148,7 @@
+ 	case PED_PARTITION_SWAP:
+ 		if (state) {
+ 			strcpy (mac_data->volume_name, "swap");
+-			mac_data->is_root = mac_data->is_lvm = 0;
++			mac_data->is_root = 0;
+ 		} else {
+ 			if (mac_data->is_swap)
+ 				strcpy (mac_data->volume_name, "untitled");
+@@ -1145,14 +1157,19 @@
+ 		return 1;
+ 
+ 	case PED_PARTITION_LVM:
+-		if (state) {
+-			strcpy (mac_data->volume_name, "lvm");
+-			mac_data->is_root = mac_data->is_swap = 0;
+-		} else {
+-			if (mac_data->is_lvm)
+-				strcpy (mac_data->volume_name, "lvm");
+-		}
+ 		mac_data->is_lvm = state;
++		if (state)
++			strcpy (mac_data->system_name, "Linux_LVM");
++		else
++			mac_partition_set_system (part, part->fs_type);
++		return 1;
++
++	case PED_PARTITION_RAID:
++		mac_data->is_raid = state;
++		if (state)
++			strcpy (mac_data->system_name, "Linux_RAID");
++		else
++			mac_partition_set_system (part, part->fs_type);
+ 		return 1;
+ 
+ 	default:
