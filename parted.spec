@@ -30,6 +30,7 @@ Patch6:		%{name}-dasd_geometry.patch
 Patch7:		%{name}-iseries.patch
 Patch8:		%{name}-aix.patch
 Patch9:		%{name}-mac-lvm.patch
+Patch10:	%{name}-link.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -131,6 +132,7 @@ Biblioteka statyczna libparted.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 rm -f po/stamp-po
 
