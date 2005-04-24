@@ -1,0 +1,57 @@
+--- parted-1.6.19/include/parted/device.h.sx8	2004-12-14 16:02:31.591464768 -0500
++++ parted-1.6.19/include/parted/device.h	2004-12-14 16:03:19.154234128 -0500
+@@ -36,7 +36,8 @@
+ 	PED_DEVICE_ATARAID	= 6,
+ 	PED_DEVICE_I2O		= 7,
+  	PED_DEVICE_DASD		= 8,
+- 	PED_DEVICE_VIODASD	= 9
++ 	PED_DEVICE_VIODASD	= 9,
++        PED_DEVICE_SX8          = 10
+ } PedDeviceType;
+ 
+ typedef struct _PedDevice PedDevice;
+--- parted-1.6.19/libparted/linux.c.sx8	2004-12-14 16:02:31.591464768 -0500
++++ parted-1.6.19/libparted/linux.c	2004-12-14 16:03:04.981388728 -0500
+@@ -217,6 +217,8 @@
+ #define I2O_MAJOR6		85
+ #define I2O_MAJOR7		86
+ #define I2O_MAJOR8		87
++#define SX8_MAJOR1              160
++#define SX8_MAJOR2              161
+ 
+ #define DASD_MAJOR		94
+ #define VIODASD_MAJOR		112
+@@ -260,6 +262,12 @@
+ }
+ 
+ static int
++_is_sx8_major (int major)
++{
++  	return (SX8_MAJOR1 <= major && major <= SX8_MAJOR2);
++}
++
++static int
+ _device_stat (PedDevice* dev, struct stat * dev_stat)
+ {
+ 	PED_ASSERT (dev != NULL, return 0);
+@@ -312,6 +320,8 @@
+ 		dev->type = PED_DEVICE_DASD;
+ 	} else if (dev_major == VIODASD_MAJOR && (dev_minor % 0x8 == 0)) {
+ 		dev->type = PED_DEVICE_VIODASD;
++ 	} else if (_is_sx8_major(dev_major) && (dev_minor % 0x20 == 0)) {
++ 		dev->type = PED_DEVICE_SX8;
+ 	} else if (_is_i2o_major (dev_major) && (dev_minor % 0x10 == 0)) {
+ 		dev->type = PED_DEVICE_I2O;
+ 	} else if (_is_cpqarray_major (dev_major) && (dev_minor % 0x10 == 0)) {
+@@ -860,6 +870,11 @@
+ 			goto error_free_arch_specific;
+ 		break;
+ 
++	case PED_DEVICE_SX8:
++		if (!init_generic (dev, _("Promise SX8 SATA Device")))
++			goto error_free_arch_specific;
++		break;
++
+ 	case PED_DEVICE_CPQARRAY:
+ 		if (!init_generic (dev, _("Compaq Smart Array")))
+ 			goto error_free_arch_specific;
