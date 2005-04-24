@@ -25,7 +25,11 @@ Patch1:		%{name}-BIG_FAT_WARNING.patch
 Patch2:		%{name}-uClibc.patch
 Patch3:		%{name}-info.patch
 Patch4:		%{name}-pl.po-update.patch
-Patch5:		%{name}-protected.patch
+Patch5:		%{name}-dasd.patch
+Patch6:		%{name}-dasd_geometry.patch
+Patch7:		%{name}-iseries.patch
+Patch8:		%{name}-aix.patch
+Patch9:		%{name}-mac-lvm.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -123,6 +127,10 @@ Biblioteka statyczna libparted.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
 
 rm -f po/stamp-po
 
