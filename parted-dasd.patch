@@ -1,14 +1,6 @@
 diff -ruN --minimal parted-1.6.21.orig/include/parted/device.h parted-1.6.21/include/parted/device.h
 --- parted-1.6.21.orig/include/parted/device.h	2004-08-15 08:35:05.000000000 -0400
 +++ parted-1.6.21/include/parted/device.h	2005-01-21 15:00:40.421628532 -0500
-@@ -22,6 +22,7 @@
- 
- #include <parted/timer.h>
- 
-+
- #define PED_SECTOR_SIZE		512
- typedef long long PedSector;
- 
 @@ -33,7 +34,8 @@
  	PED_DEVICE_CPQARRAY	= 4,
  	PED_DEVICE_FILE		= 5,
@@ -2488,9 +2480,8 @@ diff -ruN --minimal parted-1.6.21.orig/libparted/fdasd.h parted-1.6.21/libparted
 +int fdasd_prepare_labels (fdasd_anchor_t *anc, int fd) ;
 +
 +#endif /* FDASD_H */
-diff -ruN --minimal parted-1.6.21.orig/libparted/libparted.c parted-1.6.21/libparted/libparted.c
---- parted-1.6.21.orig/libparted/libparted.c	2005-01-04 11:09:51.000000000 -0500
-+++ parted-1.6.21/libparted/libparted.c	2005-01-21 15:00:40.429628321 -0500
+--- parted-1.6.23/libparted/libparted.c.orig	2005-03-29 02:01:22.000000000 +0200
++++ parted-1.6.23/libparted/libparted.c	2005-07-18 20:57:09.847100720 +0200
 @@ -87,12 +87,17 @@
  extern void ped_disk_pc98_init ();
  extern void ped_disk_sun_init ();
@@ -2506,9 +2497,9 @@ diff -ruN --minimal parted-1.6.21.orig/libparted/libparted.c parted-1.6.21/libpa
 +	ped_disk_dasd_init();
 +#endif
 +
- 	ped_disk_amiga_init ();
  	ped_disk_sun_init ();
  #ifdef ENABLE_PC98
+ 	ped_disk_pc98_init ();
 @@ -142,10 +147,14 @@
  extern void ped_disk_pc98_done ();
  extern void ped_disk_sun_done ();
@@ -2521,18 +2512,18 @@ diff -ruN --minimal parted-1.6.21.orig/libparted/libparted.c parted-1.6.21/libpa
 +#if defined(__s390__) || defined(__s390x__)
 +	ped_disk_dasd_done ();
 +#endif
- 	ped_disk_amiga_done ();
  	ped_disk_sun_done ();
  #ifdef ENABLE_PC98
+ 	ped_disk_pc98_done ();
 @@ -282,8 +291,9 @@
  		return NULL;
  	}
  
-+	memset (mem, 0, size); 
++	memset (mem, 0, size);
  #ifdef DEBUG
 -	memset (mem, 0xff, size);
 +	/* memset (mem, 0xff, size); */
- 	_check_dodgey_pointer (mem, size, 1);
+ 	_check_dodgy_pointer (mem, size, 1);
  #endif
  
 diff -ruN --minimal parted-1.6.21.orig/libparted/linux.c parted-1.6.21/libparted/linux.c
