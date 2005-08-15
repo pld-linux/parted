@@ -1,0 +1,14 @@
+--- parted-1.6.24/libparted/disk_dos.c.orig	2005-08-15 19:55:49.431319000 +0200
++++ parted-1.6.24/libparted/disk_dos.c	2005-08-15 20:04:07.208646336 +0200
+@@ -587,8 +587,10 @@
+ 		head_size = ( a_ - c * cyl_size ) / h;
+ 	else if (H > 0)
+ 		head_size = ( A_ - C * cyl_size ) / H;
+-	else /* should not happen because denum != 0 */
++	else { /* should not happen because denum != 0 */
+ 		PED_ASSERT (0, return 0);
++		return 0;
++	}
+ 
+ 	PED_ASSERT (head_size > 0, return 0);
+ 	PED_ASSERT (head_size <= 63, return 0);
