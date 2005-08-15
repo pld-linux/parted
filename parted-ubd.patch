@@ -1,0 +1,43 @@
+--- parted-1.6.24/include/parted/device.h.orig	2005-08-15 20:21:57.515934896 +0200
++++ parted-1.6.24/include/parted/device.h	2005-08-15 20:23:04.852698152 +0200
+@@ -35,7 +35,8 @@
+ 	PED_DEVICE_I2O		= 7,
+  	PED_DEVICE_DASD		= 8,
+  	PED_DEVICE_VIODASD	= 9,
+-        PED_DEVICE_SX8          = 10
++        PED_DEVICE_SX8          = 10,
++	PED_DEVICE_UBD		= 11
+ } PedDeviceType;
+ 
+ typedef struct _PedDevice PedDevice;
+--- parted-1.6.24/libparted/linux.c.orig	2005-08-15 20:21:57.519934288 +0200
++++ parted-1.6.24/libparted/linux.c	2005-08-15 20:23:37.165785816 +0200
+@@ -218,6 +218,7 @@
+ #define I2O_MAJOR6		85
+ #define I2O_MAJOR7		86
+ #define I2O_MAJOR8		87
++#define UBD_MAJOR		98
+ #define SX8_MAJOR1              160
+ #define SX8_MAJOR2              161
+ 
+@@ -327,6 +328,8 @@
+ 		dev->type = PED_DEVICE_I2O;
+ 	} else if (_is_cpqarray_major (dev_major) && (dev_minor % 0x10 == 0)) {
+ 		dev->type = PED_DEVICE_CPQARRAY;
++	} else if (dev_major == UBD_MAJOR && (dev_minor % 0x10 == 0)) {
++		dev->type = PED_DEVICE_UBD;
+ 	} else {
+ 		dev->type = PED_DEVICE_UNKNOWN;
+ 	}
+@@ -960,6 +963,11 @@
+ 			goto error_free_arch_specific;
+ 		break;
+ 
++	case PED_DEVICE_UBD:
++		if (!init_generic (dev, _("UBD Driver")))
++			goto error_free_dev;
++		break;
++
+  	case PED_DEVICE_FILE:
+ 		if (!init_file (dev))
+ 			goto error_free_arch_specific;
