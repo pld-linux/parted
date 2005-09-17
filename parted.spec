@@ -14,7 +14,7 @@ Summary(ru):	Программа GNU манипуляции дисковыми разделами
 Summary(uk):	Програма GNU ман╕пуляц╕╖ дисковими розд╕лами
 Name:		parted
 Version:	1.6.24
-Release:	1
+Release:	2
 License:	GPL
 Vendor:		Andrew Clausen <clausen@gnu.org>
 Group:		Applications/System
@@ -42,7 +42,7 @@ BuildRequires:	libtool
 BuildRequires:	libuuid-devel
 %{?with_static:BuildRequires:	libuuid-static}
 %{?with_readline:BuildRequires:	ncurses-devel >= 5.2}
-%{?with_readline:BuildRequires:	readline-devel >= 4.2}
+%{?with_readline:BuildRequires:	readline-devel >= 5.0}
 BuildRequires:	texinfo >= 4.2
 Requires(post,postun):	/sbin/ldconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
