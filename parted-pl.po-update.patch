@@ -1,28 +1,37 @@
---- parted-1.6.24/po/pl.po.orig	2005-08-13 00:39:05.000000000 +0200
-+++ parted-1.6.24/po/pl.po	2005-08-15 19:51:00.778201936 +0200
+--- parted-1.6.25/po/pl.po.orig	2005-11-02 13:31:59.000000000 +0100
++++ parted-1.6.25/po/pl.po	2005-11-04 11:13:22.331004792 +0100
 @@ -4,10 +4,10 @@
  #
  msgid ""
  msgstr ""
 -"Project-Id-Version: parted 1.6.23\n"
-+"Project-Id-Version: parted 1.6.24\n"
++"Project-Id-Version: parted 1.6.25\n"
  "Report-Msgid-Bugs-To: bug-parted@gnu.org\n"
- "POT-Creation-Date: 2005-08-13 00:39+0200\n"
+ "POT-Creation-Date: 2005-11-02 13:31+0100\n"
 -"PO-Revision-Date: 2005-07-07 22:23+0200\n"
-+"PO-Revision-Date: 2005-08-15 19:40+0200\n"
++"PO-Revision-Date: 2005-11-04 09:50+0100\n"
  "Last-Translator: Wojciech Polak <polak@gnu.org>\n"
  "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
  "MIME-Version: 1.0\n"
-@@ -331,7 +331,7 @@
+@@ -85,7 +85,7 @@
  
- #: libparted/disk.c:1842
+ #: libparted/linux.c:867
+ msgid "User-Mode Linux UBD"
+-msgstr ""
++msgstr "USB z User-Mode Linuksa"
+ 
+ #: libparted/linux.c:877
+ msgid "Unknown"
+@@ -335,7 +335,7 @@
+ 
+ #: libparted/disk.c:1843
  msgid "msftres"
 -msgstr ""
 +msgstr "msftres"
  
- #: libparted/disk.c:1848
+ #: libparted/disk.c:1849
  #, c-format
-@@ -420,12 +420,9 @@
+@@ -424,12 +424,9 @@
  "Disk."
  
  #: libparted/disk_dvh.c:189
@@ -37,7 +46,7 @@
  
  #: libparted/disk_dvh.c:312
  msgid "Checksum is wrong, indicating the partition table is corrupt."
-@@ -742,7 +739,7 @@
+@@ -746,7 +743,7 @@
  
  #: libparted/exception.c:55
  msgid "Fix"
@@ -46,7 +55,31 @@
  
  #: libparted/exception.c:56
  msgid "Yes"
-@@ -929,8 +926,8 @@
+@@ -773,7 +770,7 @@
+ msgstr "Poniechaj"
+ 
+ #: libparted/exception.c:89
+-#, fuzzy, c-format
++#, c-format
+ msgid ""
+ "A bug has been detected in GNU Parted.  Refer to the web site of parted "
+ "http://www.gnu.org/software/parted/parted.html for more informations of what "
+@@ -781,9 +778,11 @@
+ "parted@gnu.org containing at least the version (%s) and the following "
+ "message:  "
+ msgstr ""
+-"Zosta³ wykryty b³±d w dzia³aniu programu GNU parted.  Proszê wys³aæ raport "
+-"na ten temat na adres bug-parted@gnu.org, do³±czaj±c numer wersji (%s) oraz "
+-"nastêpuj±c± wiadomo¶æ:"
++"Zosta³ wykryty b³±d w dzia³aniu programu GNU parted. Na stronie "
++"http://www.gnu.org/software/parted/parted.html znajduje siê wiêcej informacji "
++"przydatnych przy zg³aszaniu b³êdów. Proszê wys³aæ raport o b³êdzie na adres "
++"bug-parted@gnu.org, do³±czaj±c co najmniej numer wersji (%s) oraz "
++"nastêpuj±cy komunikat:"
+ 
+ #: libparted/geom.c:115
+ msgid "Can't have the end before the start!"
+@@ -936,8 +935,8 @@
  "the file system if it disables this feature.  You can enable it later by "
  "running 'tune2fs -O dir_index DEVICE' and then 'e2fsck -fD DEVICE'."
  msgstr ""
@@ -57,7 +90,7 @@
  "j± w³±czyæ ponownie pó¼niej poprzez uruchomienie 'tune2fs -O dir_index "
  "URZ¡DZENIE', a nastêpnie 'e2fsck -fD URZ¡DZENIE'."
  
-@@ -1269,7 +1266,7 @@
+@@ -1276,7 +1275,7 @@
  #: libparted/fs_linux_swap/linux_swap.c:234
  #, c-format
  msgid "Unrecognised linux swap signature '%10s'."
@@ -66,7 +99,73 @@
  
  #: libparted/fs_linux_swap/linux_swap.c:310
  msgid "Too many bad pages."
-@@ -1343,7 +1340,7 @@
+@@ -1312,48 +1311,48 @@
+ "obszar na tej pozycji.  To nie powinno siê zdarzyæ!"
+ 
+ #: libparted/fs_hfs/file.c:147
+-#, fuzzy, c-format
++#, c-format
+ msgid "Could not update the extent cache for HFS file with CNID %X."
+-msgstr "Nie mo¿na uaktualniæ pamiêci obszarów pliku %s z CNID %X."
++msgstr "Nie mo¿na uaktualniæ pamiêci obszarów pliku HFS z CNID %X."
+ 
+ #: libparted/fs_hfs/file.c:184
+-#, fuzzy, c-format
++#, c-format
+ msgid "Trying to read HFS file with CNID %X behind EOF."
+-msgstr "Próba odczytania pliku %s z CNID %X za EOF."
++msgstr "Próba odczytania pliku HFS z CNID %X za EOF."
+ 
+ #: libparted/fs_hfs/file.c:194 libparted/fs_hfs/file.c:224
+-#, fuzzy, c-format
++#, c-format
+ msgid "Could not find sector %lli of HFS file with CNID %X."
+-msgstr "Nie znaleziono sektora %lli pliku %s z CNID %X."
++msgstr "Nie znaleziono sektora %lli pliku HFS z CNID %X."
+ 
+ #: libparted/fs_hfs/file.c:214
+-#, fuzzy, c-format
++#, c-format
+ msgid "Trying to write HFS file with CNID %X behind EOF."
+-msgstr "Zapisywanie pliku %s z CNID %X za EOF."
++msgstr "Próba zapisania pliku HFS z CNID %X za EOF."
+ 
+ #: libparted/fs_hfs/file_plus.c:161
+-#, fuzzy, c-format
++#, c-format
+ msgid "Could not update the extent cache for HFS+ file with CNID %X."
+-msgstr "Nie mo¿na uaktualniæ pamiêci obszarów pliku %s z CNID %X."
++msgstr "Nie mo¿na uaktualniæ pamiêci obszarów pliku HFS+ z CNID %X."
+ 
+ #: libparted/fs_hfs/file_plus.c:205
+-#, fuzzy, c-format
++#, c-format
+ msgid "Trying to read HFS+ file with CNID %X behind EOF."
+-msgstr "Próba odczytania pliku %s z CNID %X za EOF."
++msgstr "Próba odczytania pliku HFS+ z CNID %X za EOF."
+ 
+ #: libparted/fs_hfs/file_plus.c:216 libparted/fs_hfs/file_plus.c:258
+-#, fuzzy, c-format
++#, c-format
+ msgid "Could not find sector %lli of HFS+ file with CNID %X."
+-msgstr "Nie znaleziono sektora %lli pliku %s z CNID %X."
++msgstr "Nie znaleziono sektora %lli pliku HFS+ z CNID %X."
+ 
+ #: libparted/fs_hfs/file_plus.c:247
+-#, fuzzy, c-format
++#, c-format
+ msgid "Trying to write HFS+ file with CNID %X behind EOF."
+-msgstr "Zapisywanie pliku %s z CNID %X za EOF."
++msgstr "Próba zapisania pliku HFS+ z CNID %X za EOF."
+ 
+ #: libparted/fs_hfs/hfs.c:214
+ msgid "Sorry, HFS cannot be resized that way yet."
+-msgstr "Przykro mi, ale nie mo¿na w ten sposób zmieniæ rozmiaru HFS."
++msgstr "Przykro mi, ale nie mo¿na jeszcze w ten sposób zmieniæ rozmiaru HFS."
+ 
+ #: libparted/fs_hfs/hfs.c:244 libparted/fs_hfs/hfs.c:639
+ msgid "Data relocation has failed."
+@@ -1369,7 +1368,7 @@
  
  #: libparted/fs_hfs/hfs.c:447
  msgid "No valid HFS[+X] signature has been found while opening."
@@ -75,7 +174,7 @@
  
  #: libparted/fs_hfs/hfs.c:457
  #, c-format
-@@ -1351,12 +1348,11 @@
+@@ -1377,12 +1376,11 @@
  msgstr "Wersja %d HFS+ nie jest wspierana."
  
  #: libparted/fs_hfs/hfs.c:468
@@ -90,7 +189,7 @@
  msgid ""
  "You have an HFS+ file system that has a feature that I haven't seen used "
  "anywhere.  Parted can theoretically handle it, but the corresponding code "
-@@ -1366,7 +1362,7 @@
+@@ -1392,7 +1390,7 @@
  "Ten system plików HFS+ posiada cechê której nigdy dotychczas nie widzia³em.  "
  "Teoretycznie, Parted potrafi j± obs³ugiwaæ, ale odpowiadaj±cy kod nie "
  "przeszed³ testów, z powodu czego jego u¿ycie mo¿e byæ ryzykowne.  Proszê o "
@@ -99,7 +198,18 @@
  
  #: libparted/fs_hfs/hfs.c:670
  msgid "Data relocation left some data at the end of the volume."
-@@ -1424,66 +1420,66 @@
+@@ -1424,9 +1422,8 @@
+ "zawiera wbudowanego wolumenu HFS+."
+ 
+ #: libparted/fs_hfs/hfs.c:931
+-#, fuzzy
+ msgid "Sorry, HFS+ cannot be resized that way yet."
+-msgstr "Przykro mi, ale nie mo¿na w ten sposób zmieniæ rozmiaru HFS."
++msgstr "Przykro mi, ale nie mo¿na jeszcze w ten sposób zmieniæ rozmiaru HFS+."
+ 
+ #: libparted/fs_hfs/hfs.c:966
+ msgid "shrinking embedded HFS+ volume"
+@@ -1455,66 +1452,66 @@
  
  #: libparted/fs_hfs/journal.c:156
  msgid "Bad block list header checksum."
@@ -116,7 +226,7 @@
  #: libparted/fs_hfs/journal.c:261
 -#, fuzzy
  msgid ""
- "Journal stored outside of the volume are not supported. Try to desactivate "
+ "Journal stored outside of the volume are not supported.  Try to desactivate "
  "the journal and run Parted again."
  msgstr ""
 -"Wolumeny HFS+ z kronikowaniem nie s± wspierane, nale¿y deaktywowaæ kronikê "
@@ -152,8 +262,8 @@
  
  #: libparted/fs_hfs/journal.c:320
  msgid ""
- "The sector size stored in the journal is not 512 bytes. Parted only supports "
- "512 bytes length sectors."
+ "The sector size stored in the journal is not 512 bytes.  Parted only "
+ "supports 512 bytes length sectors."
  msgstr ""
 +"Rozmiar sektora zapisany w kronice nie jest równy 512 bajtów. Parted obs³uguje "
 +"tylko sektory o d³ugo¶ci 512 bajtów."
@@ -165,8 +275,8 @@
  
  #: libparted/fs_hfs/journal.c:350
  msgid ""
- "The journal is not empty. Parted must replay the transactions before opening "
- "the file system. This will modify the file system."
+ "The journal is not empty.  Parted must replay the transactions before "
+ "opening the file system.  This will modify the file system."
  msgstr ""
 +"Kronika nie jest pusta. Parted musi odtworzyæ transakcje przed otwarciem "
 +"systemu plików. Ta operacja zmodyfikuje system plików."
@@ -174,31 +284,58 @@
  #: libparted/fs_hfs/journal.c:378
  msgid ""
  "The volume header or the master directory block has changed while replaying "
- "the journal. You should restart Parted."
+ "the journal.  You should restart Parted."
  msgstr ""
 +"Nag³ówek wolumenu lub blok g³ównego katalogu zmieni³y siê podczas odtwarzania "
 +"kroniki. Nale¿y zrestartowaæ Parteda."
  
  #: libparted/fs_hfs/reloc.c:166 libparted/fs_hfs/reloc_plus.c:156
  msgid "An extent has not been relocated."
-@@ -2036,6 +2044,13 @@
- "along with the following message and preferably\n"
- "additional information about your setup:\n"
+@@ -1534,10 +1531,9 @@
+ "Ten wolumen HFS nie posiada pliku katalogowego.  To jest bardzo niezwyk³e!"
+ 
+ #: libparted/fs_hfs/reloc.c:489
+-#, fuzzy
+ msgid "This HFS volume has no extents overflow file.  This is quite unusual!"
  msgstr ""
-+"Znaleziono b³±d w GNU Partedzie. Proszê wys³aæ e-maila pod adres\n"
+-"Ten tom HFS+ nie zawiera pliku przepe³nienia obszarów. To raczej niezwykle!"
++"Ten wolumen HFS nie zawiera pliku przepe³nienia obszarów. To raczej niezwykle!"
+ 
+ #: libparted/fs_hfs/reloc.c:531
+ msgid ""
+@@ -2075,6 +2083,22 @@
+ "\thttp://www.gnu.org/software/parted/parted.html\n"
+ "for more informations of what could be useful for bug submitting!\n"
+ msgstr ""
++"\n"
++"\n"
++"Znaleziono b³±d w GNU Partedzie.\n"
++"Byæ mo¿e zosta³ on poprawiony w ostatniej wersji GNU Parteda, któr± mo¿na\n"
++"znale¼æ pod adresem\n"
++"\thttp://ftp.gnu.org/gnu/parted/\n"
++"Je¶li b³±d nie zosta³ jeszcze poprawiony, albo nie jest mo¿liwe sprawdzenie,\n"
++"proszê wys³aæ e-maila pod adres\n"
 +"\tparted-maintainers@lists.alioth.debian.org\n"
 +"lub (lepiej) wype³niæ raport o b³êdzie na\n"
 +"\thttp://parted.alioth.debian.org/bugs/\n"
-+"Raport powinien zawieraæ wersjê tego wydania (%s)\n"
-+"wraz z nastêpuj±cym komunikatem i najlepiej\n"
-+"dodatkowymi informacjami o konfiguracji:\n"
++"Raport powinien zawieraæ wersjê tego wydania (%s) wraz z nastêpuj±cym\n"
++"komunikatem i najlepiej dodatkowymi informacjami o konfiguracji.\n"
++"Na stronie"
++"\thttp://www.gnu.org/software/parted/parted.html\n"
++"znajduje siê wiêcej informacji przydatnych przy zg³aszaniu b³êdów.\n"
  
- #: parted/ui.c:633
+ #: parted/ui.c:639
  msgid "Expecting a partition number."
-@@ -2086,161 +2101,3 @@
+@@ -2125,167 +2149,3 @@
  #, c-format
  msgid "Using %s\n"
  msgstr "U¿ycie %s\n"
+-
+-#~ msgid ""
+-#~ "This HFS volume has no extents overflow file. This is quite unusual !"
+-#~ msgstr ""
+-#~ "Ten wolumen HFS nie zawiera pliku przepe³nienia obszarów. To raczej "
+-#~ "niezwykle!"
 -
 -#~ msgid ""
 -#~ "You found a bug in GNU Parted.  Please email a bug report to bug-"

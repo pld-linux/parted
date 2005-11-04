@@ -1,12 +1,12 @@
---- parted-1.6.24/include/parted/device.h.orig	2005-08-15 20:25:26.794119776 +0200
-+++ parted-1.6.24/include/parted/device.h	2005-08-15 20:26:32.862075920 +0200
+--- parted-1.6.25/include/parted/device.h.orig	2005-11-04 10:13:40.473529896 +0100
++++ parted-1.6.25/include/parted/device.h	2005-11-04 10:14:41.797207280 +0100
 @@ -36,7 +36,8 @@
-  	PED_DEVICE_DASD		= 8,
-  	PED_DEVICE_VIODASD	= 9,
-         PED_DEVICE_SX8          = 10,
--	PED_DEVICE_UBD		= 11
-+	PED_DEVICE_UBD		= 11,
-+	PED_DEVICE_AOE          = 12
+ 	PED_DEVICE_UBD		= 8,
+ 	PED_DEVICE_DASD		= 9,
+ 	PED_DEVICE_VIODASD	= 10,
+-	PED_DEVICE_SX8		= 11
++	PED_DEVICE_SX8		= 11,
++	PED_DEVICE_AOE		= 12
  } PedDeviceType;
  
  typedef struct _PedDevice PedDevice;

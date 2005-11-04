@@ -29,15 +29,15 @@
  	case PED_DEVICE_CPQARRAY:
  		if (!init_generic (dev, _("Compaq Smart Array")))
  			goto error_free_arch_specific;
---- parted-1.6.3/include/parted/device.h.iseries	2003-05-16 18:00:20.000000000 -0400
-+++ parted-1.6.3/include/parted/device.h	2003-05-16 18:00:05.000000000 -0400
-@@ -35,7 +35,8 @@
- 	PED_DEVICE_FILE		= 5,
+--- parted-1.6.25/include/parted/device.h.orig	2005-11-04 10:04:49.674223656 +0100
++++ parted-1.6.25/include/parted/device.h	2005-11-04 10:05:25.462782968 +0100
+@@ -34,7 +34,8 @@
  	PED_DEVICE_ATARAID	= 6,
  	PED_DEVICE_I2O		= 7,
-- 	PED_DEVICE_DASD		= 8
-+ 	PED_DEVICE_DASD		= 8,
-+ 	PED_DEVICE_VIODASD	= 9
+ 	PED_DEVICE_UBD		= 8,
+-	PED_DEVICE_DASD		= 9
++	PED_DEVICE_DASD		= 9,
++	PED_DEVICE_VIODASD	= 10
  } PedDeviceType;
  
  typedef struct _PedDevice PedDevice;
