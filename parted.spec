@@ -13,13 +13,13 @@ Summary(pt_BR):	Ferramenta flexМvel de particionamento
 Summary(ru):	Программа GNU манипуляции дисковыми разделами
 Summary(uk):	Програма GNU ман╕пуляц╕╖ дисковими розд╕лами
 Name:		parted
-Version:	1.6.24
-Release:	2
+Version:	1.6.25
+Release:	1
 License:	GPL
 Vendor:		Andrew Clausen <clausen@gnu.org>
 Group:		Applications/System
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.gz
-# Source0-md5:	b1e83f3abab0a1894a8cc617779461ef
+# Source0-md5:	2ed5a721e425e3f10bb58f5a0fc7271c
 Patch0:		%{name}-no_wrap.patch
 Patch1:		%{name}-BIG_FAT_WARNING.patch
 Patch2:		%{name}-uClibc.patch
@@ -30,10 +30,8 @@ Patch6:		%{name}-dasd_geometry.patch
 Patch7:		%{name}-iseries.patch
 Patch8:		%{name}-aix.patch
 Patch9:		%{name}-link.patch
-Patch10:	%{name}-nodebug.patch
-Patch11:	%{name}-sx8.patch
-Patch12:	%{name}-ubd.patch
-Patch13:	%{name}-etherd.patch
+Patch10:	%{name}-sx8.patch
+Patch11:	%{name}-etherd.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -137,8 +135,6 @@ Biblioteka statyczna libparted.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
-%patch13 -p1
 
 rm -f po/stamp-po
 
