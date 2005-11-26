@@ -1,0 +1,10 @@
+--- parted-1.6.25.1/libparted/fs_reiserfs/reiserfs.c.orig	2005-11-11 13:35:30.000000000 +0100
++++ parted-1.6.25.1/libparted/fs_reiserfs/reiserfs.c	2005-11-26 23:05:42.000000000 +0100
+@@ -771,6 +771,7 @@
+ 
+ error_free_libreiserfs_handle:
+ 	dlclose(libreiserfs_handle);
++	libreiserfs_handle = NULL;
+ error:
+ 	return 0;
+ }
