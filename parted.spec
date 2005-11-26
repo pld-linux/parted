@@ -32,6 +32,7 @@ Patch8:		%{name}-aix.patch
 Patch9:		%{name}-link.patch
 Patch10:	%{name}-sx8.patch
 Patch11:	%{name}-etherd.patch
+Patch12:	%{name}-segv.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -135,6 +136,7 @@ Biblioteka statyczna libparted.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p1
 
 rm -f po/stamp-po
 
