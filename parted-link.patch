@@ -1,25 +1,5 @@
---- parted-1.6.22/configure.in.orig	2005-03-19 22:47:12.000000000 +0100
-+++ parted-1.6.22/configure.in	2005-04-24 15:35:55.738042232 +0200
-@@ -213,9 +213,11 @@
- fi
- CFLAGS="$CFLAGS -DLOCALEDIR=\"\\\"$datadir/locale\\\"\""
- 
-+REISER_LIBS=""
- dnl Check for libdl, if we are doing dynamic loading
- if test "$enable_dynamic_loading" = yes; then
- 	AC_CHECK_LIB(dl, dlopen,
-+		REISER_LIBS="-ldl"
- 		PARTED_LIBS="$PARTED_LIBS -ldl"
- 		AC_DEFINE(DYNAMIC_LOADING, 1, [Lazy linking to fs libs]),
- 		AC_MSG_ERROR(
-@@ -243,7 +245,6 @@
- AC_SUBST(UUID_LIBS)
- 
- dnl Check for libreiserfs
--REISER_LIBS=""
- if test "$enable_dynamic_loading" = no -a "$enable_discover_only" = no; then
- 	OLD_LIBS="$LIBS"
- 	AC_CHECK_LIB(dal, dal_equals,
+--- parted-1.7.1/configure.ac.orig	2005-03-19 22:47:12.000000000 +0100
++++ parted-1.7.1/configure.ac	2005-04-24 15:35:55.738042232 +0200
 @@ -264,7 +265,7 @@
  if test "$with_readline" = yes; then
  	OLD_LIBS="$LIBS"

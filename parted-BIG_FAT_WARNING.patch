@@ -1,9 +1,8 @@
-diff -ur parted-1.4.21/parted/ui.c parted-1.4.21-/parted/ui.c
---- parted-1.4.21/parted/ui.c	Fri Dec 14 12:36:55 2001
-+++ parted-1.4.21-/parted/ui.c	Fri Dec 14 12:36:38 2001
-@@ -71,6 +71,11 @@
- "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
- "GNU General Public License for more details.\n");
+--- parted-1.7.1/parted/ui.c.orig	2006-05-27 21:38:39.594851500 +0200
++++ parted-1.7.1/parted/ui.c	2006-05-27 21:39:49.027190750 +0200
+@@ -67,6 +67,11 @@
+ static char* banner_msg = N_(
+ "Welcome to GNU Parted! Type 'help' to view a list of commands.\n");
  
 +static char* warning_msg = N_(
 +"\nWARNING: unlike other partitioning software, Parted does *NOT* wait for\n"
@@ -12,24 +11,22 @@ diff -ur parted-1.4.21/parted/ui.c parted-1.4.21-/parted/ui.c
 +
  static char* usage_msg = N_(
  "Usage: parted [OPTION]... [DEVICE [COMMAND [PARAMETERS]...]...]\n"
- "Apply COMMANDs with PARAMETERS to DEVICE.  If no COMMAND(s) are given, runs in\n"
-@@ -643,7 +648,7 @@
+ "Apply COMMANDs with PARAMETERS to DEVICE.  If no COMMAND(s) are given, run in\n"
+@@ -1256,7 +1261,7 @@
  
- 	printf ("%s", prog_name);
+     print_using_dev (*dev);
  
--	list = str_list_create (_(banner_msg), NULL);
-+	list = str_list_create (_(banner_msg), _(warning_msg), NULL);
+-    list = str_list_create (_(banner_msg), NULL);
++    list = str_list_create (_(banner_msg), _(warning_msg), NULL);
  	str_list_print_wrap (list, screen_width (), 0, 0);
  	str_list_destroy (list);
  
---- parted-1.6.15/po/pl.po.orig	2004-10-21 22:38:12.171388000 +0200
-+++ parted-1.6.15/po/pl.po	2004-10-21 22:49:37.028274776 +0200
-@@ -1624,6 +1624,18 @@
- "Powszechnej Licencji Publicznej GNU.\n"
- "\n"
+--- parted-1.7.1/po/pl.po.orig	2006-05-27 21:38:39.582850750 +0200
++++ parted-1.7.1/po/pl.po	2006-05-27 21:41:33.121696250 +0200
+@@ -1717,6 +1717,18 @@
  
-+#: parted/ui.c:74
-+msgid ""
+ #: parted/ui.c:71
+ msgid ""
 +"\n"
 +"WARNING: unlike other partitioning software, Parted does *NOT* wait for\n"
 +"exit to write changes to partition table, you're experimenting on your\n"
@@ -40,6 +37,8 @@ diff -ur parted-1.4.21/parted/ui.c parted-1.4.21-/parted/ui.c
 +"*NIE* nie czeka na wyj¶cie z programu z zapisaniem zmian w tablicy partycji\n"
 +"- u¿ywaj±c go eksperymentuje siê na ¿ywym organizmie dysku.\n"
 +
- #: parted/ui.c:77
- msgid ""
++#: parted/ui.c:71
++msgid ""
  "Usage: parted [OPTION]... [DEVICE [COMMAND [PARAMETERS]...]...]\n"
+ "Apply COMMANDs with PARAMETERS to DEVICE.  If no COMMAND(s) are given, run in\n"
+ "interactive mode.\n"
