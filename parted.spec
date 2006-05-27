@@ -13,29 +13,30 @@ Summary(pt_BR):	Ferramenta flexМvel de particionamento
 Summary(ru):	Программа GNU манипуляции дисковыми разделами
 Summary(uk):	Програма GNU ман╕пуляц╕╖ дисковими розд╕лами
 Name:		parted
-Version:	1.6.25.1
+Version:	1.7.1
 Release:	1
 License:	GPL
-Vendor:		Andrew Clausen <clausen@gnu.org>
 Group:		Applications/System
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.gz
-# Source0-md5:	8ad8b2c8aa865d9d6a43a4ecfe021782
-Patch0:		%{name}-no_wrap.patch
-Patch1:		%{name}-BIG_FAT_WARNING.patch
-Patch2:		%{name}-uClibc.patch
-Patch3:		%{name}-info.patch
-Patch4:		%{name}-pl.po-update.patch
+# Source0-md5:	75328a335ace38e72470463488be1000
+Patch0:		%{name}-pl.po-update.patch
+Patch1:		%{name}-no_wrap.patch
+Patch2:		%{name}-BIG_FAT_WARNING.patch
+Patch3:		%{name}-uClibc.patch
+Patch4:		%{name}-info.patch
+Patch4:		%{name}-sx8.patch
 Patch5:		%{name}-dasd.patch
-Patch6:		%{name}-dasd_geometry.patch
-Patch7:		%{name}-iseries.patch
+Patch6:		%{name}-iseries.patch
+Patch7:		%{name}-dm.patch
 Patch8:		%{name}-aix.patch
 Patch9:		%{name}-link.patch
-Patch10:	%{name}-sx8.patch
-Patch11:	%{name}-etherd.patch
-Patch12:	%{name}-segv.patch
+Patch10:	%{name}-etherd.patch
+Patch11:	%{name}-segv.patch
+Patch12:	%{name}-headers.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
+BuildRequires:	device-mapper-devel >= 1.02.02
 BuildRequires:	gettext-devel
 BuildRequires:	libtool
 BuildRequires:	libuuid-devel
@@ -90,6 +91,7 @@ Summary(pl):	Pliki wymagane przy kompilacji programСw u©ywaj╠cych libparted
 Summary(pt_BR):	Arquivos de desenvolvimento para a libparted
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	device-mapper-devel >= 1.02.02
 Requires:	libuuid-devel
 
 %description devel
@@ -126,8 +128,8 @@ Biblioteka statyczna libparted.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%{?with_uClibc:%patch2 -p1}
-%patch3 -p1
+%patch2 -p1
+%{?with_uClibc:%patch3 -p1}
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
@@ -150,11 +152,8 @@ rm -f po/stamp-po
 %configure \
 	%{!?with_readline:--without-readline} \
 	%{?with_readline:--with-readline} \
-	--without-included-gettext \
 	%{!?with_nls:--disable-nls} \
-	%{?with_static:--without-pic} \
-	%{?with_static:--enable-all-static} \
-	%{!?with_static:--enable-shared}
+	%{?with_static:--without-pic}
 
 %{!?with_nls:touch include/libintl.h}
 
@@ -182,11 +181,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files %{?with_nls:-f %{name}.lang}
 %defattr(644,root,root,755)
-%doc doc/{API,FAT,FAQ} AUTHORS BUGS ChangeLog NEWS README THANKS TODO
+%doc doc/{API,FAT} AUTHORS BUGS ChangeLog NEWS README THANKS TODO
+%lang(ja) %doc doc/USER.jp
 %attr(755,root,root) %{_sbindir}/*
 %{!?with_static:%attr(755,root,root) %{_libdir}/lib*.so.*.*}
-%{_mandir}/man*/*
-%lang(pt) %{_mandir}/pt_BR/man*/*
+%{_mandir}/man8/*
+%lang(pt) %{_mandir}/pt_BR/man8/*
 %{_infodir}/parted*
 
 %files devel
