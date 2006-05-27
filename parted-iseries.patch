@@ -1,43 +1,41 @@
---- parted-1.6.3/libparted/linux.c.iseries	2003-05-16 17:50:31.000000000 -0400
-+++ parted-1.6.3/libparted/linux.c	2003-05-16 19:13:48.000000000 -0400
-@@ -223,6 +223,7 @@
- #define I2O_MAJOR8		87
- 
- #define DASD_MAJOR		94
-+#define VIODASD_MAJOR		112
- 
- #define SCSI_BLK_MAJOR(M) (						\
- 		(M) == SCSI_DISK0_MAJOR 				\
-@@ -313,6 +314,8 @@
- 		dev->type = PED_DEVICE_ATARAID;
- 	} else if (dev_major == DASD_MAJOR && (dev_minor % 0x4 == 0)) {
- 		dev->type = PED_DEVICE_DASD;
-+	} else if (dev_major == VIODASD_MAJOR && (dev_minor % 0x8 == 0)) {
-+		dev->type = PED_DEVICE_VIODASD;
- 	} else if (_is_i2o_major (dev_major) && (dev_minor % 0x10 == 0)) {
- 		dev->type = PED_DEVICE_I2O;
- 	} else if (_is_cpqarray_major (dev_major) && (dev_minor % 0x10 == 0)) {
-@@ -864,6 +867,11 @@
- 			goto error_free_arch_specific;
- 		break;
- 
-+	case PED_DEVICE_VIODASD:
-+		if (!init_generic (dev, _("IBM iSeries Virtual DASD")))
-+			goto error_free_arch_specific;
-+		break;
-+
- 	case PED_DEVICE_CPQARRAY:
- 		if (!init_generic (dev, _("Compaq Smart Array")))
- 			goto error_free_arch_specific;
---- parted-1.6.25/include/parted/device.h.orig	2005-11-04 10:04:49.674223656 +0100
-+++ parted-1.6.25/include/parted/device.h	2005-11-04 10:05:25.462782968 +0100
-@@ -34,7 +34,8 @@
- 	PED_DEVICE_ATARAID	= 6,
- 	PED_DEVICE_I2O		= 7,
- 	PED_DEVICE_UBD		= 8,
--	PED_DEVICE_DASD		= 9
-+	PED_DEVICE_DASD		= 9,
-+	PED_DEVICE_VIODASD	= 10
+--- parted-1.7.0/include/parted/device.h.P150	2006-05-19 10:32:18.000000000 -0400
++++ parted-1.7.0/include/parted/device.h	2006-05-19 11:01:23.000000000 -0400
+@@ -44,6 +44,7 @@
+         PED_DEVICE_I2O          = 7,
+         PED_DEVICE_UBD          = 8,
+         PED_DEVICE_DASD         = 9,
++        PED_DEVICE_VIODASD      = 10,
+         PED_DEVICE_SX8          = 11
  } PedDeviceType;
  
- typedef struct _PedDevice PedDevice;
+--- parted-1.7.0/libparted/arch/linux.c.P150	2006-05-19 10:54:51.000000000 -0400
++++ parted-1.7.0/libparted/arch/linux.c	2006-05-19 11:02:45.000000000 -0400
+@@ -233,6 +233,7 @@
+ #define I2O_MAJOR8              87
+ #define UBD_MAJOR               98
+ #define DASD_MAJOR              94
++#define VIODASD_MAJOR           112
+ #define SX8_MAJOR1              160
+ #define SX8_MAJOR2              161
+ 
+@@ -331,6 +332,8 @@
+                 dev->type = PED_DEVICE_ATARAID;
+         } else if (dev_major == DASD_MAJOR && (dev_minor % 0x4 == 0)) {
+                 dev->type = PED_DEVICE_DASD;
++        } else if (dev_major == VIODASD_MAJOR && (dev_minor % 0x8 == 0)) {
++                dev->type = PED_DEVICE_VIODASD;
+         } else if (_is_sx8_major(dev_major) && (dev_minor % 0x20 == 0)) {
+                 dev->type = PED_DEVICE_SX8;
+         } else if (_is_i2o_major (dev_major) && (dev_minor % 0x10 == 0)) {
+@@ -973,6 +976,11 @@
+                         goto error_free_arch_specific;
+                 break;
+ 
++        case PED_DEVICE_VIODASD:
++                if (!init_generic (dev, _("IBM iSeries Virtual DASD")))
++                        goto error_free_arch_specific;
++                break;
++
+         case PED_DEVICE_CPQARRAY:
+                 if (!init_generic (dev, _("Compaq Smart Array")))
+                         goto error_free_arch_specific;
