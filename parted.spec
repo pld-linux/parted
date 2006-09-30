@@ -1,3 +1,5 @@
+# TODO:
+# - put library to separate package
 #
 # Conditional build:
 %bcond_with	static		# link statically
