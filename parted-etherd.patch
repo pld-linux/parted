@@ -1,36 +1,41 @@
---- parted-1.7.1/include/parted/device.h.orig	2006-05-27 22:27:39.758600250 +0200
-+++ parted-1.7.1/include/parted/device.h	2006-05-27 22:28:10.212503500 +0200
-@@ -46,7 +46,8 @@
+--- parted-1.8.0/include/parted/device.h.orig	2006-11-17 16:43:51.000000000 +0100
++++ parted-1.8.0/include/parted/device.h	2006-11-23 20:53:35.820291000 +0100
+@@ -45,11 +45,9 @@
+         PED_DEVICE_UBD          = 8,
          PED_DEVICE_DASD         = 9,
          PED_DEVICE_VIODASD      = 10,
-         PED_DEVICE_SX8          = 11,
+-        PED_DEVICE_SX8          = 11
+-#ifdef ENABLE_DEVICE_MAPPER
+-                                    ,
 -        PED_DEVICE_DM           = 12
+-#endif
++        PED_DEVICE_SX8          = 11,
 +        PED_DEVICE_DM           = 12,
 +	PED_DEVICE_AOE		= 13
  } PedDeviceType;
  
  typedef struct _PedDevice PedDevice;
---- parted-1.7.1/libparted/arch/linux.c.orig	2006-05-27 22:27:39.770601000 +0200
-+++ parted-1.7.1/libparted/arch/linux.c	2006-05-27 22:29:40.138123500 +0200
-@@ -238,6 +238,7 @@
+--- parted-1.8.0/libparted/arch/linux.c.orig	2006-11-17 16:44:19.000000000 +0100
++++ parted-1.8.0/libparted/arch/linux.c	2006-11-23 20:52:58.101933750 +0100
+@@ -262,6 +262,7 @@
+ #define UBD_MAJOR               98
+ #define DASD_MAJOR              94
  #define VIODASD_MAJOR           112
++#define AOE_MAJOR		152
  #define SX8_MAJOR1              160
  #define SX8_MAJOR2              161
-+#define AOE_MAJOR		152
  
- #define SCSI_BLK_MAJOR(M) (                                             \
-                 (M) == SCSI_DISK0_MAJOR                                 \
-@@ -438,6 +439,8 @@
+@@ -464,6 +465,8 @@
                  dev->type = PED_DEVICE_CPQARRAY;
          } else if (dev_major == UBD_MAJOR && (dev_minor % 0x10 == 0)) {
                  dev->type = PED_DEVICE_UBD;
 +	} else if (dev_major == AOE_MAJOR && (dev_minor % 0x10 == 0)) {
 +		dev->type = PED_DEVICE_AOE;
+ #ifdef ENABLE_DEVICE_MAPPER
          } else if (_is_dm_major(dev_major)) {
                  dev->type = PED_DEVICE_DM;
-         } else {
-@@ -1118,6 +1121,11 @@
-                         goto error_free_dev;
+@@ -1150,6 +1153,11 @@
+                         goto error_free_arch_specific;
                  break;
  
 +	case PED_DEVICE_AOE:
