@@ -1,0 +1,4384 @@
+--- parted-1.6.25/include/parted/device.h.orig	2005-10-19 22:13:26.000000000 +0200
++++ parted-1.6.25/include/parted/device.h	2005-11-04 10:03:56.934241352 +0100
+@@ -33,7 +33,8 @@
+ 	PED_DEVICE_FILE		= 5,
+ 	PED_DEVICE_ATARAID	= 6,
+ 	PED_DEVICE_I2O		= 7,
+-	PED_DEVICE_UBD		= 8
++	PED_DEVICE_UBD		= 8,
++	PED_DEVICE_DASD		= 9
+ } PedDeviceType;
+ 
+ typedef struct _PedDevice PedDevice;
+diff -ruN --minimal parted-1.6.21.orig/include/parted/disk.h parted-1.6.21/include/parted/disk.h
+--- parted-1.6.21.orig/include/parted/disk.h	2005-01-04 11:09:50.000000000 -0500
++++ parted-1.6.21/include/parted/disk.h	2005-01-21 15:00:40.422628505 -0500
+@@ -36,7 +36,8 @@
+ 	PED_PARTITION_LOGICAL		= 0x01,
+ 	PED_PARTITION_EXTENDED		= 0x02,
+ 	PED_PARTITION_FREESPACE		= 0x04,
+-	PED_PARTITION_METADATA		= 0x08
++	PED_PARTITION_METADATA		= 0x08,
++	PED_PARTITION_PROTECTED		= 0x10
+ } PedPartitionType;
+ 
+ typedef enum {
+diff -ruN --minimal parted-1.6.21.orig/include/parted/linux.h parted-1.6.21/include/parted/linux.h
+--- parted-1.6.21.orig/include/parted/linux.h	2001-12-26 19:26:08.000000000 -0500
++++ parted-1.6.21/include/parted/linux.h	2005-01-21 15:00:40.422628505 -0500
+@@ -29,6 +29,11 @@
+ 
+ struct _LinuxSpecific {
+ 	int	fd;
++#if defined(__s390__) || defined(__s390x__)
++	unsigned int	real_sector_size;
++        /* IBM internal dasd structure (i guess ;), required. */
++        struct fdasd_anchor  *anchor;
++#endif
+ };
+ 
+ extern PedArchitecture ped_linux_arch;
+diff -ruN --minimal parted-1.6.21.orig/libparted/Makefile.am parted-1.6.21/libparted/Makefile.am
+--- parted-1.6.21.orig/libparted/Makefile.am	2005-01-05 18:16:52.000000000 -0500
++++ parted-1.6.21/libparted/Makefile.am	2005-01-21 15:00:40.423628479 -0500
+@@ -35,6 +35,11 @@
+ 			timer.c			\
+ 			disk.c			\
+ 			disk_bsd.c		\
++			disk_dasd.c		\
++			fdasd.c 		\
++			fdasd.h 		\
++			vtoc.c 			\
++			vtoc.h 			\
+ 			disk_dos.c		\
+ 			disk_gpt.c		\
+ 			disk_loop.c		\
+diff -ruN --minimal parted-1.6.21.orig/libparted/disk_dasd.c parted-1.6.21/libparted/disk_dasd.c
+--- parted-1.6.21.orig/libparted/disk_dasd.c	1969-12-31 19:00:00.000000000 -0500
++++ parted-1.6.21/libparted/disk_dasd.c	2005-01-21 15:00:40.425628426 -0500
+@@ -0,0 +1,882 @@
++/* -*- Mode: c; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 8 -*-
++
++    libparted - a library for manipulating disk partitions
++    Copyright (C) 2000, 2001 Free Software Foundation, Inc.
++
++    This program is free software; you can redistribute it and/or modify
++    it under the terms of the GNU General Public License as published by
++    the Free Software Foundation; either version 2 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU General Public License for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with this program; if not, write to the Free Software
++    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++
++    Contributor:  Phil Knirsch <phil@redhat.de>
++                  Harald Hoyer <harald@redhat.de>
++*/
++
++#include "config.h"
++
++#include <string.h>
++#include <stdio.h>
++#include <errno.h>
++#include <ctype.h>
++#include <time.h>
++#include <fcntl.h>
++#include <unistd.h>
++
++#include <sys/stat.h>
++#include <sys/ioctl.h>
++#include <parted/parted.h>
++#include <parted/endian.h>
++#include <parted/debug.h>
++
++#include "vtoc.h"
++#include "fdasd.h"
++#include <parted/linux.h>
++
++#include <libintl.h>
++#if ENABLE_NLS
++#  define _(String) dgettext (PACKAGE, String)
++#else
++#  define _(String) (String)
++#endif /* ENABLE_NLS */
++
++
++#define PARTITION_LINUX_SWAP	0x82
++#define PARTITION_LINUX		0x83
++#define PARTITION_LINUX_EXT	0x85
++#define PARTITION_LINUX_LVM	0x8e
++#define PARTITION_LINUX_RAID	0xfd
++#define PARTITION_LINUX_LVM_OLD 0xfe
++
++
++extern void ped_disk_dasd_init ();
++extern void ped_disk_dasd_done ();
++
++
++#define DASD_NAME "dasd"
++
++typedef struct {
++	int type;
++        int system;
++	int		raid;
++	int		lvm;
++  void            *part_info;
++} DasdPartitionData;
++
++typedef struct {
++        unsigned int	real_sector_size;
++        unsigned int	format_type;
++        /* IBM internal dasd structure (i guess ;), required. */
++        struct fdasd_anchor  *anchor;
++} DasdDiskSpecific;
++
++static int dasd_probe (PedDevice *dev);
++static int dasd_clobber (PedDevice* dev);
++static int dasd_read (PedDisk* disk);
++static int dasd_write (PedDisk* disk);
++
++static PedPartition* dasd_partition_new (
++	const PedDisk* disk, PedPartitionType part_type,
++       	const PedFileSystemType* fs_type, PedSector start, PedSector end);
++static void dasd_partition_destroy (PedPartition* part);
++static int dasd_partition_set_flag (
++	PedPartition* part, PedPartitionFlag flag, int state);
++static int dasd_partition_get_flag (
++	const PedPartition* part, PedPartitionFlag flag);
++static int dasd_partition_is_flag_available (
++	const PedPartition* part,
++	PedPartitionFlag flag);
++static int dasd_partition_align (PedPartition* part,
++	       			  const PedConstraint* constraint);
++static int dasd_partition_enumerate (PedPartition* part);
++static int dasd_get_max_primary_partition_count (const PedDisk* disk);
++
++static PedDisk* dasd_alloc (PedDevice* dev);
++static PedDisk* dasd_duplicate (const PedDisk* disk);
++static void dasd_free (PedDisk* disk);
++static int dasd_partition_set_system (PedPartition* part, const PedFileSystemType* fs_type);
++static int dasd_alloc_metadata (PedDisk* disk);
++
++static PedDiskOps dasd_disk_ops = {
++	probe:			dasd_probe,
++	clobber:		dasd_clobber,
++	read:			dasd_read,
++	write:			dasd_write,
++
++	alloc: dasd_alloc,
++	duplicate: dasd_duplicate,
++	free: dasd_free,
++	partition_set_system:	dasd_partition_set_system,
++	
++	partition_new:		dasd_partition_new,
++	partition_destroy:	dasd_partition_destroy,
++	partition_set_flag:	dasd_partition_set_flag,
++	partition_get_flag:	dasd_partition_get_flag,
++	partition_is_flag_available:	dasd_partition_is_flag_available,
++	partition_set_name:	NULL,
++	partition_get_name:	NULL,
++	partition_align:	dasd_partition_align,
++	partition_enumerate:	dasd_partition_enumerate,
++
++	alloc_metadata:		dasd_alloc_metadata,
++	get_max_primary_partition_count:
++        dasd_get_max_primary_partition_count,
++
++        partition_duplicate: NULL
++};
++
++static PedDiskType dasd_disk_type = {
++	next:		NULL,
++	name:		"dasd",
++	ops:		&dasd_disk_ops,
++	features:	0
++};
++
++static PedDisk*
++dasd_alloc (PedDevice* dev)
++{
++	PedDisk* disk;
++	LinuxSpecific* arch_specific;
++        DasdDiskSpecific *disk_specific;
++
++	PED_ASSERT (dev != NULL, return NULL);
++
++        arch_specific = LINUX_SPECIFIC (dev);
++        disk = _ped_disk_alloc (dev, &dasd_disk_type);
++	if (!disk)
++                return NULL;
++        
++	disk->disk_specific = disk_specific = ped_malloc (sizeof (DasdDiskSpecific));
++	if (!disk->disk_specific) {
++                ped_free (disk);
++                return NULL;
++        }
++        
++        /* because we lie to parted we have to compensate with the
++           real sector size.  Record that now. */
++	if (ioctl (arch_specific->fd, BLKSSZGET,
++                   &disk_specific->real_sector_size) == -1) {
++                ped_exception_throw (PED_EXCEPTION_ERROR,
++                                     PED_EXCEPTION_CANCEL,
++                                     _("Unable to determine the block "
++                                       "size of this dasd"));
++                ped_free (disk_specific);
++                ped_free (disk);
++                return NULL;
++        }
++
++        return disk;
++}
++
++static PedDisk*
++dasd_duplicate (const PedDisk* disk)
++{
++	PedDisk*	new_disk;
++
++	new_disk = ped_disk_new_fresh (disk->dev, &dasd_disk_type);
++	if (!new_disk)
++		return NULL;
++	new_disk->disk_specific = NULL;
++	return new_disk;
++}
++
++static void
++dasd_free (PedDisk* disk)
++{
++	PED_ASSERT (disk != NULL, return);
++
++	_ped_disk_free (disk);
++}
++
++
++void
++ped_disk_dasd_init ()
++{
++	ped_register_disk_type (&dasd_disk_type);
++}
++
++void
++ped_disk_dasd_done ()
++{
++	ped_unregister_disk_type (&dasd_disk_type);
++}
++
++static int
++dasd_probe (PedDevice *dev)
++{
++        char *errstr = 0;
++	LinuxSpecific* arch_specific;
++        struct fdasd_anchor anchor;
++
++	PED_ASSERT (dev != NULL, return 0);
++	PED_ASSERT ((dev->type == PED_DEVICE_DASD || dev->type == PED_DEVICE_VIODASD), return 0);
++
++        arch_specific = LINUX_SPECIFIC (dev);
++
++        /* add partition test here */
++        fdasd_initialize_anchor(&anchor);
++
++        fdasd_get_geometry(&anchor, arch_specific->fd);
++
++        fdasd_check_api_version(&anchor, arch_specific->fd);
++
++        if (fdasd_check_volume(&anchor, arch_specific->fd))
++                goto error_cleanup;
++
++        fdasd_cleanup(&anchor);
++
++	return 1;
++error_cleanup:
++        fdasd_cleanup(&anchor);
++error:
++        ped_exception_throw ( PED_EXCEPTION_ERROR,
++                              PED_EXCEPTION_IGNORE_CANCEL,
++                              errstr );
++
++        return 0;
++}
++
++
++static int
++dasd_clobber (PedDevice* dev)
++{
++        int i;
++        LinuxSpecific*	arch_specific;
++        struct fdasd_anchor anchor;
++
++	PED_ASSERT (dev != NULL, return 0);
++
++	arch_specific = LINUX_SPECIFIC (dev);
++
++        fdasd_initialize_anchor(&anchor);
++        fdasd_get_geometry(&anchor, arch_specific->fd);
++
++        fdasd_recreate_vtoc(&anchor);
++        fdasd_write_labels(&anchor, arch_specific->fd);
++
++	return 1;
++ error:
++        return 0;
++}
++
++static int
++dasd_read (PedDisk* disk)
++{
++	int i, s;
++	char str[20];
++        PedDevice* dev;
++	PedPartition* part;
++	PedSector start, end;
++	PedConstraint* constraint_exact;
++	partition_info_t *p;
++	LinuxSpecific*	arch_specific;
++        DasdDiskSpecific* disk_specific;
++
++        PDEBUG;
++
++	PED_ASSERT (disk != NULL, return 0);
++        PDEBUG;
++	PED_ASSERT (disk->dev != NULL, return 0);
++        PDEBUG;
++
++        dev = disk->dev;
++
++        arch_specific = LINUX_SPECIFIC (dev);
++        disk_specific = disk->disk_specific;
++
++        /* XXX why are we re-creating the anchor? */
++        if (disk_specific->anchor) {
++                fdasd_cleanup(disk_specific->anchor);
++                free(disk_specific->anchor);
++        }
++
++        disk_specific->anchor = ped_malloc(sizeof(fdasd_anchor_t));
++
++        PDEBUG;
++
++        fdasd_initialize_anchor(disk_specific->anchor);
++
++        fdasd_get_geometry(disk_specific->anchor, arch_specific->fd);
++
++	/* check dasd for labels and vtoc */
++        if (fdasd_check_volume(disk_specific->anchor, arch_specific->fd))
++		goto error_close_dev;
++
++	if ((disk_specific->anchor->geo.cylinders * disk_specific->anchor->geo.heads) > BIG_DISK_SIZE)
++		disk_specific->anchor->big_disk++;
++
++	ped_disk_delete_all (disk);
++
++	if (strncmp(disk_specific->anchor->vlabel->volkey, vtoc_ebcdic_enc ("LNX1", str, 4), 4) == 0)
++	{
++                DasdPartitionData*		dasd_data;
++
++		/* LDL format, old one */
++		disk_specific->format_type = 1;
++		start = 24;
++		end = (long long)(long long) disk_specific->anchor->geo.cylinders
++		      * (long long)disk_specific->anchor->geo.heads
++		      * (long long)disk->dev->hw_geom.sectors
++		      * (long long)disk_specific->real_sector_size
++		      / (long long)disk->dev->sector_size - 1;
++		part = ped_partition_new (disk, PED_PARTITION_PROTECTED, NULL, start, end);
++		if (!part)
++			goto error_close_dev;
++		part->num = 1;
++		part->fs_type = ped_file_system_probe (&part->geom);
++                dasd_data = part->disk_specific;
++		dasd_data->raid = 0;
++		dasd_data->lvm = 0;
++                dasd_data->type = 0;
++		if (!ped_disk_add_partition (disk, part, NULL))
++			goto error_close_dev;
++		return 1;
++	}
++
++	/* CDL format, newer */
++	disk_specific->format_type = 2;
++
++        p = disk_specific->anchor->first;
++        PDEBUG;
++
++	for (i = 1 ; i <= USABLE_PARTITIONS; i++)
++	{
++                char *ch = p->f1->DS1DSNAM;
++                DasdPartitionData*		dasd_data;
++
++
++                if (p->used != 0x01)
++                        continue;
++
++        PDEBUG;
++
++		start = (long long)(long long) p->start_trk 
++                        * (long long) disk->dev->hw_geom.sectors 
++                        * (long long) disk_specific->real_sector_size
++                        / (long long) disk->dev->sector_size
++                        ;
++		end   = (long long)((long long) p->end_trk + 1) 
++                        * (long long) disk->dev->hw_geom.sectors
++                        * (long long) disk_specific->real_sector_size 
++                        / (long long) disk->dev->sector_size 
++                        - 1;
++		part = ped_partition_new (disk, 0, NULL, start, end);
++        PDEBUG;
++
++		if (!part)
++			goto error_close_dev;
++
++        PDEBUG;
++
++		part->num = i;
++		part->fs_type = ped_file_system_probe (&part->geom);
++
++                vtoc_ebcdic_dec(p->f1->DS1DSNAM, p->f1->DS1DSNAM, 44);
++                ch = strstr(p->f1->DS1DSNAM, "PART");
++                if (ch != NULL) {
++                        strncpy(str, ch+9, 6);
++                        str[6] = '\0';
++                        /*fprintf(stderr, "f1 label contains: >%s<\n", p->f1->DS1DSNAM);
++                } else {
++                        strcpy(str, "error");
++                        fprintf(stderr, "Error, f1 label contains: >%s<\n", p->f1->DS1DSNAM);
++			*/
++                }
++
++                dasd_data = part->disk_specific;
++
++                if(strncmp(PART_TYPE_RAID, str, 6) == 0)
++			ped_partition_set_flag(part, PED_PARTITION_RAID, 1);
++                else
++			ped_partition_set_flag(part, PED_PARTITION_RAID, 0);
++
++                if(strncmp(PART_TYPE_LVM, str, 6) == 0)
++			ped_partition_set_flag(part, PED_PARTITION_LVM, 1);
++                else
++			ped_partition_set_flag(part, PED_PARTITION_LVM, 0);
++
++                if(strncmp(PART_TYPE_SWAP, str, 6) == 0) {
++                        dasd_data->system = PARTITION_LINUX_SWAP;
++                        PDEBUG;
++                }
++
++                vtoc_ebcdic_enc(p->f1->DS1DSNAM, p->f1->DS1DSNAM, 44);
++
++                dasd_data->part_info = (void *) p;
++                dasd_data->type = 0;
++
++		constraint_exact = ped_constraint_exact (&part->geom);
++                if(!constraint_exact) 
++                        goto error_close_dev;
++		if (!ped_disk_add_partition (disk, part, constraint_exact))
++			goto error_close_dev;
++		ped_constraint_destroy (constraint_exact);
++
++                if (p->fspace_trk > 0) {
++                        start = (long long)((long long) p->end_trk + 1)
++                                * (long long) disk->dev->hw_geom.sectors 
++                                * (long long) disk_specific->real_sector_size
++                                / (long long) disk->dev->sector_size
++                                ;
++                        end   = (long long)((long long) p->end_trk + 1 + p->fspace_trk) 
++                                * (long long) disk->dev->hw_geom.sectors
++                                * (long long) disk_specific->real_sector_size 
++                                / (long long) disk->dev->sector_size 
++                                - 1;
++                        part = ped_partition_new (disk, 0, NULL, start, end);
++                        if (!part)
++                                goto error_close_dev;
++                        part->type = PED_PARTITION_FREESPACE;
++                        constraint_exact = ped_constraint_exact (&part->geom);
++                        if(!constraint_exact) 
++                                goto error_close_dev;
++                        if (!ped_disk_add_partition (disk, part, constraint_exact))
++                                goto error_close_dev;
++                        ped_constraint_destroy (constraint_exact);
++                }
++
++		p = p->next;
++	}
++
++        PDEBUG;
++	return 1;
++
++error_close_dev:
++        PDEBUG;
++	return 0;
++}
++
++static int
++dasd_update_type(PedDisk* disk)
++{
++	PedPartition*		part;
++        LinuxSpecific*	arch_specific;
++        DasdDiskSpecific* disk_specific;
++        char *sys = NULL;
++
++	arch_specific = LINUX_SPECIFIC (disk->dev);
++        disk_specific = disk->disk_specific;
++
++        PDEBUG;
++
++	for (part = ped_disk_next_partition (disk, NULL); part;
++	     part = ped_disk_next_partition (disk, part)) {
++                partition_info_t *p;
++                char *ch = NULL;
++                DasdPartitionData*		dasd_data;
++
++                PDEBUG;
++
++                if(part->type & PED_PARTITION_FREESPACE
++                   || part->type & PED_PARTITION_METADATA) {
++                        continue;
++                }
++
++                PDEBUG;
++
++                dasd_data = part->disk_specific;
++                p = dasd_data->part_info;
++                if (!p ) {
++                        PDEBUG;
++                        continue;
++                }
++                vtoc_ebcdic_dec(p->f1->DS1DSNAM, p->f1->DS1DSNAM, 44);
++                ch = strstr(p->f1->DS1DSNAM, "PART");
++                /*fprintf(stderr, "f1 label contains: >%s<\n", p->f1->DS1DSNAM);*/
++
++                PDEBUG;
++                if (ch == NULL) {
++                        vtoc_ebcdic_enc(p->f1->DS1DSNAM, p->f1->DS1DSNAM, 44);
++                        PDEBUG;
++                        continue;
++                }
++
++                ch += 9;
++                                
++                switch(dasd_data->system) {
++                case PARTITION_LINUX_LVM:
++                        PDEBUG;
++                        strncpy(ch, PART_TYPE_LVM, 6);
++                        break;
++                case PARTITION_LINUX_RAID:
++                        PDEBUG;
++                        strncpy(ch, PART_TYPE_RAID, 6);
++                        break;
++                case PARTITION_LINUX:
++                        PDEBUG;
++                        strncpy(ch, PART_TYPE_NATIVE, 6);
++                        break;
++                case PARTITION_LINUX_SWAP:
++                        PDEBUG;
++                        strncpy(ch, PART_TYPE_SWAP, 6);
++                        break;
++                default:
++                        PDEBUG;
++                        strncpy(ch, PART_TYPE_NATIVE, 6);
++                        break;
++                }
++                disk_specific->anchor->vtoc_changed++;
++
++                vtoc_ebcdic_enc(p->f1->DS1DSNAM, p->f1->DS1DSNAM, 44);
++        }
++        return 1;
++}
++        
++static int
++dasd_write (PedDisk* disk)
++{
++	DasdPartitionData*	dasd_data;
++	PedPartition*		part;
++	int			i;
++        int ret;
++	partition_info_t *p;
++        LinuxSpecific*	arch_specific;
++        DasdDiskSpecific* disk_specific;
++	PED_ASSERT (disk != NULL, return 0);
++	PED_ASSERT (disk->dev != NULL, return 0);
++
++	arch_specific = LINUX_SPECIFIC (disk->dev);
++        disk_specific = disk->disk_specific;
++
++        PDEBUG;
++
++	/* If formated in LDL, don't write anything. */
++	if (disk_specific->format_type == 1)
++		return 1;
++
++        /* XXX re-initialize anchor? */
++        fdasd_initialize_anchor(disk_specific->anchor);
++        fdasd_get_geometry(disk_specific->anchor, arch_specific->fd);
++
++	/* check dasd for labels and vtoc */
++        if (fdasd_check_volume(disk_specific->anchor, arch_specific->fd))
++		goto error;
++
++	if ((disk_specific->anchor->geo.cylinders * disk_specific->anchor->geo.heads) > BIG_DISK_SIZE)
++		disk_specific->anchor->big_disk++;
++
++        fdasd_recreate_vtoc(disk_specific->anchor);
++
++	for (i = 1; i <= USABLE_PARTITIONS; i++) {
++                unsigned int start, stop;
++                int type;
++
++                PDEBUG;
++		part = ped_disk_get_partition (disk, i);
++		if (!part)
++			continue;
++
++                PDEBUG;
++
++                start = part->geom.start * disk->dev->sector_size 
++                        / disk_specific->real_sector_size / disk->dev->hw_geom.sectors;
++                stop = (part->geom.end + 1) 
++                        * disk->dev->sector_size / disk_specific->real_sector_size
++                        / disk->dev->hw_geom.sectors - 1;
++
++                PDEBUG;
++                dasd_data = part->disk_specific;
++                
++                type = dasd_data->type;
++                PDEBUG;
++                /*fprintf(stderr, "Partition %d  %ld - %ld \t", i, part->geom.start, part->geom.end);
++                fprintf(stderr, "Partition %d  %ld - %ld \n", i, start, stop);
++		*/
++
++                p = fdasd_add_partition(disk_specific->anchor, start, stop);
++                if(!p) {
++                        PDEBUG;
++                        return 0;
++                }
++                dasd_data->part_info = (void *) p;
++		p->type = dasd_data->system;
++	}
++        PDEBUG;
++
++        if(!fdasd_prepare_labels(disk_specific->anchor, arch_specific->fd))
++                return 0;
++
++        dasd_update_type(disk);
++        PDEBUG;
++
++        if(!fdasd_write_labels(disk_specific->anchor, arch_specific->fd))
++                return 0;
++
++        return 1;
++ error:
++        PDEBUG;
++	return 0;
++}
++
++static PedPartition*
++dasd_partition_new (const PedDisk* disk, PedPartitionType part_type,
++		   const PedFileSystemType* fs_type,
++		   PedSector start, PedSector end)
++{
++	PedPartition*		part;
++
++	part = _ped_partition_alloc (disk, part_type, fs_type, start, end);
++	if (!part)
++		goto error;
++
++        part->disk_specific = ped_malloc (sizeof (DasdPartitionData));
++	return part;
++
++error:
++	return 0;
++}
++
++
++static void
++dasd_partition_destroy (PedPartition* part)
++{
++	PED_ASSERT (part != NULL, return);
++
++	if (ped_partition_is_active (part))
++		ped_free (part->disk_specific);
++	ped_free (part);
++}
++
++
++static int
++dasd_partition_set_flag (PedPartition* part, PedPartitionFlag flag, int state)
++{
++	PedDisk*			disk;
++	PedPartition*			walk;
++	DasdPartitionData*		dasd_data;
++	const PedFileSystemType*	fs_type;
++
++	PED_ASSERT (part != NULL, return 0);
++	PED_ASSERT (part->disk_specific != NULL, return 0);
++	dasd_data = part->disk_specific;
++
++	switch (flag) {
++	case PED_PARTITION_RAID:
++		if (state) {
++			dasd_data->lvm = 0;
++		}
++		dasd_data->raid = state;
++		return ped_partition_set_system (part, part->fs_type);
++	case PED_PARTITION_LVM:
++		if (state) {
++			dasd_data->raid = 0;
++		}
++		dasd_data->lvm = state;
++		return ped_partition_set_system (part, part->fs_type);
++	default:
++		return 0;
++	}
++}
++
++
++static int
++dasd_partition_get_flag (const PedPartition* part, PedPartitionFlag flag)
++{
++	DasdPartitionData*	dasd_data;
++
++	PED_ASSERT (part != NULL, return 0);
++	PED_ASSERT (part->disk_specific != NULL, return 0);
++	dasd_data = part->disk_specific;
++
++	switch (flag) {
++	case PED_PARTITION_RAID:
++		return dasd_data->raid;
++
++	case PED_PARTITION_LVM:
++		return dasd_data->lvm;
++
++	default:
++		return 0;
++	}
++}
++
++static int
++dasd_partition_is_flag_available (const PedPartition* part,
++				 PedPartitionFlag flag)
++{
++	switch (flag) {
++	case PED_PARTITION_RAID:
++		return 1;
++
++	case PED_PARTITION_LVM:
++		return 1;
++
++	default:
++		return 0;
++	}
++}
++
++
++static int
++dasd_get_max_primary_partition_count (const PedDisk* disk)
++{
++        DasdDiskSpecific* disk_specific;
++
++	disk_specific = disk->disk_specific;
++	/* If formated in LDL, maximum partition number is 1 */
++	if (disk_specific->format_type == 1)
++		return 1;
++
++	return USABLE_PARTITIONS;
++}
++
++static PedConstraint*
++_primary_constraint (PedDisk* disk)
++{
++	PedAlignment	start_align;
++	PedAlignment	end_align;
++	PedGeometry	max_geom;
++	PedSector	sector_size;
++        LinuxSpecific*  arch_specific;
++        DasdDiskSpecific* disk_specific;
++
++        PDEBUG;
++
++        arch_specific = LINUX_SPECIFIC (disk->dev);
++        disk_specific = disk->disk_specific;
++	sector_size = disk_specific->real_sector_size / disk->dev->sector_size;
++
++	if (!ped_alignment_init (&start_align, 0, disk->dev->hw_geom.sectors * sector_size))
++		return NULL;
++	if (!ped_alignment_init (&end_align, -1, disk->dev->hw_geom.sectors * sector_size))
++		return NULL;
++	if (!ped_geometry_init (&max_geom, disk->dev, 0, disk->dev->length))
++		return NULL;
++
++	return ped_constraint_new (&start_align, &end_align, &max_geom,
++				   &max_geom, 1, disk->dev->length);
++}
++
++static int
++dasd_partition_align (PedPartition* part, const PedConstraint* constraint)
++{
++        DasdDiskSpecific* disk_specific;
++
++	PED_ASSERT (part != NULL, return 0);
++
++	disk_specific = part->disk->disk_specific;
++	/* If formated in LDL, ignore metadata partition */
++	if (disk_specific->format_type == 1)
++		return 1;
++
++	if (_ped_partition_attempt_align (part, constraint,
++					  _primary_constraint (part->disk)))
++	       	return 1;
++
++#ifndef DISCOVER_ONLY
++	ped_exception_throw (
++		PED_EXCEPTION_ERROR,
++		PED_EXCEPTION_CANCEL,
++		_("Unable to satisfy all constraints on the partition."));
++#endif
++	return 0;
++}
++
++
++static int
++dasd_partition_enumerate (PedPartition* part)
++{
++	int i;
++	PedPartition* p;
++	
++	/* never change the partition numbers */
++	if (part->num != -1)
++		return 1;
++	for (i = 1; i <= USABLE_PARTITIONS; i++) {
++		p = ped_disk_get_partition (part->disk, i);
++		if (!p) {
++			part->num = i;
++			return 1;
++		}
++	}
++
++	/* failed to allocate a number */
++	ped_exception_throw (PED_EXCEPTION_ERROR, PED_EXCEPTION_CANCEL,
++			     _("Unable to allocate a dasd disklabel slot"));
++	return 0;
++}
++
++static int
++dasd_partition_set_system (PedPartition* part,
++			    const PedFileSystemType* fs_type)
++{
++	DasdPartitionData* dasd_data = part->disk_specific;
++	PedSector cyl_size = part->disk->dev->hw_geom.sectors * part->disk->dev->hw_geom.heads;
++
++        PDEBUG;
++
++	part->fs_type = fs_type;
++
++	if (dasd_data->lvm) {
++		dasd_data->system = PARTITION_LINUX_LVM;
++        PDEBUG;
++		return 1;
++	}
++	if (dasd_data->raid) {
++		dasd_data->system = PARTITION_LINUX_RAID;
++        PDEBUG;
++		return 1;
++	}
++	if (!fs_type) {
++		dasd_data->system = PARTITION_LINUX;
++        PDEBUG;
++	} else if (!strcmp (fs_type->name, "linux-swap")) {
++		dasd_data->system = PARTITION_LINUX_SWAP;
++        PDEBUG;
++        } else {
++		dasd_data->system = PARTITION_LINUX;
++        PDEBUG;
++        }
++
++	return 1;
++}
++
++static int
++dasd_alloc_metadata (PedDisk* disk)
++{
++	PedPartition*		new_part;
++	PedConstraint*		constraint_any = NULL;
++        PedSector		vtoc_end;
++        LinuxSpecific*		arch_specific;
++        DasdDiskSpecific*	disk_specific;
++
++	PED_ASSERT (disk != NULL, goto error);
++	PED_ASSERT (disk->dev != NULL, goto error);
++
++	arch_specific = LINUX_SPECIFIC (disk->dev);
++        disk_specific = disk->disk_specific;
++
++	constraint_any = ped_constraint_any (disk->dev);
++
++	/* If formated in LDL, the real partition starts at sector 24. */
++	if (disk_specific->format_type == 1)
++		vtoc_end = 23;
++        else
++        /* Mark the start of the disk as metadata. */
++        	vtoc_end = (FIRST_USABLE_TRK * (long long) disk->dev->hw_geom.sectors 
++				* (long long) disk_specific->real_sector_size
++				/ (long long) disk->dev->sector_size) - 1;
++	new_part = ped_partition_new (disk, PED_PARTITION_METADATA, NULL,
++                                      0, vtoc_end);
++	if (!new_part)
++		goto error;
++
++	if (!ped_disk_add_partition (disk, new_part, constraint_any)) {
++		ped_partition_destroy (new_part);
++		goto error;
++	}
++
++	ped_constraint_destroy (constraint_any);
++	return 1;
++error:
++	ped_constraint_destroy (constraint_any);
++	return 0;
++}
+diff -ruN --minimal parted-1.6.21.orig/libparted/fdasd.c parted-1.6.21/libparted/fdasd.c
+--- parted-1.6.21.orig/libparted/fdasd.c	1969-12-31 19:00:00.000000000 -0500
++++ parted-1.6.21/libparted/fdasd.c	2005-01-21 15:00:40.428628348 -0500
+@@ -0,0 +1,1302 @@
++/*
++ * File...........: arch/s390/tools/fdasd.c
++ * Author(s)......: Volker Sameske <sameske@de.ibm.com>
++ * Bugreports.to..: <Linux390@de.ibm.com>
++ * (C) IBM Corporation, IBM Deutschland Entwicklung GmbH, 2001
++ *
++ * History of changes (starts March 2001)
++ * 2001-04-11 possibility to change volume serial added
++ *            possibility to change partition type added
++ *            some changes to DS4HPCHR and DS4DSREC
++ * 2001-05-03 check for invalid partition numbers added
++ *            wrong free_space calculation bug fixed
++ * 2001-06-26 '-a' option added, it is now possible to add a single
++ *            partition in non-interactive mode
++ * 2001-06-26 long parameter support added
++ *           
++ */
++#include "vtoc.h"
++#include "fdasd.h"
++
++#include <parted/parted.h>
++
++#include <libintl.h>
++#if ENABLE_NLS
++#  define _(String) dgettext (PACKAGE, String)
++#else
++#  define _(String) (String)
++#endif /* ENABLE_NLS */
++
++
++#define GETARG(x) {int k=strlen(optarg);x=malloc(k);strncpy(x,optarg,k);}
++
++static int
++getpos (fdasd_anchor_t *anc, int dsn)
++{
++PDEBUG
++	return anc->partno[dsn];
++}
++
++static int
++getdsn (fdasd_anchor_t *anc, int pos)
++{
++PDEBUG
++	int i;
++
++	for (i=0; i<USABLE_PARTITIONS; i++)
++	{
++		if (anc->partno[i] == pos)
++			return i;
++	}
++
++	return -1;
++}
++
++static void
++setpos (fdasd_anchor_t *anc, int dsn, int pos)
++{
++PDEBUG
++	anc->partno[dsn] = pos;
++}
++
++
++static void
++fdasd_check_volser (char *s, int devno)
++{
++PDEBUG
++  int i, j;
++
++  for (i = 0; i < 6; i++)
++    {
++      if ((s[i] < 0x20) || (s[i] > 0x7a) || ((s[i] >= 0x21) && (s[i] <= 0x22)) ||      /* !"         */
++         ((s[i] >= 0x26) && (s[i] <= 0x2f)) || /* &'()*+,-./ */
++         ((s[i] >= 0x3a) && (s[i] <= 0x3f)) || /* :;<=>?     */
++         ((s[i] >= 0x5b) && (s[i] <= 0x60)))   /* \]^_Â´     */
++       s[i] = ' ';
++      s[i] = toupper (s[i]);
++    }
++  s[6] = 0x00;
++
++  for (i = 0; i < 6; i++)
++    {
++      if (s[i] == ' ')
++       for (j = i; j < 6; j++)
++         if (s[j] != ' ')
++           {
++             s[i] = s[j];
++             s[j] = ' ';
++             break;
++           }
++    }
++
++  if (s[0] == ' ')
++    {
++      printf ("Usage error, switching to default.\n");
++      sprintf (s, "0X%04x", devno);
++      for (i = 0; i < 6; i++)
++       s[i] = toupper (s[i]);
++    }
++}
++
++/*
++ *
++ */
++void
++fdasd_cleanup (fdasd_anchor_t *anchor) 
++{
++PDEBUG
++        int i;
++        partition_info_t *p, *q;
++
++        if (anchor == NULL) return;
++
++	if (anchor->f4 != NULL) free(anchor->f4);
++	if (anchor->f5 != NULL) free(anchor->f5);
++	if (anchor->f7 != NULL) free(anchor->f7);
++	if (anchor->vlabel != NULL) free(anchor->vlabel);
++
++	p = anchor->first;
++	if (p == NULL)
++		return;
++
++        for (i=1; i <= USABLE_PARTITIONS; i++) 
++	{
++		if (p == NULL)
++			return;
++	        q = p->next;
++		free(p);
++		p = q;
++	}
++}
++
++
++/*
++ *
++ */
++static void 
++fdasd_error(fdasd_anchor_t *anc,
++	    enum fdasd_failure why,
++	    char * str) 
++{
++PDEBUG
++        char    error[2*LINE_LENGTH], *message = error;
++
++	switch (why) 
++	{
++        case unable_to_open_disk:
++	        sprintf(error, _("%s open error\n%s\n"), 
++			FDASD_ERROR, str);
++		break;
++        case unable_to_seek_disk:
++	        sprintf(error, _("%s seek error\n%s\n"), 
++			FDASD_ERROR, str);
++		break;
++        case unable_to_read_disk:
++	        sprintf(error, _("%s read error\n%s\n"), 
++			FDASD_ERROR, str);
++		break;
++        case read_only_disk:
++	        sprintf(error, _("%s write error\n%s\n"), 
++			FDASD_ERROR, str);
++		break;
++        case unable_to_ioctl:
++	        sprintf(error, _("%s IOCTL error\n%s\n"), 
++			FDASD_ERROR, str);
++		break;
++        case api_version_mismatch:
++                sprintf(error, _("%s API version mismatch\n%s\n"),
++                        FDASD_ERROR, str);
++                break;     
++        case wrong_disk_type:
++                sprintf(error, _("%s Unsupported disk type\n%s\n"),
++                        FDASD_ERROR, str);
++                break;           
++        case wrong_disk_format:
++                sprintf(error, _("%s Unsupported disk format\n%s\n"),
++                        FDASD_ERROR, str);
++                break;   
++        case disk_in_use:
++                sprintf(error, _("%s Disk in use\n%s\n"),
++                        FDASD_ERROR, str);
++                break;      
++        case config_syntax_error:
++                sprintf(error, _("%s Config file syntax error\n%s\n"),
++                        FDASD_ERROR, str);
++                break;       
++        case vlabel_corrupted:
++	        sprintf(error, _("%s Volume label is corrupted.\n%s\n"), 
++			FDASD_ERROR, str);
++		break;
++        case dsname_corrupted:
++	        sprintf(error, _("%s a data set name is corrupted.\n%s\n"), 
++			FDASD_ERROR, str);
++		break;
++        case malloc_failed:
++	        sprintf(error, _("%s space allocation\n%s\n"),
++			FDASD_ERROR, str);
++		break;
++        case device_verification_failed:
++	        sprintf(error, _("%s device verification failed\n" \
++			"The specified device is not a valid DASD device\n"),
++			FDASD_ERROR);
++		break;
++	default: 
++	        sprintf(error, _("%s Fatal error\n%s\n"),
++			FDASD_ERROR, str);
++	}
++
++        ped_exception_throw(PED_EXCEPTION_ERROR, PED_EXCEPTION_CANCEL, message);
++}
++
++
++/*
++ * converts cyl-cyl-head-head-blk to blk
++ */
++static unsigned long 
++cchhb2blk (cchhb_t *p, struct fdasd_hd_geometry *geo) 
++{
++PDEBUG
++        return (unsigned long) (p->cc * geo->heads * geo->sectors + 
++                                p->hh * geo->sectors +
++                                p->b);
++}
++
++
++/*
++ *
++ */
++static char *fdasd_partition_type (char *str) 
++{
++PDEBUG
++	if (strncmp("NATIVE", str, 6) == 0)
++		strcpy(str, "Linux native");
++	else if (strncmp("NEW   ", str, 6) == 0)
++		strcpy(str, "Linux native");
++	else if (strncmp("SWAP  ", str, 6) == 0)
++		strcpy(str, "Linux swap");
++	else if (strncmp("RAID  ", str, 6) == 0)
++		strcpy(str, "Linux Raid");
++	else
++		strcpy(str, "unknown");
++
++	return str;
++}
++
++
++/*
++ * initializes the anchor structure and allocates some
++ * memory for the labels
++ */
++void
++fdasd_initialize_anchor (fdasd_anchor_t * anc) 
++{
++PDEBUG
++        int i;
++	volume_label_t  *v;
++	partition_info_t *p = NULL;
++	partition_info_t *q = NULL;
++
++	anc->devno             = 0;
++	anc->dev_type          = 0;
++	anc->used_partitions   = 0;
++
++	anc->silent            = 0;
++	anc->verbose           = 0;
++	anc->big_disk          = 0;
++	anc->volid_specified   = 0;
++	anc->config_specified  = 0;
++	anc->auto_partition    = 0;
++	anc->devname_specified = 0;
++	anc->print_table       = 0;
++
++	anc->option_reuse      = 0;
++	anc->option_recreate   = 0;
++
++        anc->vlabel_changed    = 0;
++	anc->vtoc_changed      = 0;
++	anc->blksize           = 0;
++	anc->fspace_trk        = 0;
++	anc->label_pos         = 0;
++
++	for (i=0; i<USABLE_PARTITIONS; i++)
++		setpos(anc, i, -1);
++
++	bzero(anc->confdata, sizeof(config_data_t));
++
++	anc->f4 = malloc(sizeof(format4_label_t));
++	if (anc->f4 == NULL) 
++		fdasd_error(anc, malloc_failed, 
++			    "FMT4 DSCB memory allocation failed.");
++
++	anc->f5 = malloc(sizeof(format5_label_t));
++	if (anc->f5 == NULL) 
++		fdasd_error(anc, malloc_failed,
++			    "FMT5 DSCB memory allocation failed.");
++
++	anc->f7 = malloc(sizeof(format7_label_t));
++	if (anc->f7 == NULL) 
++		fdasd_error(anc, malloc_failed,
++			    "FMT7 DSCB memory allocation failed.");
++
++	bzero(anc->f4, sizeof(format4_label_t));
++	bzero(anc->f5, sizeof(format5_label_t));
++	bzero(anc->f7, sizeof(format7_label_t));
++
++	v = malloc(sizeof(volume_label_t));
++	if (v == NULL) 
++		fdasd_error(anc, malloc_failed,
++			    "Volume label memory allocation failed.");
++	bzero(v, sizeof(volume_label_t));
++	anc->vlabel = v;
++
++	for (i=1; i<=USABLE_PARTITIONS; i++) 
++	{
++	        p = malloc(sizeof(partition_info_t));
++		if (p == NULL) 
++			fdasd_error(anc, malloc_failed,
++				   "Partition info memory allocation failed.");
++		p->used       = 0x00;
++		p->len_trk    = 0;
++		p->start_trk  = 0;
++		p->fspace_trk = 0;
++		p->type       = 0;
++
++		/* add p to double pointered list */
++		if (i == 1) 
++		{
++		        anc->first = p;
++			p->prev = NULL;
++		} 
++		else if (i == USABLE_PARTITIONS) 
++		{
++		        anc->last = p;
++		        p->next = NULL;
++			p->prev = q;
++			q->next = p;
++		} 
++		else 
++		{
++		        p->prev = q;
++		        q->next = p;
++		}
++
++		p->f1 = malloc(sizeof(format1_label_t));
++		if (p->f1 == NULL) 
++			fdasd_error(anc, malloc_failed,
++			    "FMT1 DSCB memory allocation failed.");
++		bzero(p->f1, sizeof(format1_label_t));
++		
++		q = p;
++	}
++}
++
++
++/*
++ * call IOCTL to re-read the partition table
++ */
++static void
++fdasd_reread_partition_table (fdasd_anchor_t * anc, int fd)
++{
++PDEBUG
++	char str[LINE_LENGTH];
++	int f;
++
++	if (ioctl (fd, BLKRRPART, NULL) != 0)
++		fdasd_error (anc, unable_to_ioctl, "Error while rereading "
++       			"partition table.\nPlease reboot!");
++}
++
++
++/*
++ * writes all changes to dasd
++ */
++static void
++fdasd_write_vtoc_labels (fdasd_anchor_t * anc, int fd)
++{ 
++PDEBUG
++	partition_info_t *p;
++	unsigned long b;
++	char dsno[6], s1[7], s2[45], *c1, *c2, *ch;
++	int i = 0, k = 0;
++    
++	b = (cchhb2blk (&anc->vlabel->vtoc, &anc->geo) - 1) * anc->blksize;
++	if (b <= 0)
++		fdasd_error (anc, vlabel_corrupted, "");
++
++	/* write FMT4 DSCB */
++	vtoc_write_label (fd, b, NULL, anc->f4, NULL, NULL);
++
++	/* write FMT5 DSCB */
++	b += anc->blksize;
++	vtoc_write_label (fd, b, NULL, NULL, anc->f5, NULL);
++
++	/* write FMT7 DSCB */
++	if (anc->big_disk)
++	{
++		b += anc->blksize;
++		vtoc_write_label (fd, b, NULL, NULL, NULL, anc->f7);
++	}
++
++	/* loop over all FMT1 DSCBs */
++	p = anc->first;
++	for (i = 0; i < USABLE_PARTITIONS; i++)
++	{
++		b += anc->blksize;
++
++		if (p->used != 0x01)
++		{
++			vtoc_write_label (fd, b, p->f1, NULL, NULL, NULL);
++			continue;
++		}
++  
++		strncpy (p->f1->DS1DSSN, anc->vlabel->volid, 6);
++
++		ch = p->f1->DS1DSNAM;
++		vtoc_ebcdic_dec (ch, ch, 44);
++		c1 = ch + 7;
++  
++		if (getdsn (anc, i) > -1)
++		{
++			/* re-use the existing data set name */
++			c2 = strchr (c1, '.');
++			if (c2 != NULL)
++				strncpy (s2, c2, 31);
++			else
++				fdasd_error (anc, dsname_corrupted, "");
++
++			strncpy (s1, anc->vlabel->volid, 6);
++			vtoc_ebcdic_dec (s1, s1, 6);
++			s1[6] = ' ';
++			strncpy (c1, s1, 7);
++			c1 = strchr (ch, ' ');
++			strncpy (c1, s2, 31);
++		}
++		else
++		{
++			/* create a new data set name */
++			while (getpos (anc, k) > -1)
++				k++;
++
++			setpos (anc, k, i);
++
++			strncpy (s2, ch, 44);
++			s2[44] = 0;
++			vtoc_ebcdic_dec (s2, s2, 44);
++
++			strncpy (ch, "LINUX.V               " "                      ", 44);
++
++			strncpy (s1, anc->vlabel->volid, 6);
++			vtoc_ebcdic_dec (s1, s1, 6);
++			strncpy (c1, s1, 6);
++
++			c1 = strchr (ch, ' ');
++			strncpy (c1, ".PART", 5);
++			c1 += 5;
++
++			sprintf (dsno, "%04d.", k + 1);
++			strncpy (c1, dsno, 5);
++
++			c1 += 5;
++			switch(p->type) {
++				case PARTITION_LINUX_LVM:
++					strncpy(c1, PART_TYPE_LVM, 6);
++					break;
++				case PARTITION_LINUX_RAID:
++					strncpy(c1, PART_TYPE_RAID, 6);
++					break;
++				case PARTITION_LINUX:
++					strncpy(c1, PART_TYPE_NATIVE, 6);
++					break;
++				case PARTITION_LINUX_SWAP:
++					strncpy(c1, PART_TYPE_SWAP, 6);
++					break;
++				default:
++					strncpy(c1, PART_TYPE_NATIVE, 6);
++					break;
++			}
++		}
++		vtoc_ebcdic_enc (ch, ch, 44);
++
++		vtoc_write_label (fd, b, p->f1, NULL, NULL, NULL);
++		p = p->next;
++	}
++}
++
++
++/*
++ * writes all changes to dasd
++ */
++int
++fdasd_write_labels (fdasd_anchor_t * anc, int fd)
++{
++PDEBUG
++	if (anc->vlabel_changed)
++	{
++		vtoc_write_volume_label (fd, anc->label_pos, anc->vlabel);
++	}
++
++	if (anc->vtoc_changed)
++		fdasd_write_vtoc_labels (anc, fd);
++
++	/*
++	if ((anc->vtoc_changed) || (anc->vlabel_changed))
++		fdasd_reread_partition_table (anc, fd);
++
++	*/
++
++	return 1;
++}
++
++
++/*
++ * writes all changes to dasd
++ */
++int
++fdasd_prepare_labels (fdasd_anchor_t *anc, int fd) 
++{
++PDEBUG
++        partition_info_t *p = anc->first;
++	char dsno[6], s1[7], s2[45], *c1, *c2, *ch;
++	int i = 0, k = 0;
++
++	/* loop over all FMT1 DSCBs */
++	p = anc->first;
++	for (i = 0; i < USABLE_PARTITIONS; i++)
++	{
++		strncpy (p->f1->DS1DSSN, anc->vlabel->volid, 6);
++
++		ch = p->f1->DS1DSNAM;
++		vtoc_ebcdic_dec (ch, ch, 44);
++		c1 = ch + 7;
++  
++		if (getdsn (anc, i) > -1)
++		{
++			/* re-use the existing data set name */
++			c2 = strchr (c1, '.');
++			if (c2 != NULL)
++				strncpy (s2, c2, 31);
++			else
++				fdasd_error (anc, dsname_corrupted, "");
++
++			strncpy (s1, anc->vlabel->volid, 6);
++			vtoc_ebcdic_dec (s1, s1, 6);
++			s1[6] = ' ';
++			strncpy (c1, s1, 7);
++			c1 = strchr (ch, ' ');
++			strncpy (c1, s2, 31);
++		}
++		else
++		{
++			/* create a new data set name */
++			while (getpos (anc, k) > -1)
++				k++;
++
++			setpos (anc, k, i);
++
++			strncpy (s2, ch, 44);
++			s2[44] = 0;
++			vtoc_ebcdic_dec (s2, s2, 44);
++
++			strncpy (ch, "LINUX.V               " "                      ", 44);
++
++			strncpy (s1, anc->vlabel->volid, 6);
++			vtoc_ebcdic_dec (s1, s1, 6);
++			strncpy (c1, s1, 6);
++
++			c1 = strchr (ch, ' ');
++			strncpy (c1, ".PART", 5);
++			c1 += 5;
++
++			sprintf (dsno, "%04d.", k + 1);
++			strncpy (c1, dsno, 5);
++
++			c1 += 5;
++			switch(p->type) {
++				case PARTITION_LINUX_LVM:
++					strncpy(c1, PART_TYPE_LVM, 6);
++					break;
++				case PARTITION_LINUX_RAID:
++					strncpy(c1, PART_TYPE_RAID, 6);
++					break;
++				case PARTITION_LINUX:
++					strncpy(c1, PART_TYPE_NATIVE, 6);
++					break;
++				case PARTITION_LINUX_SWAP:
++					strncpy(c1, PART_TYPE_SWAP, 6);
++					break;
++				default:
++					strncpy(c1, PART_TYPE_NATIVE, 6);
++					break;
++			}
++		}
++		vtoc_ebcdic_enc (ch, ch, 44);
++		p = p->next;
++	}
++	return 1;
++}
++
++
++/*
++ *
++ */
++void
++fdasd_recreate_vtoc(fdasd_anchor_t *anc)
++{
++PDEBUG
++	partition_info_t *p = anc->first;
++	int i;
++
++	vtoc_init_format4_label(anc->f4,
++				USABLE_PARTITIONS,
++				anc->geo.cylinders,
++				anc->geo.heads,
++				anc->geo.sectors,
++				anc->blksize,
++				anc->dev_type);
++
++	vtoc_init_format5_label(anc->f5);
++	vtoc_init_format7_label(anc->f7);
++	vtoc_set_freespace(anc->f4, anc->f5, anc->f7, 
++			   '+', anc->verbose,
++			   FIRST_USABLE_TRK,
++			   anc->geo.cylinders * anc->geo.heads - 1,
++			   anc->geo.cylinders, anc->geo.heads);
++
++	for (i = 0; i < USABLE_PARTITIONS; i++)
++	{
++		bzero(p->f1, sizeof(format1_label_t));
++		p->used       = 0x00;
++		p->start_trk  = 0;
++		p->end_trk    = 0;
++		p->len_trk    = 0;
++		p->fspace_trk = 0;
++		p->type       = 0;
++		p = p->next;
++	}
++
++	anc->used_partitions = 0;
++	anc->fspace_trk = anc->geo.cylinders * anc->geo.heads - FIRST_USABLE_TRK;
++
++	for (i=0; i<USABLE_PARTITIONS; i++)
++		setpos(anc, i, -1);
++
++	anc->vtoc_changed++;
++}
++
++
++/*
++ * changes the volume serial
++ */
++static void
++fdasd_change_volser (fdasd_anchor_t *anc, char *line_ptr) 
++{
++PDEBUG
++	char str[10];
++
++        if (strcmp(line_ptr, "") != 0) 
++	{
++		int i;
++
++		/* fill with blanks if necessary and remove the linebreak */
++		i = strlen(line_ptr);
++		if (i <= 6)
++		{
++			strncpy(line_ptr + i - 1, "      ", 6);
++		}
++
++		strncpy(str, line_ptr, 6);
++
++		for (i=0; i<6; i++) str[i] = toupper(str[i]);
++		str[6] = 0x00;
++
++		fdasd_check_volser (str, anc->devno);
++	        vtoc_volume_label_set_volser(anc->vlabel, str);
++
++        	vtoc_set_cchhb(&anc->vlabel->vtoc, 0x0000, 0x0001, 0x01);
++        	anc->vlabel_changed++;
++        	anc->vtoc_changed++;
++	}
++}
++
++
++/*
++ * sets some important partition data
++ * (like used, start_trk, end_trk, len_trk)
++ * by calculating these values with the
++ * information provided in the labels
++ */
++static void
++fdasd_update_partition_info (fdasd_anchor_t *anc) 
++{
++PDEBUG
++	partition_info_t *q = NULL, *p = anc->first;
++	unsigned int h = anc->geo.heads;
++	unsigned long max = anc->geo.cylinders * h - 1;
++	int i;
++	char *ch;
++
++	anc->used_partitions = anc->geo.sectors - 2 - anc->f4->DS4DSREC;
++
++	for (i = 1; i <= USABLE_PARTITIONS; i++)
++	{
++		if (p->f1->DS1FMTID != 0xf1)
++		{
++			if (i == 1)
++				/* there is no partition at all */
++				anc->fspace_trk = max - FIRST_USABLE_TRK + 1;
++			else
++				/* previous partition was the last one */
++				q->fspace_trk = max - q->end_trk;
++			break;
++		}
++
++		/* this is a valid format 1 label */
++		p->used = 0x01;
++		p->start_trk = p->f1->DS1EXT1.llimit.cc * h +
++			       p->f1->DS1EXT1.llimit.hh;
++		p->end_trk   = p->f1->DS1EXT1.ulimit.cc * h +
++			       p->f1->DS1EXT1.ulimit.hh;
++		p->len_trk   = p->end_trk - p->start_trk + 1;
++
++		if (i == 1)
++			/* first partition, there is at least one */
++			anc->fspace_trk = p->start_trk - FIRST_USABLE_TRK;
++		else
++		{
++			if (i == USABLE_PARTITIONS)
++				/* last possible partition */
++				p->fspace_trk = max - p->end_trk;
++
++			/* set free space values of previous partition */
++			q->fspace_trk = p->start_trk - q->end_trk - 1;
++		}
++
++		ch = p->f1->DS1DSNAM;
++		vtoc_ebcdic_dec (ch, ch, 44);
++		if (strstr(ch, PART_TYPE_LVM))
++			p->type = PARTITION_LINUX_LVM;
++		else if (strstr(ch, PART_TYPE_RAID))
++			p->type = PARTITION_LINUX_RAID;
++		else if (strstr(ch, PART_TYPE_NATIVE))
++			p->type = PARTITION_LINUX;
++		else if (strstr(ch, PART_TYPE_SWAP))
++			p->type = PARTITION_LINUX_SWAP;
++		else
++			p->type = PARTITION_LINUX;
++		vtoc_ebcdic_enc (ch, ch, 44);
++
++		q = p;
++		p = p->next;
++	}
++}
++
++
++/*
++ * reorganizes all FMT1s, after that all used FMT1s should be right in 
++ * front of all unused FMT1s
++ */
++static void
++fdasd_reorganize_FMT1s (fdasd_anchor_t *anc) 
++{
++PDEBUG
++	int i, j;
++	format1_label_t *ltmp;
++	partition_info_t *ptmp;
++
++	for (i=1; i<=USABLE_PARTITIONS - 1; i++)
++	{
++		ptmp = anc->first;
++		for (j=1; j<=USABLE_PARTITIONS - i; j++)
++		{
++			if (ptmp->f1->DS1FMTID < ptmp->next->f1->DS1FMTID)
++			{
++				ltmp = ptmp->f1;
++				ptmp->f1 = ptmp->next->f1;
++				ptmp->next->f1 = ltmp;
++			}
++			ptmp=ptmp->next;
++		}
++	}
++}
++
++
++/*
++ *
++ */
++static void
++fdasd_process_valid_vtoc (fdasd_anchor_t * anc, unsigned long b, int fd)
++{
++PDEBUG
++	int f5_counter = 0, f7_counter = 0, f1_counter = 0, oldfmt = 0;
++	int i, n, f1size = sizeof (format1_label_t);
++	partition_info_t *p = anc->first;
++	format1_label_t q;
++	char s[5], *ch;
++
++	b += anc->blksize;
++
++	for (i = 1; i <= anc->geo.sectors; i++)
++	{
++		bzero (&q, f1size);
++		vtoc_read_label (fd, b, &q, NULL, NULL, NULL);
++
++		switch (q.DS1FMTID)
++		{
++			case 0xf1:
++				if (p == NULL)
++					break;
++				memcpy (p->f1, &q, f1size);
++
++				n = -1;
++				vtoc_ebcdic_dec (p->f1->DS1DSNAM, p->f1->DS1DSNAM, 44);
++				ch = strstr (p->f1->DS1DSNAM, "PART");
++				if (ch != NULL)
++				{
++					strncpy (s, ch + 4, 4);
++					s[4] = '\0';
++					n = atoi (s) - 1;
++				}
++
++				vtoc_ebcdic_enc (p->f1->DS1DSNAM, p->f1->DS1DSNAM, 44);
++
++				/* this dasd has data set names 0000-0002
++				but we use now 0001-0003 */
++				if (n == -1)
++					oldfmt++;
++
++				if (((oldfmt == 0) && (n < 0)) || (n >= USABLE_PARTITIONS))
++				{
++				}
++          			else
++				{
++					if (oldfmt)       /* correct +1 */
++					{
++						setpos (anc, n + 1, f1_counter);
++					}
++					else
++						setpos (anc, n, f1_counter);
++				}
++
++				p = p->next;
++				f1_counter++;
++				break;
++			case 0xf5:
++				memcpy (anc->f5, &q, f1size);
++				f5_counter++;
++				break;
++			case 0xf7:
++				if (f7_counter == 0)
++					memcpy (anc->f7, &q, f1size);
++				f7_counter++;
++				break;
++		}
++		b += anc->blksize;
++	}
++
++	if (oldfmt > 0)
++	{
++		/* this is the old format PART0000 - PART0002 */
++		anc->vtoc_changed++;
++	}
++
++	if ((f5_counter == 0) || (anc->big_disk))
++		vtoc_init_format5_label (anc->f5);
++
++	if (f7_counter == 0)
++		vtoc_init_format7_label (anc->f7);
++
++	fdasd_reorganize_FMT1s (anc);
++	fdasd_update_partition_info (anc);
++}
++
++
++/*
++ *
++ */
++static int
++fdasd_valid_vtoc_pointer(fdasd_anchor_t *anc, unsigned long b, int fd)
++{
++PDEBUG
++	char str[LINE_LENGTH];
++
++	/* VOL1 label contains valid VTOC pointer */ 
++	vtoc_read_label (fd, b, NULL, anc->f4, NULL, NULL);
++
++	if (anc->f4->DS4IDFMT != 0xf4)
++	{
++		if (strncmp (anc->vlabel->volkey, vtoc_ebcdic_enc ("LNX1", str, 4), 4) == 0)
++			return 0;
++		/* format4 DSCB is invalid
++		printf(" invalid\ncreating new VTOC...\n"); */
++		fdasd_error(anc, wrong_disk_format, "Invalid VTOC");
++	}
++	else
++		fdasd_process_valid_vtoc (anc, b, fd);
++
++	return 0;
++}
++
++
++/*
++ * check the dasd for a volume label
++ */
++int 
++fdasd_check_volume (fdasd_anchor_t *anc, int fd) 
++{
++PDEBUG
++	volume_label_t *v = anc->vlabel;
++	unsigned long b = -1;
++	char str[LINE_LENGTH];
++
++	vtoc_read_volume_label (fd, anc->label_pos, v);
++
++	if (strncmp (v->vollbl, vtoc_ebcdic_enc ("VOL1", str, 4), 4) == 0)
++	{
++		/* found VOL1 volume label */
++		b = (cchhb2blk (&v->vtoc, &anc->geo) - 1) * anc->blksize;
++		if (b > 0)
++		{
++			int rc;
++			rc = fdasd_valid_vtoc_pointer (anc, b, fd);
++
++			if (rc < 0)
++				return 1;
++			else
++				return 0;
++		}
++		else 
++		{
++			return 1;
++		}
++        }
++	else if (strncmp (v->volkey, vtoc_ebcdic_enc ("LNX1", str, 4), 4) == 0)
++	{
++	        return 0;
++	}
++
++        return 1;
++}
++
++
++/*
++ * checks the current API version with the API version of the dasd driver
++ */
++void
++fdasd_check_api_version (fdasd_anchor_t *anc, int f)
++{
++PDEBUG
++        int api;
++	char s[LINE_LENGTH];
++ 
++        if (ioctl(f, DASDAPIVER, &api) != 0)
++        {
++                fdasd_error(anc, unable_to_ioctl,
++                            "Could not retrieve API version.");
++        }
++ 
++	if (api != DASD_MIN_API_VERSION)
++	{
++		sprintf(s, "The current API version '%d' doesn't " \
++			"match dasd driver API version " \
++			"'%d'!", api, DASD_MIN_API_VERSION);
++		fdasd_error(anc, api_version_mismatch, s);
++	}
++}                                      
++
++
++/*
++ * reads dasd geometry data
++ */
++void 
++fdasd_get_geometry (fdasd_anchor_t *anc, int f) 
++{
++PDEBUG
++        int blksize = 0;
++	dasd_information_t dasd_info;
++	char s[LINE_LENGTH];
++
++	if (ioctl(f, HDIO_GETGEO, &anc->geo) != 0) 
++	{
++		fdasd_error(anc, unable_to_ioctl, 
++			    "Could not retrieve disk geometry information.");
++	}
++
++	if (ioctl(f, BLKSSZGET, &blksize) != 0)
++	{
++	        fdasd_error(anc, unable_to_ioctl,
++			    "Could not retrieve blocksize information.");
++	}
++
++	/* get disk type */
++	if (ioctl(f, BIODASDINFO, &dasd_info) != 0) 
++	{
++		fdasd_error(anc, unable_to_ioctl, 
++			    "Could not retrieve disk information.");
++	}
++
++	if (strncmp(dasd_info.type, "ECKD", 4) != 0)
++	{
++		sprintf(s, "This is not an ECKD disk! This disk type " \
++			"is not supported!");
++		fdasd_error(anc,wrong_disk_type, s);
++	}
++
++	/* Disable FBA_layout check
++        if (dasd_info.FBA_layout)
++        {
++	   if(!anc->silent) {
++                sprintf(s, "Device is not formatted with z/OS compatible " \
++			"disk layout!");
++                fdasd_error(anc,wrong_disk_format, s);
++	   }
++        }      
++	*/
++
++	/* We do not write yet, so let this check go 
++	if (dasd_info.open_count > 1)
++	{
++		sprintf(s, "Device is in use by another program. Exit all " \
++			"applications using this disk and/or unmount it.");
++		fdasd_error(anc,disk_in_use, s);
++	}
++	*/
++
++	anc->dev_type   = dasd_info.dev_type;
++	anc->blksize    = blksize;
++	anc->label_pos  = dasd_info.label_block * blksize;
++	anc->devno      = dasd_info.devno;
++	anc->fspace_trk = anc->geo.cylinders * anc->geo.heads - FIRST_USABLE_TRK;
++}
++
++/*
++ * returns unused partition info pointer if there
++ * is a free partition, otherwise NULL
++ */
++static partition_info_t * 
++fdasd_get_empty_f1_label (fdasd_anchor_t * anc) 
++{
++PDEBUG
++	if (anc->used_partitions < USABLE_PARTITIONS)	  
++	        return anc->last;	      
++	else
++	        return NULL;
++}
++
++/*
++ * asks for and sets some important partition data
++ */
++static int 
++fdasd_get_partition_data (fdasd_anchor_t *anc,
++			  extent_t *part_extent,
++			  partition_info_t *p, unsigned int *start_ptr, unsigned int *stop_ptr) 
++{
++PDEBUG
++	unsigned int limit, cc, hh;
++	cchh_t llimit, ulimit;
++	partition_info_t *q;
++        char mesg[48];
++	u_int8_t b1, b2;
++	u_int16_t c, h;
++	unsigned int start = *start_ptr, stop = *stop_ptr;
++	int i;
++	char *ch;
++
++	if (anc->f4->DS4DEVCT.DS4DEVFG & ALTERNATE_CYLINDERS_USED)
++		c = anc->f4->DS4DEVCT.DS4DSCYL - (u_int16_t) anc->f4->DS4DEVAC;
++	else
++		c = anc->f4->DS4DEVCT.DS4DSCYL;
++
++	h = anc->f4->DS4DEVCT.DS4DSTRK;
++	limit = (h * c - 1);
++
++	/* check start value from user */
++	q = anc->first;
++	for (i = 0; i < USABLE_PARTITIONS; i++)
++	{
++		if ( q->next == NULL )
++			break;
++		if (start >= q->start_trk && start <= q->end_trk)
++		{
++			/* start is within another partition */
++			start = q->end_trk + 1;
++			if (start > limit)
++			{
++				start = FIRST_USABLE_TRK;
++				q = anc->first;
++			}
++
++/*
++			printf("value within another partition, " \
++			       "using %d instead\n", start);
++*/
++		}
++
++		if (start < q->start_trk)
++		{
++			limit = q->start_trk - 1;
++			break;
++		}
++		q = q->next;
++	}
++
++	if (start == limit)
++		stop = start;
++
++	/* update partition info */
++	p->len_trk    = stop - start + 1;
++	p->start_trk  = start;
++	p->end_trk    = stop;
++
++	cc = start / anc->geo.heads;
++	hh = start - (cc * anc->geo.heads);
++	vtoc_set_cchh(&llimit, cc, hh);
++
++	/* check for cylinder boundary */
++	if (hh == 0)  
++		b1 = 0x81;
++	else
++		b1 = 0x01;
++
++	cc = stop / anc->geo.heads;
++	hh = stop - cc * anc->geo.heads;
++	vtoc_set_cchh(&ulimit, cc, hh);
++
++        /* it is always the 1st extent */
++	b2 = 0x00;
++
++	vtoc_set_extent(part_extent, b1, b2, &llimit, &ulimit);
++
++	*start_ptr = start;
++	*stop_ptr = stop;
++
++	ch = p->f1->DS1DSNAM;
++	vtoc_ebcdic_dec (ch, ch, 44);
++	if (strstr(ch, PART_TYPE_LVM))
++		p->type = PARTITION_LINUX_LVM;
++	else if (strstr(ch, PART_TYPE_RAID))
++		p->type = PARTITION_LINUX_RAID;
++	else if (strstr(ch, PART_TYPE_NATIVE))
++		p->type = PARTITION_LINUX;
++	else if (strstr(ch, PART_TYPE_SWAP))
++		p->type = PARTITION_LINUX_SWAP;
++	else
++		p->type = PARTITION_LINUX;
++	vtoc_ebcdic_enc (ch, ch, 44);
++
++	return 0;
++}
++
++
++/*
++ *
++ */
++static void
++fdasd_enqueue_new_partition (fdasd_anchor_t *anc) 
++{
++PDEBUG
++        partition_info_t *q = anc->first, *p = anc->last;
++	int i,k=0;
++
++	for (i=1; i<USABLE_PARTITIONS; i++) 
++	{
++	        if ((q->end_trk == 0) || 
++		    (p->start_trk < q->start_trk))
++		        break;
++		else
++		{ 
++		        q = q->next;
++			k++;
++		}
++	}
++
++	if (anc->first == q) anc->first = p;
++	
++	if (p != q) 
++	{
++	        anc->last->prev->next = NULL;
++		anc->last = anc->last->prev;
++
++	        p->next = q;
++		p->prev = q->prev;
++		q->prev = p;
++		
++		if (p->prev != NULL)
++		        p->prev->next = p;
++	}
++
++	p->used       = 0x01;
++	p->type       = PARTITION_LINUX;
++
++	for (i=0; i<USABLE_PARTITIONS; i++)
++	{
++		int j = getpos(anc, i);
++		if (j >= k) setpos(anc, i, j + 1);
++	}
++
++	/* update free-space counters */
++	if (anc->first == p) 
++	{
++	        /* partition is the first used partition */
++	        if (p->start_trk == FIRST_USABLE_TRK) 
++		{
++	               /* partition starts right behind VTOC */
++	               p->fspace_trk = anc->fspace_trk - p->len_trk;
++		       anc->fspace_trk = 0;
++		}
++		else 
++		{
++	               /* there is some space between VTOC and partition */
++
++	               p->fspace_trk   = anc->fspace_trk - 
++			                 p->len_trk -
++			                 p->start_trk +
++			                 FIRST_USABLE_TRK;
++		       anc->fspace_trk = p->start_trk - FIRST_USABLE_TRK;
++		}
++	}
++	else
++	{
++	        /* there are partitons in front of the new one */
++ 	        if (p->start_trk == p->prev->end_trk + 1) 
++		{
++		        /* new partition is right behind the previous one */
++		        p->fspace_trk = p->prev->fspace_trk - p->len_trk;
++			p->prev->fspace_trk = 0;
++		}
++		else
++		{
++		        /* there is some space between new and prev. part. */
++		        p->fspace_trk       = p->prev->fspace_trk - 
++			                      p->len_trk - 
++			                      p->start_trk +
++			                      p->prev->end_trk + 1;
++			p->prev->fspace_trk = p->start_trk -
++                                              p->prev->end_trk - 
++			                      1;
++		}
++	}
++}
++
++
++/*
++ * adds a new partition to the 'partition table'
++ */
++partition_info_t *
++fdasd_add_partition (fdasd_anchor_t *anc, unsigned int start, unsigned int stop) 
++{
++PDEBUG
++	cchhb_t hf1;
++	partition_info_t *p;
++	extent_t ext;
++	int i;
++
++	PDEBUG;
++
++	if ((p = fdasd_get_empty_f1_label(anc)) == NULL) 
++	{
++	PDEBUG;
++		return 0;
++	}
++
++	PDEBUG;
++	if (fdasd_get_partition_data(anc, &ext, p, &start, &stop) != 0)
++		return 0;
++
++	PDEBUG;
++	vtoc_init_format1_label(anc->vlabel->volid,
++				anc->blksize,
++				&ext,
++				p->f1);
++
++
++	PDEBUG;
++	fdasd_enqueue_new_partition(anc);
++	
++	PDEBUG;
++	anc->used_partitions += 1;
++
++	i = anc->used_partitions + 2;
++	if (anc->big_disk) i++;
++	PDEBUG;
++
++        vtoc_set_cchhb(&hf1, VTOC_START_CC, VTOC_START_HH, i);
++
++	vtoc_update_format4_label(anc->f4, &hf1, 
++		anc->f4->DS4DSREC - 1);
++
++	PDEBUG;
++
++	start = ext.llimit.cc * anc->geo.heads + ext.llimit.hh;
++	stop  = ext.ulimit.cc * anc->geo.heads + ext.ulimit.hh;
++
++	PDEBUG;
++	vtoc_set_freespace(anc->f4, anc->f5, anc->f7, 
++			   '-', anc->verbose,
++			   start, stop,
++			   anc->geo.cylinders, anc->geo.heads);
++
++	anc->vtoc_changed++;
++
++	PDEBUG;
++	return p;
++}
+diff -ruN --minimal parted-1.6.21.orig/libparted/fdasd.h parted-1.6.21/libparted/fdasd.h
+--- parted-1.6.21.orig/libparted/fdasd.h	1969-12-31 19:00:00.000000000 -0500
++++ parted-1.6.21/libparted/fdasd.h	2005-01-21 15:00:40.429628321 -0500
+@@ -0,0 +1,230 @@
++/*
++ * File...........: s390-tools/fdasd/fdasd.h
++ * Author(s)......: Volker Sameske <sameske@de.ibm.com>
++ *                  Horst Hummel   <Horst.Hummel@de.ibm.com>
++ * Bugreports.to..: <Linux390@de.ibm.com>
++ * (C) IBM Corporation, IBM Deutschland Entwicklung GmbH, 2001-2002
++ *
++ * History of changes (starts March 2001)
++ * version 1.01 - menu entry 's' to show mapping devnode - DS name
++ *         1.02 - DS names count now from 0001 instead from 0000
++ *         1.03 - volser checks: 'AA AAA' to 'AAAAA '
++ *              - removed dependency to kernel headers.
++ *         1.04 - added -p option
++ *         1.05 - new API policy, set it back to 0
++ */
++#ifndef FDASD_H
++#define FDASD_H
++
++/*****************************************************************************
++ * SECTION: Definitions needed for DASD-API (see dasd.h)                     *
++ *****************************************************************************/
++
++#define DASD_IOCTL_LETTER 'D'
++
++#define DASD_PARTN_BITS 2
++
++#define PARTITION_LINUX_SWAP    0x82
++#define PARTITION_LINUX         0x83
++#define PARTITION_LINUX_EXT     0x85
++#define PARTITION_LINUX_LVM     0x8e
++#define PARTITION_LINUX_RAID    0xfd
++#define PARTITION_LINUX_LVM_OLD 0xfe
++
++#define PART_TYPE_NATIVE "NATIVE"
++#define PART_TYPE_SWAP   "SWAP  "
++#define PART_TYPE_RAID   "RAID  "
++#define PART_TYPE_LVM   "LVM   "
++
++#ifdef DEBUG_DASD
++#define PDEBUG           fprintf(stderr, "%s:%d:%s\n", \
++                         __FILE__,                              \
++                         __LINE__,                              \
++                         __PRETTY_FUNCTION__);
++#else
++#define PDEBUG
++#endif
++
++/* 
++ * struct dasd_information_t
++ * represents any data about the device, which is visible to userspace.
++ *  including foramt and featueres.
++ */
++typedef struct dasd_information_t {
++        unsigned int devno;           /* S/390 devno                         */
++        unsigned int real_devno;      /* for aliases                         */
++        unsigned int schid;           /* S/390 subchannel identifier         */
++        unsigned int cu_type  : 16;   /* from SenseID                        */
++        unsigned int cu_model :  8;   /* from SenseID                        */
++        unsigned int dev_type : 16;   /* from SenseID                        */
++        unsigned int dev_model : 8;   /* from SenseID                        */
++        unsigned int open_count; 
++        unsigned int req_queue_len; 
++        unsigned int chanq_len;       /* length of chanq                     */
++        char type[4];                 /* from discipline.name, 'none' for    */
++	                              /* unknown                             */
++        unsigned int status;          /* current device level                */
++        unsigned int label_block;     /* where to find the VOLSER            */
++        unsigned int FBA_layout;      /* fixed block size (like AIXVOL)      */
++        unsigned int characteristics_size;
++        unsigned int confdata_size;
++        char characteristics[64];     /* from read_device_characteristics    */
++        char configuration_data[256]; /* from read_configuration_data        */
++} dasd_information_t;
++
++/* 
++ * struct format_data_t
++ * represents all data necessary to format a dasd
++ */
++typedef struct format_data_t {
++	int start_unit; /* from track */
++	int stop_unit;  /* to track */
++	int blksize;    /* sectorsize */
++        int intensity;  
++} format_data_t;
++
++/*
++ * values to be used for format_data_t.intensity
++ * 0/8: normal format
++ * 1/9: also write record zero
++ * 3/11: also write home address
++ * 4/12: invalidate track
++ */
++#define DASD_FMT_INT_FMT_R0 1 /* write record zero */
++#define DASD_FMT_INT_FMT_HA 2 /* write home address, also set FMT_R0 ! */
++#define DASD_FMT_INT_INVAL  4 /* invalidate tracks */
++#define DASD_FMT_INT_COMPAT 8 /* use OS/390 compatible disk layout */
++
++
++/* Disable the volume (for Linux) */
++#define BIODASDDISABLE _IO(DASD_IOCTL_LETTER,0) 
++/* Enable the volume (for Linux) */
++#define BIODASDENABLE  _IO(DASD_IOCTL_LETTER,1)  
++
++/* retrieve API version number */
++#define DASDAPIVER     _IOR(DASD_IOCTL_LETTER,0,int)
++/* Get information on a dasd device (enhanced) */
++#define BIODASDINFO   _IOR(DASD_IOCTL_LETTER,1,dasd_information_t)
++
++
++/*****************************************************************************
++ * SECTION: Further IOCTL Definitions  (see fs.h)                            *
++ *****************************************************************************/
++/* re-read partition table */
++#define BLKRRPART  _IO(0x12,95)	
++/* get block device sector size */
++#define BLKSSZGET  _IO(0x12,104)
++
++/*****************************************************************************
++ * SECTION: Definition from hdreq.h                                          *
++ *****************************************************************************/
++
++struct fdasd_hd_geometry {
++      unsigned char heads;
++      unsigned char sectors;
++      unsigned short cylinders;
++      unsigned long start;
++};
++
++/* get device geometry */
++#define HDIO_GETGEO		0x0301	
++
++/*****************************************************************************
++ * SECTION: FDASD internal types                                             *
++ *****************************************************************************/
++
++#define DASD_MIN_API_VERSION 0
++
++#define DEFAULT_FDASD_CONF "/etc/fdasd.conf" /* default config file */
++
++#define PARTN_MASK ((1 << DASD_PARTN_BITS) - 1)
++#define USABLE_PARTITIONS ((1 << DASD_PARTN_BITS) - 1)
++
++#define FDASD_VERSION "1.05"
++#define FDASD_ERROR "fdasd error: "
++#define DEVICE "device"
++#define DISC   "disc"
++#define PART   "part"
++
++#define ALTERNATE_CYLINDERS_USED 0x10
++
++typedef struct partition_info {
++        u_int8_t           used;
++        unsigned long      start_trk;
++        unsigned long      end_trk;
++        unsigned long      len_trk;
++        unsigned long      fspace_trk;
++        format1_label_t  * f1; 
++        struct partition_info *next;
++        struct partition_info *prev;
++        u_int8_t           type;
++} partition_info_t;
++
++
++typedef struct config_data {
++	unsigned long start;
++	unsigned long stop;
++} config_data_t;
++
++
++typedef struct fdasd_anchor {
++        int vlabel_changed;
++        int vtoc_changed;
++	int devname_specified;
++	int volid_specified;
++	int config_specified;
++	int auto_partition;
++	int print_table;
++	int big_disk;
++	int silent;
++	int verbose;
++	int devno;
++	int option_reuse;
++	int option_recreate;
++	int partno[USABLE_PARTITIONS];
++	u_int16_t dev_type;
++	unsigned int used_partitions;
++	unsigned long label_pos;
++        unsigned int  blksize;
++        unsigned long fspace_trk;
++        format4_label_t  *f4;
++        format5_label_t  *f5;
++	format7_label_t  *f7;
++        partition_info_t *first;
++        partition_info_t *last;
++        volume_label_t   *vlabel;
++	config_data_t confdata[USABLE_PARTITIONS];
++	struct fdasd_hd_geometry geo;
++} fdasd_anchor_t;
++
++enum offset {lower, upper};
++
++enum fdasd_failure {
++	unable_to_open_disk,
++	unable_to_seek_disk,
++	unable_to_read_disk,
++	read_only_disk,
++        unable_to_ioctl,
++	api_version_mismatch,
++	wrong_disk_type,
++	wrong_disk_format,
++	disk_in_use,
++	config_syntax_error,
++	vlabel_corrupted,
++	dsname_corrupted,
++	malloc_failed,
++	device_verification_failed
++};
++
++void fdasd_cleanup (fdasd_anchor_t *anchor);
++void fdasd_initialize_anchor (fdasd_anchor_t * anc);
++void fdasd_get_geometry (fdasd_anchor_t *anc, int fd);
++void fdasd_check_api_version (fdasd_anchor_t *anc, int fd);
++int fdasd_check_volume (fdasd_anchor_t *anc, int fd);
++int fdasd_write_labels (fdasd_anchor_t *anc, int fd);
++int fdasd_invalid_vtoc_pointer(fdasd_anchor_t *anc);
++void fdasd_recreate_vtoc(fdasd_anchor_t *anc);
++partition_info_t * fdasd_add_partition (fdasd_anchor_t *anc, unsigned int start, unsigned int stop);
++int fdasd_prepare_labels (fdasd_anchor_t *anc, int fd) ;
++
++#endif /* FDASD_H */
+--- parted-1.6.23/libparted/libparted.c.orig	2005-03-29 02:01:22.000000000 +0200
++++ parted-1.6.23/libparted/libparted.c	2005-07-18 20:57:09.847100720 +0200
+@@ -87,12 +87,17 @@
+ extern void ped_disk_pc98_init ();
+ extern void ped_disk_sun_init ();
+ extern void ped_disk_amiga_init ();
++extern void ped_disk_dasd_init ();
+ 
+ static void
+ init_disk_types ()
+ {
+ 	ped_disk_loop_init ();	/* must be last in the probe list */
+ 
++#if defined(__s390__) || defined(__s390x__)
++	ped_disk_dasd_init();
++#endif
++
+ 	ped_disk_sun_init ();
+ #ifdef ENABLE_PC98
+ 	ped_disk_pc98_init ();
+@@ -142,10 +147,14 @@
+ extern void ped_disk_pc98_done ();
+ extern void ped_disk_sun_done ();
+ extern void ped_disk_amiga_done ();
++extern void ped_disk_dasd_done ();
+ 
+ static void
+ done_disk_types ()
+ {
++#if defined(__s390__) || defined(__s390x__)
++	ped_disk_dasd_done ();
++#endif
+ 	ped_disk_sun_done ();
+ #ifdef ENABLE_PC98
+ 	ped_disk_pc98_done ();
+@@ -282,8 +291,9 @@
+ 		return NULL;
+ 	}
+ 
++	memset (mem, 0, size);
+ #ifdef DEBUG
+-	memset (mem, 0xff, size);
++	/* memset (mem, 0xff, size); */
+ 	_check_dodgy_pointer (mem, size, 1);
+ #endif
+ 
+diff -ruN --minimal parted-1.6.21.orig/libparted/linux.c parted-1.6.21/libparted/linux.c
+--- parted-1.6.21.orig/libparted/linux.c	2005-01-15 20:01:57.000000000 -0500
++++ parted-1.6.21/libparted/linux.c	2005-01-21 15:04:40.574398622 -0500
+@@ -60,6 +60,9 @@
+ #define HDIO_GETGEO		0x0301	/* get device geometry */
+ #define HDIO_GET_IDENTITY	0x030d	/* get IDE identification info */
+ 
++#include "vtoc.h"
++#include "fdasd.h"
++
+ struct hd_geometry {
+ 	unsigned char heads;
+ 	unsigned char sectors;
+@@ -215,6 +218,8 @@
+ #define I2O_MAJOR7		86
+ #define I2O_MAJOR8		87
+ 
++#define DASD_MAJOR		94
++
+ #define SCSI_BLK_MAJOR(M) (						\
+ 		(M) == SCSI_DISK0_MAJOR 				\
+ 		|| (M) == SCSI_CDROM_MAJOR				\
+@@ -302,6 +307,8 @@
+ 		dev->type = PED_DEVICE_DAC960;
+ 	} else if (dev_major == ATARAID_MAJOR && (dev_minor % 0x10 == 0)) {
+ 		dev->type = PED_DEVICE_ATARAID;
++	} else if (dev_major == DASD_MAJOR && (dev_minor % 0x4 == 0)) {
++		dev->type = PED_DEVICE_DASD;
+ 	} else if (_is_i2o_major (dev_major) && (dev_minor % 0x10 == 0)) {
+ 		dev->type = PED_DEVICE_I2O;
+ 	} else if (_is_cpqarray_major (dev_major) && (dev_minor % 0x10 == 0)) {
+@@ -363,6 +370,14 @@
+ 	if (ioctl (arch_specific->fd, BLKSSZGET, &sector_size))
+ 		return PED_SECTOR_SIZE;
+ 
++	/*
++	 * We return PED_SECTOR_SIZE, cause, we do not want to fiddle around with b0rken
++	 * parted and kernel for DASDs!!
++	 */
++	if(dev->type == PED_DEVICE_DASD) {
++		return PED_SECTOR_SIZE;
++	}
++
+ 	if (sector_size != PED_SECTOR_SIZE) {
+ 		if (ped_exception_throw (
+ 			PED_EXCEPTION_BUG,
+@@ -696,6 +711,44 @@
+ }
+ 
+ static int
++init_dasd (PedDevice* dev, char* model_name)
++{
++	struct stat		dev_stat;
++	PedExceptionOption	ex_status;
++        int f, blksize = 0;
++        dasd_information_t dasd_info;
++        char *errstr = 0;
++        struct hd_geometry geo;
++
++
++	if (!_device_stat (dev, &dev_stat))
++		goto error;
++
++	if (!ped_device_open (dev))
++		goto error;
++
++	LinuxSpecific* arch_specific = LINUX_SPECIFIC (dev);
++
++	if (!_device_probe_geometry (dev)) 
++	  goto error_close_dev;
++
++	dev->model = strdup (model_name);
++
++	ped_device_close (dev);
++	return 1;
++
++except:
++        ped_exception_throw ( PED_EXCEPTION_ERROR,
++                              PED_EXCEPTION_IGNORE_CANCEL,
++                              errstr );
++
++error_close_dev:
++	ped_device_close (dev);
++error:
++	return 0;
++}
++
++static int
+ init_generic (PedDevice* dev, char* model_name)
+ {
+ 	struct stat		dev_stat;
+@@ -719,8 +772,8 @@
+ 				PED_EXCEPTION_WARNING,
+ 				PED_EXCEPTION_IGNORE_CANCEL,
+ 				_("Unable to determine geometry of "
+-				"file/device.  You should not use Parted "
+-				"unless you REALLY know what you're doing!"));
++				"file/device %s.  You should not use Parted "
++				"unless you REALLY know what you're doing!"), dev->path);
+ 		switch (ex_status) {
+ 			case PED_EXCEPTION_CANCEL:
+ 				goto error_close_dev;
+@@ -795,6 +848,11 @@
+ 			goto error_free_arch_specific;
+ 		break;
+ 
++	case PED_DEVICE_DASD:
++		if (!init_dasd (dev, _("IBM S390 DASD drive")))
++			goto error_free_arch_specific;
++		break;
++
+ 	case PED_DEVICE_CPQARRAY:
+ 		if (!init_generic (dev, _("Compaq Smart Array")))
+ 			goto error_free_arch_specific;
+@@ -1710,7 +1768,10 @@
+ 		 * created.  Therefore, if using DevFS, we must get the kernel
+ 		 * to re-read and grok the partition table.
+ 		 */
+-		if (_have_blkpg () && !_have_devfs ()) {
++		/* Work around kernel dasd problem so we really do a
++		   BLKRRPART */
++		if (disk->dev->type != PED_DEVICE_DASD &&
++		    _have_blkpg () && !_have_devfs ()) {
+ 			if (_disk_sync_part_table (disk))
+ 				return 1;
+ 		}
+diff -ruN --minimal parted-1.6.21.orig/libparted/vtoc.c parted-1.6.21/libparted/vtoc.c
+--- parted-1.6.21.orig/libparted/vtoc.c	1969-12-31 19:00:00.000000000 -0500
++++ parted-1.6.21/libparted/vtoc.c	2005-01-21 15:00:40.454627663 -0500
+@@ -0,0 +1,1352 @@
++#include "vtoc.h"
++
++#ifdef DEBUG_DASD
++#define PDEBUG           fprintf(stderr, "%s:%d:%s\n", \
++                        __FILE__,                              \
++                        __LINE__,                              \
++                        __PRETTY_FUNCTION__);
++#else
++#define PDEBUG
++#endif
++
++#include <parted/parted.h>
++
++#include <libintl.h>
++#if ENABLE_NLS
++#  define _(String) dgettext (PACKAGE, String)
++#else
++#  define _(String) (String)
++#endif /* ENABLE_NLS */
++
++static unsigned char EBCtoASC[256] =
++{
++/* 0x00  NUL   SOH   STX   ETX  *SEL    HT  *RNL   DEL */
++	0x00, 0x01, 0x02, 0x03, 0x07, 0x09, 0x07, 0x7F,
++/* 0x08  -GE  -SPS  -RPT    VT    FF    CR    SO    SI */
++	0x07, 0x07, 0x07, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
++/* 0x10  DLE   DC1   DC2   DC3  -RES   -NL    BS  -POC
++                                -ENP  ->LF             */
++	0x10, 0x11, 0x12, 0x13, 0x07, 0x0A, 0x08, 0x07,
++/* 0x18  CAN    EM  -UBS  -CU1  -IFS  -IGS  -IRS  -ITB
++                                                  -IUS */
++	0x18, 0x19, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
++/* 0x20  -DS  -SOS    FS  -WUS  -BYP    LF   ETB   ESC
++                                -INP                   */
++	0x07, 0x07, 0x1C, 0x07, 0x07, 0x0A, 0x17, 0x1B,
++/* 0x28  -SA  -SFE   -SM  -CSP  -MFA   ENQ   ACK   BEL
++                     -SW                               */ 
++	0x07, 0x07, 0x07, 0x07, 0x07, 0x05, 0x06, 0x07,
++/* 0x30 ----  ----   SYN   -IR   -PP  -TRN  -NBS   EOT */
++	0x07, 0x07, 0x16, 0x07, 0x07, 0x07, 0x07, 0x04,
++/* 0x38 -SBS   -IT  -RFF  -CU3   DC4   NAK  ----   SUB */
++	0x07, 0x07, 0x07, 0x07, 0x14, 0x15, 0x07, 0x1A,
++/* 0x40   SP   RSP           ä              ----       */
++	0x20, 0xFF, 0x83, 0x84, 0x85, 0xA0, 0x07, 0x86,
++/* 0x48                      .     <     (     +     | */
++	0x87, 0xA4, 0x9B, 0x2E, 0x3C, 0x28, 0x2B, 0x7C,
++/* 0x50    &                                      ---- */
++	0x26, 0x82, 0x88, 0x89, 0x8A, 0xA1, 0x8C, 0x07,
++/* 0x58          ß     !     $     *     )     ;       */
++	0x8D, 0xE1, 0x21, 0x24, 0x2A, 0x29, 0x3B, 0xAA,
++/* 0x60    -     /  ----     Ä  ----  ----  ----       */
++	0x2D, 0x2F, 0x07, 0x8E, 0x07, 0x07, 0x07, 0x8F,
++/* 0x68             ----     ,     %     _     >     ? */ 
++	0x80, 0xA5, 0x07, 0x2C, 0x25, 0x5F, 0x3E, 0x3F,
++/* 0x70  ---        ----  ----  ----  ----  ----  ---- */
++	0x07, 0x90, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
++/* 0x78    *     `     :     #     @     '     =     " */
++	0x70, 0x60, 0x3A, 0x23, 0x40, 0x27, 0x3D, 0x22,
++/* 0x80    *     a     b     c     d     e     f     g */
++	0x07, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67,
++/* 0x88    h     i              ----  ----  ----       */
++	0x68, 0x69, 0xAE, 0xAF, 0x07, 0x07, 0x07, 0xF1,
++/* 0x90    °     j     k     l     m     n     o     p */
++	0xF8, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 0x70,
++/* 0x98    q     r                    ----        ---- */
++	0x71, 0x72, 0xA6, 0xA7, 0x91, 0x07, 0x92, 0x07,
++/* 0xA0          ~     s     t     u     v     w     x */
++	0xE6, 0x7E, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78,
++/* 0xA8    y     z              ----  ----  ----  ---- */
++	0x79, 0x7A, 0xAD, 0xAB, 0x07, 0x07, 0x07, 0x07,
++/* 0xB0    ^                    ----     §  ----       */
++	0x5E, 0x9C, 0x9D, 0xFA, 0x07, 0x07, 0x07, 0xAC,
++/* 0xB8       ----     [     ]  ----  ----  ----  ---- */
++	0xAB, 0x07, 0x5B, 0x5D, 0x07, 0x07, 0x07, 0x07,
++/* 0xC0    {     A     B     C     D     E     F     G */
++	0x7B, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47,
++/* 0xC8    H     I  ----           ö              ---- */
++	0x48, 0x49, 0x07, 0x93, 0x94, 0x95, 0xA2, 0x07,
++/* 0xD0    }     J     K     L     M     N     O     P */
++	0x7D, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50,
++/* 0xD8    Q     R  ----           ü                   */
++	0x51, 0x52, 0x07, 0x96, 0x81, 0x97, 0xA3, 0x98,
++/* 0xE0    \           S     T     U     V     W     X */
++	0x5C, 0xF6, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58,
++/* 0xE8    Y     Z        ----     Ö  ----  ----  ---- */
++	0x59, 0x5A, 0xFD, 0x07, 0x99, 0x07, 0x07, 0x07,
++/* 0xF0    0     1     2     3     4     5     6     7 */
++	0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
++/* 0xF8    8     9  ----  ----     Ü  ----  ----  ---- */
++	0x38, 0x39, 0x07, 0x07, 0x9A, 0x07, 0x07, 0x07
++};
++
++static unsigned char ASCtoEBC[256] =
++{
++    /*00  NL    SH    SX    EX    ET    NQ    AK    BL */
++	0x00, 0x01, 0x02, 0x03, 0x37, 0x2D, 0x2E, 0x2F,
++    /*08  BS    HT    LF    VT    FF    CR    SO    SI */
++	0x16, 0x05, 0x15, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
++    /*10  DL    D1    D2    D3    D4    NK    SN    EB */
++	0x10, 0x11, 0x12, 0x13, 0x3C, 0x15, 0x32, 0x26,
++    /*18  CN    EM    SB    EC    FS    GS    RS    US */
++	0x18, 0x19, 0x3F, 0x27, 0x1C, 0x1D, 0x1E, 0x1F,
++    /*20  SP     !     "     #     $     %     &     ' */
++	0x40, 0x5A, 0x7F, 0x7B, 0x5B, 0x6C, 0x50, 0x7D,
++    /*28   (     )     *     +     ,     -    .      / */
++	0x4D, 0x5D, 0x5C, 0x4E, 0x6B, 0x60, 0x4B, 0x61,
++    /*30   0     1     2     3     4     5     6     7 */
++	0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7,
++    /*38   8     9     :     ;     <     =     >     ? */
++	0xF8, 0xF9, 0x7A, 0x5E, 0x4C, 0x7E, 0x6E, 0x6F,
++    /*40   @     A     B     C     D     E     F     G */
++	0x7C, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7,
++    /*48   H     I     J     K     L     M     N     O */
++	0xC8, 0xC9, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6,
++    /*50   P     Q     R     S     T     U     V     W */
++	0xD7, 0xD8, 0xD9, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6,
++    /*58   X     Y     Z     [     \     ]     ^     _ */
++	0xE7, 0xE8, 0xE9, 0xAD, 0xE0, 0xBD, 0x5F, 0x6D,
++    /*60   `     a     b     c     d     e     f     g */
++	0x79, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
++    /*68   h     i     j     k     l     m     n     o */
++	0x88, 0x89, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96,
++    /*70   p     q     r     s     t     u     v     w */
++	0x97, 0x98, 0x99, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6,
++    /*78   x     y     z     {     |     }     ~    DL */
++	0xA7, 0xA8, 0xA9, 0xC0, 0x4F, 0xD0, 0xA1, 0x07,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F,
++	0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0xFF
++};
++
++enum failure {unable_to_open,
++	      unable_to_seek,
++	      unable_to_write,
++	      unable_to_read};
++
++static char buffer[85];
++
++/*
++ *
++ */
++static void 
++vtoc_error(enum failure why, char *s1, char *s2) 
++{
++	PDEBUG
++        char    error[LINE_LENGTH];
++
++	switch (why) 
++	{
++	case unable_to_open:
++	        sprintf(error, _("%s opening device '%s' failed.\n%s\n"),
++			VTOC_ERROR, s1, s2);
++		break;
++	case unable_to_seek:
++	        sprintf(error, _("%s seeking device '%s' failed.\n%s\n"),
++			VTOC_ERROR, s1, s2);
++		break;
++	case unable_to_write:
++	        sprintf(error, _("%s writing to device '%s' failed,\n%s\n"),
++			VTOC_ERROR, s1, s2);
++		break;
++	case unable_to_read:
++	        sprintf(error, _("%s reading from device '%s' failed.\n%s\n"),
++			VTOC_ERROR, s1, s2);
++		break;
++	default: sprintf(error, _("Fatal error\n"));
++	}
++
++        ped_exception_throw(PED_EXCEPTION_ERROR, PED_EXCEPTION_CANCEL, error);
++}
++
++
++/*
++ *
++ */
++char * 
++vtoc_ebcdic_enc (char source[LINE_LENGTH],
++		 char target[LINE_LENGTH],
++		 int l) 
++{
++	PDEBUG
++        int i;
++
++	for (i = 0; i < l; i++) 
++	        target[i]=ASCtoEBC[(unsigned char)(source[i])];
++
++	return target;
++}
++
++
++/*
++ *
++ */
++char * 
++vtoc_ebcdic_dec (char source[LINE_LENGTH],
++		 char target[LINE_LENGTH],
++		 int l) 
++{
++	PDEBUG
++        int i;
++
++	for (i = 0; i < l; i++) 
++	        target[i]=EBCtoASC[(unsigned char)(source[i])];
++
++	return target;
++}
++
++
++/*
++ *
++ */
++void 
++vtoc_set_extent (extent_t *ext,
++		 u_int8_t typeind,
++		 u_int8_t seqno,
++		 cchh_t *lower,
++		 cchh_t *upper) 
++{ 
++	PDEBUG
++        ext->typeind = typeind;
++        ext->seqno   = seqno;
++        memcpy(&ext->llimit,lower,sizeof(cchh_t));
++        memcpy(&ext->ulimit,upper,sizeof(cchh_t));
++}
++
++
++/*
++ *
++ */
++void 
++vtoc_set_cchh (cchh_t *addr,
++               u_int16_t cc,
++               u_int16_t hh) 
++{
++	PDEBUG
++        addr->cc = cc;
++	addr->hh = hh;
++}
++
++
++/*
++ *
++ */
++static void 
++vtoc_set_ttr (ttr_t *addr,
++              u_int16_t tt,
++              u_int8_t r) 
++{
++	PDEBUG
++        addr->tt = tt;
++	addr->r = r;
++}
++
++
++/*
++ *
++ */
++void 
++vtoc_set_cchhb (cchhb_t *addr,
++		u_int16_t cc,
++		u_int16_t hh,
++		u_int8_t b) 
++{
++	PDEBUG
++        addr->cc = cc;
++        addr->hh = hh;
++        addr->b = b;
++}
++
++
++/*
++ *
++ */
++void 
++vtoc_set_date (
++        labeldate_t * d,
++	u_int8_t year,
++	u_int16_t day) 
++{
++	PDEBUG
++        d->year = year;
++        d->day = day;
++}
++
++
++/*
++ * initializes the volume label with EBCDIC spaces
++ */
++void
++vtoc_volume_label_init (volume_label_t *vlabel)
++{
++	PDEBUG
++	sprintf(buffer, "%84s", " ");
++	vtoc_ebcdic_enc(buffer, buffer, 84);	
++	strncpy(vlabel->volkey, buffer, 84);
++}
++
++
++/*
++ * reads the volume label from dasd
++ */
++int 
++vtoc_read_volume_label (
++        int f,
++        unsigned long vlabel_start,
++        volume_label_t *vlabel) 
++{
++	PDEBUG
++	int rc;
++
++	if (lseek(f, vlabel_start, SEEK_SET) == -1) 
++	{
++		vtoc_error(unable_to_seek, "vtoc_read_volume_label",
++			   "Could not read volume label.");
++		return 1;
++	}
++
++	rc = read(f, vlabel, sizeof(volume_label_t));
++	if (rc != sizeof(volume_label_t)) 
++	{
++		vtoc_error(unable_to_read, "vtoc_read_volume_label",
++		   	   "Could not read volume label.");
++		return 1;
++	}
++
++	return 0;
++}
++
++
++/*
++ * writes the volume label to dasd
++ */
++int 
++vtoc_write_volume_label (
++        int f,
++	unsigned long vlabel_start,
++	volume_label_t *vlabel) 
++{
++	PDEBUG
++        int rc;
++
++	if (lseek(f, vlabel_start, SEEK_SET) == -1) 
++	{
++		vtoc_error(unable_to_seek, "vtoc_write_volume_label",
++			   "Could not write volume label.");
++	}
++
++	rc = write(f, vlabel, sizeof(volume_label_t)); 
++	if (rc != sizeof(volume_label_t)) 
++	{
++		vtoc_error(unable_to_write, "vtoc_write_volume_label",
++			   "Could not write volume label.");
++	}
++	return 0;
++}
++
++
++/*
++ * takes a string as input, converts it to uppercase, translates
++ * it to EBCDIC and fills it up with spaces before it copies it
++ * as volume serial to the volume label
++ */
++void
++vtoc_volume_label_set_volser (
++	volume_label_t *vlabel, 
++	char *volser)
++{
++	PDEBUG
++	int j, i = strlen(volser);
++	char s[VOLSER_LENGTH + 1];
++
++	strcpy(s, "      ");
++	vtoc_ebcdic_enc(s, s, VOLSER_LENGTH);
++	strncpy(vlabel->volid, s, VOLSER_LENGTH);
++
++	if (i > VOLSER_LENGTH) i = VOLSER_LENGTH;
++
++	strncpy(s, volser, i);
++	for (j=0; j<i; j++) {
++		s[j] = toupper(s[j]);
++	}
++
++	s[VOLSER_LENGTH] = 0x00;
++	vtoc_ebcdic_enc(s, s, i);
++	strncpy(vlabel->volid, s, i);
++
++	return;
++}
++
++
++/*
++ * returns the volume serial number right after it is translated 
++ * to ASCII
++ */
++char *
++vtoc_volume_label_get_volser (
++	volume_label_t *vlabel,
++	char *volser)
++{
++	PDEBUG
++	vtoc_ebcdic_dec(vlabel->volid, volser, VOLSER_LENGTH);
++
++	return volser;
++}
++
++
++/*
++ * sets the volume label key right after
++ * it has been translated to EBCDIC
++ */
++void
++vtoc_volume_label_set_key (
++        volume_label_t *vlabel,
++        char *key)
++{
++	PDEBUG
++        char s[4];
++ 
++        vtoc_ebcdic_enc(key, s, 4);
++        strncpy(vlabel->volkey, s, 4);
++ 
++        return;
++}                
++
++
++/*
++ * sets the volume label identifier right
++ * after it has been translated to EBCDIC
++ */
++void
++vtoc_volume_label_set_label (
++	volume_label_t *vlabel,
++	char *lbl)
++{
++	PDEBUG
++	char s[4];
++
++	vtoc_ebcdic_enc(lbl, s, 4);
++	strncpy(vlabel->vollbl, s, 4);
++
++	return;
++}
++
++
++/*
++ * returns the volume label key = the label identifier
++ * right after it has been translated to ASCII
++ */
++char *
++vtoc_volume_label_get_label (
++	volume_label_t *vlabel,
++	char *lbl)
++{
++	PDEBUG
++	vtoc_ebcdic_dec(vlabel->vollbl, lbl, 4);
++
++	return lbl;
++}
++
++
++/*
++ * reads either a format4 label or a format1 label
++ * from the specified position
++ */
++void 
++vtoc_read_label (int f,
++		 unsigned long position,
++		 format1_label_t *f1,
++		 format4_label_t *f4,
++		 format5_label_t *f5,
++		 format7_label_t *f7) 
++{        
++	PDEBUG
++	int t;
++
++        if (lseek(f, position, SEEK_SET) == -1) 
++	{
++		vtoc_error(unable_to_seek, "vtoc_read_label",
++			   _("Could not read VTOC labels."));
++        }
++
++	if (f1 != NULL)
++	{
++		t = sizeof(format1_label_t);
++	        if (read(f, f1, t) != t) 
++		{
++			vtoc_error(unable_to_read, "vtoc_read_label",
++				   _("Could not read VTOC FMT1 DSCB."));
++		}
++	}
++
++	if (f4 != NULL)
++	{
++		t = sizeof(format4_label_t);
++	        if (read(f, f4, t) != t) 
++		{
++			vtoc_error(unable_to_read, "vtoc_read_label",
++				   _("Could not read VTOC FMT4 DSCB."));
++		}
++	}
++
++        if (f5 != NULL)
++	{
++		t = sizeof(format5_label_t);
++                if (read(f, f5, t) != t)
++                {
++                        vtoc_error(unable_to_read, "vtoc_read_label",
++                                   _("Could not read VTOC FMT5 DSCB."));
++                }
++	}
++
++	if (f7 != NULL)
++	{
++		t = sizeof(format7_label_t);
++	        if (read(f, f7, t) != t) 
++		{
++			vtoc_error(unable_to_read, "vtoc_read_label",
++				   _("Could not read VTOC FMT7 DSCB."));
++		}
++	}
++}
++
++
++/*
++ * writes either a FMT1, FMT4 or FMT5 label
++ * to the specified position
++ */
++void
++vtoc_write_label (int f,
++		  unsigned long position,
++		  format1_label_t *f1, 
++		  format4_label_t *f4,
++		  format5_label_t *f5,
++		  format7_label_t *f7)
++{
++	PDEBUG
++	int t;
++
++        if (lseek(f, position, SEEK_SET) == -1) 
++	{
++		vtoc_error(unable_to_seek, "vtoc_write_label",
++			   _("Could not write VTOC labels."));
++        }
++
++	if (f1 != NULL)
++	{
++		t = sizeof(format1_label_t);
++	        if (write(f, f1, t) != t) 
++		{
++			vtoc_error(unable_to_write, "vtoc_write_label",
++				   _("Could not write VTOC FMT1 DSCB."));
++		}
++	}
++
++	if (f4 != NULL)
++	{
++		t = sizeof(format4_label_t);
++	        if (write(f, f4, t) != t) 
++		{
++			vtoc_error(unable_to_write, "vtoc_write_label",
++				   _("Could not write VTOC FMT4 DSCB."));
++		}
++	}
++
++	if (f5 != NULL)
++	{
++		t = sizeof(format5_label_t);
++	        if (write(f, f5, t) != t) 
++		{
++			vtoc_error(unable_to_write, "vtoc_write_label",
++				   _("Could not write VTOC FMT5 DSCB."));
++		}
++	}
++
++	if (f7 != NULL)
++	{
++		t = sizeof(format7_label_t);
++	        if (write(f, f7, t) != t) 
++		{
++			vtoc_error(unable_to_write, "vtoc_write_label",
++				   _("Could not write VTOC FMT7 DSCB."));
++		}
++	}
++
++}
++
++
++/*
++ * initializes a format4 label
++ */
++void 
++vtoc_init_format4_label (
++	format4_label_t    *f4,
++	unsigned int usable_partitions,
++	unsigned int cylinders,
++	unsigned int tracks,
++	unsigned int blocks,
++	unsigned int blksize,
++	u_int16_t dev_type) 
++{
++	PDEBUG
++	int i;
++
++	cchh_t lower = {VTOC_START_CC, VTOC_START_HH};
++	cchh_t upper = {VTOC_START_CC, VTOC_START_HH};
++
++	for (i=0; i<44; i++) f4->DS4KEYCD[i] = 0x04;
++        f4->DS4IDFMT = 0xf4;
++	vtoc_set_cchhb(&f4->DS4HPCHR, 0x0000, 0x0000, 0x00);
++        f4->DS4DSREC = blocks - 2;
++	/* free space starts right behind VTOC
++	   vtoc_set_cchh(&f4->DS4HCCHH, VTOC_START_CC, VTOC_START_HH + 1);*/
++        vtoc_set_cchh(&f4->DS4HCCHH, 0x0000, 0x0000);
++        f4->DS4NOATK = 0x0000;
++        f4->DS4VTOCI = 0x00;
++        f4->DS4NOEXT = 0x01;
++        f4->DS4SMSFG = 0x00;
++        f4->DS4DEVAC = 0x00;
++
++        /* -- begin f4->DS4DEVCT -- */
++        f4->DS4DEVCT.DS4DSCYL = cylinders;
++        f4->DS4DEVCT.DS4DSTRK = tracks;
++
++	switch (dev_type)
++	{
++	case DASD_3380_TYPE:
++		f4->DS4DEVCT.DS4DEVTK = DASD_3380_VALUE;
++		break;
++	case DASD_3390_TYPE:
++		f4->DS4DEVCT.DS4DEVTK = DASD_3390_VALUE;
++		break;
++	case DASD_9345_TYPE:
++		f4->DS4DEVCT.DS4DEVTK = DASD_9345_VALUE;
++		break;
++        default:
++		f4->DS4DEVCT.DS4DEVTK = blocks * blksize;;
++        }
++
++
++        f4->DS4DEVCT.DS4DEVI  = 0x00;
++        f4->DS4DEVCT.DS4DEVL  = 0x00;
++        f4->DS4DEVCT.DS4DEVK  = 0x00;
++        f4->DS4DEVCT.DS4DEVFG = 0x30;
++        f4->DS4DEVCT.DS4DEVTL = 0x0000;
++        f4->DS4DEVCT.DS4DEVDT = blocks;
++        f4->DS4DEVCT.DS4DEVDB = 0x00;
++        /* -- end f4->DS4DEVCT -- */
++
++	bzero(f4->DS4AMTIM, sizeof(f4->DS4AMTIM));
++	bzero(f4->DS4AMCAT, sizeof(f4->DS4AMCAT));
++	bzero(f4->DS4R2TIM, sizeof(f4->DS4R2TIM));
++	bzero(f4->res1, sizeof(f4->res1));
++	bzero(f4->DS4F6PTR, sizeof(f4->DS4F6PTR));
++
++        /* -- begin f4lbl->DS4VTOCE -- */
++	vtoc_set_extent(&f4->DS4VTOCE, 0x01, 0x00, &lower, &upper);
++        /* -- end f4lbl->DS4VTOCE -- */
++
++	bzero(f4->res2, sizeof(f4->res2));
++	f4->DS4EFLVL = 0x00;
++	bzero(&f4->DS4EFPTR, sizeof(f4->DS4EFPTR));
++	bzero(f4->res3, sizeof(f4->res3));
++}
++
++
++/*
++ * initializes a format5 label
++ */
++void
++vtoc_init_format5_label (format5_label_t *f5) 
++{
++	PDEBUG
++	int i;
++
++	bzero(f5, sizeof(format5_label_t));
++	for (i=0; i<4; i++) f5->DS5KEYID[i] = 0x05;
++	f5->DS5FMTID = 0xf5;
++}
++
++
++/*
++ * initializes a format7 label
++ */
++void
++vtoc_init_format7_label (format7_label_t *f7) 
++{
++	PDEBUG
++	int i;
++
++	bzero(f7, sizeof(format7_label_t));
++	for (i=0; i<4; i++) f7->DS7KEYID[i] = 0x07;
++	f7->DS7FMTID = 0xf7;
++}
++
++
++/*
++ * initializes a format1 label
++ */
++void 
++vtoc_init_format1_label (
++	char *volid,
++        unsigned int blksize,
++	extent_t *part_extent,
++	format1_label_t *f1) 
++{
++	PDEBUG
++        struct tm * creatime;
++	time_t t;
++	char str[80];
++
++	/* get actual date */
++	t = time(NULL);
++	creatime = gmtime(&t);
++
++	bzero(f1->DS1DSNAM, sizeof(f1->DS1DSNAM));
++	sprintf(str, "PART    .NEW                                ");
++	vtoc_ebcdic_enc(str, str, 44);
++	strncpy(f1->DS1DSNAM, str, 44);
++	f1->DS1FMTID = 0xf1;
++	strncpy(f1->DS1DSSN, "      ", 6);
++	f1->DS1VOLSQ = 0x0001;
++
++	vtoc_set_date(&f1->DS1CREDT,
++                      (u_int8_t) creatime->tm_year,
++		      (u_int16_t) creatime->tm_yday);
++	/* expires never - 99 365 */
++        vtoc_set_date(&f1->DS1EXPDT,
++	              0x63,
++                      0x016D);
++	f1->DS1NOEPV = 0x01;
++	f1->DS1NOBDB = 0x00;
++        f1->DS1FLAG1 = 0x00;
++	vtoc_ebcdic_enc("IBM LINUX    ", str, 13);
++	strncpy(f1->DS1SYSCD, str, 13);
++        vtoc_set_date(&f1->DS1REFD,
++		      (u_int8_t) creatime->tm_year,
++                      (u_int16_t) creatime->tm_yday);
++        f1->DS1SMSFG = 0x00;
++        f1->DS1SCXTF = 0x00;
++        f1->DS1SCXTV = 0x0000;
++        f1->DS1DSRG1 = 0x00;
++        f1->DS1DSRG2 = 0x00;
++        f1->DS1RECFM = 0x88;
++        f1->DS1OPTCD = 0x00;
++        f1->DS1BLKL  = blksize;
++        f1->DS1LRECL = blksize;
++        f1->DS1KEYL  = 0x00;
++        f1->DS1RKP   = 0x0000;
++        f1->DS1DSIND = 0x80; /* last volume for this dataset */
++        f1->DS1SCAL1 = 0x80;
++        bzero(&f1->DS1SCAL3, sizeof(f1->DS1SCAL3));
++	vtoc_set_ttr(&f1->DS1LSTAR,
++	             0x0000,
++	             0x00);
++	f1->DS1TRBAL = 0x00;
++	bzero(&f1->res1, sizeof(f1->res1));
++        memcpy(&f1->DS1EXT1,
++               part_extent,
++               sizeof(extent_t));
++        bzero(&f1->DS1EXT2, sizeof(extent_t));
++        bzero(&f1->DS1EXT3, sizeof(extent_t));
++        vtoc_set_cchhb(&f1->DS1PTRDS,
++                       0x0000, 0x0000, 0x00);
++}
++
++
++/*
++ * do some updates to the VTOC format4 label
++ */
++void 
++vtoc_update_format4_label (
++	format4_label_t *f4,
++	cchhb_t *highest_f1,
++	u_int16_t unused_update) 
++{
++	PDEBUG
++	/* update highest address of a format 1 label */
++	memcpy(&f4->DS4HPCHR, highest_f1, sizeof(cchhb_t));
++
++	/* update unused DSCB count */
++	f4->DS4DSREC = unused_update;
++}
++
++
++/*
++ * reorganizes all extents within a FMT5 label
++ */
++static void
++vtoc_reorganize_FMT5_extents (format5_label_t *f5) 
++{
++	PDEBUG
++	ds5ext_t *ext, *last, tmp;
++	int i, j;
++
++	for (i=0; i<26; i++)
++	{
++		if (i==0) 
++			last = &f5->DS5AVEXT; 
++		else if ((i > 0) && (i < 8))
++			last = &f5->DS5EXTAV[i-1];
++		else
++			last = &f5->DS5MAVET[i-8];
++
++		for (j=i; j<26; j++)
++		{
++			if (j==0) 
++				ext = &f5->DS5AVEXT; 
++			else if ((j > 0) && (j < 8))
++				ext = &f5->DS5EXTAV[j-1];
++			else
++				ext = &f5->DS5MAVET[j-8];
++
++			if (((ext->t > 0) && (last->t == 0)) || 
++			    ((ext->t > 0) && (ext->t < last->t)))
++			{
++				tmp.t  = last->t;
++				tmp.fc = last->fc;
++				tmp.ft = last->ft;
++				last->t  = ext->t;
++				last->fc = ext->fc;
++				last->ft = ext->ft;
++				ext->t  = tmp.t;
++				ext->fc = tmp.fc;
++				ext->ft = tmp.ft;
++			}
++		}
++	}
++}
++
++
++/*
++ * add a free space extent description to the VTOC FMT5 DSCB
++ */
++void 
++vtoc_update_format5_label_add (format5_label_t *f5,
++			       int verbose,
++			       int cyl,
++			       int trk,
++			       u_int16_t a, 
++			       u_int16_t b, 
++			       u_int8_t c) 
++{
++	PDEBUG
++	ds5ext_t *ext = NULL, *tmp = NULL;
++	int i;	
++
++	for (i=0; i<26; i++)
++	{
++		if (i==0) 
++			ext = &f5->DS5AVEXT; 
++		else if ((i > 0) && (i < 8))
++			ext = &f5->DS5EXTAV[i-1];
++		else
++			ext = &f5->DS5MAVET[i-8];
++
++		if (((a < ext->t) && (a + b*trk + c > ext->t)) || 
++		    ((a > ext->t) && (ext->t + ext->fc*trk + ext->ft > a)))
++		{
++			printf("BUG: overlapping free space extents " \
++			       "in FMT5 DSCB!\nexiting...\n");
++			exit(1);
++		}
++
++		if ((ext->t + ext->fc + ext->ft) == 0x0000)
++		{
++			ext->t  = a;
++			ext->fc = b;
++			ext->ft = c;
++			tmp = ext;
++			if (verbose) 
++				printf("FMT5 add extent: " \
++				       "add new extent\n");
++			break;
++		}
++	}
++
++	if (tmp == NULL)
++	{
++		/* BUG: no free extent found */
++		printf("BUG: no free FMT5 DSCB extent found!\nexiting...\n");
++		exit(1);
++	}
++
++	for (i=0; i<26; i++)
++	{
++		if (i==0)
++			ext = &f5->DS5AVEXT;
++		else if ((i > 0) && (i < 8))
++			ext = &f5->DS5EXTAV[i-1];
++		else
++			ext = &f5->DS5MAVET[i-8];
++
++		if ((ext->t + ext->fc + ext->ft) == 0x0000)
++			continue;
++
++		if ((ext->t + ext->fc*trk + ext->ft) == tmp->t)
++		{
++			/* this extent precedes the new one */
++			ext->fc += (tmp->fc + (tmp->ft + ext->ft)/trk);
++			ext->ft = (tmp->ft + ext->ft) % trk;
++			bzero(tmp, sizeof(ds5ext_t));
++			tmp = ext;
++			if (verbose) 
++				printf("FMT5 add extent: " \
++				       "merge with predecessor\n");
++			i = -1;
++			continue;
++		} 
++
++		if ((tmp->t + tmp->fc*trk + tmp->ft) == ext->t)
++		{
++			/* this extent succeeds the new one */
++			ext->t = tmp->t;
++			ext->fc += (tmp->fc + (tmp->ft + ext->ft)/trk);
++			ext->ft = (tmp->ft + ext->ft) % trk;
++			bzero(tmp, sizeof(ds5ext_t));
++			tmp = ext;
++			if (verbose) 
++				printf("FMT5 add extent: " \
++				       "merge with successor\n");
++			i = -1;
++			continue;
++		} 
++	}
++}
++
++
++/*
++ * remove a free space extent description from the VTOC FMT5 DSCB
++ */
++void 
++vtoc_update_format5_label_del (format5_label_t *f5,
++			       int verbose,
++			       int cyl,
++			       int trk,
++			       u_int16_t a,
++			       u_int16_t b,
++			       u_int8_t c) 
++{
++	PDEBUG
++	ds5ext_t *ext;
++	int i, counter=0;
++	
++	for (i=0; i<26; i++)
++	{
++		if (i==0) 
++			ext = &f5->DS5AVEXT; 
++		else if ((i > 0) && (i < 8))
++			ext = &f5->DS5EXTAV[i-1];
++		else
++			ext = &f5->DS5MAVET[i-8];
++
++		if ((a == ext->t) && (b == ext->fc) && (c == ext->ft))
++		{
++			/* fills up whole free space gap */
++			bzero(ext, sizeof(ds5ext_t));
++			if (verbose) 
++				printf("FMT5 del extent: fills whole gap\n");
++			counter++;
++			break;
++		}
++
++		if ((a == ext->t) && ((b < ext->fc) || (c < ext->ft)))
++		{
++			/* left-bounded in free space gap */
++			ext->t = ext->t + b*trk + c;
++			if (c > ext->ft)
++			{
++				ext->fc -= (b + 1);
++				ext->ft -= (c - trk);
++			}
++			else
++			{
++				ext->fc -= b;
++				ext->ft -= c;
++			}
++			if (verbose) 
++				printf("FMT5 del extent: left bounded\n");
++			counter++;
++			break;
++		}
++
++		if ((ext->t < a) && 
++		    ((ext->t + ext->fc*trk + ext->ft) == (a + b*trk + c)))
++		{
++			/* right-bounded in free space gap */
++			if (c > ext->ft)
++			{
++				ext->fc -= (b + 1);
++				ext->ft -= (c - trk);
++			}
++			else
++			{
++				ext->fc -= b;
++				ext->ft -= c;
++			}
++			if (verbose) 
++				printf("FMT5 del extent: right bounded\n");
++			counter++;
++			break;
++		}
++
++		if ((a > ext->t) &&
++			((ext->t + ext->fc*trk + ext->ft) > (a + b*trk + c)))
++		{
++			/* partition devides free space into 2 pieces */
++			u_int16_t x = a + b*trk + c;
++			u_int16_t w,y;
++			u_int8_t z;
++
++			w = (ext->t + ext->fc*trk + ext->ft) - (a + b*trk + c);
++			y = w / trk;
++			z = w % trk;
++
++			ext->fc = (a - ext->t) / trk;
++			ext->ft = (a - ext->t) % trk;
++
++			vtoc_update_format5_label_add(f5, verbose, 
++						      cyl, trk, x, y, z);
++
++			if (verbose) 
++				printf("FMT5 del extent: 2 pieces\n");
++			counter++;
++			break;
++		}
++
++		if ((a < ext->t) && (a + b*trk + c > ext->t) &&
++		    (a + b*trk + c < ext->t + ext->fc*trk + ext->ft))
++		{
++			printf("BUG: corresponding free space extent " \
++			       "doesn't match free space currently shown " \
++			       "in FMT5 DSCB!\nexiting...\n");
++			exit(1);
++		}
++		
++		if ((a > ext->t) && (a < ext->t + ext->fc*trk + ext->ft) && 
++		    (a + b*trk + c > ext->t + ext->fc*trk + ext->ft))
++		{
++     			printf("BUG: specified free space extent for " \
++			       "deleting doesn't match free space " \
++			       "currently shown in FMT5 DSCB!\n" \
++			       "exiting...\n");
++			exit(1);
++		}
++	}
++
++	if (counter > 0) return;
++
++	printf("BUG: specified free space extent for " \
++	       "deleting not found in FMT5 DSCB!\n" \
++	       "exiting...\n");
++	exit(1);
++}
++
++
++/*
++ * reorganizes all extents within a FMT7 label
++ */
++static void
++vtoc_reorganize_FMT7_extents (format7_label_t *f7) 
++{
++	PDEBUG
++	ds7ext_t *ext, *last, tmp;
++	int i, j;
++
++	for (i=0; i<16; i++)
++	{
++		if (i<5) 
++			last = &f7->DS7EXTNT[i]; 
++		else 
++			last = &f7->DS7ADEXT[i-5];
++
++		for (j=i; j<16; j++)
++		{
++			if (j<5) 
++				ext = &f7->DS7EXTNT[j]; 
++			else 
++				ext = &f7->DS7ADEXT[j-5];
++
++			if (((ext->a > 0) && (last->a == 0)) || 
++			    ((ext->a > 0) && (ext->a < last->a)))
++			{
++				tmp.a = last->a;
++				tmp.b = last->b;
++				last->a = ext->a;
++				last->b = ext->b;
++				ext->a = tmp.a;
++				ext->b = tmp.b;
++			}
++		}
++	}
++}
++
++
++/*
++ * add a free space extent description to the VTOC FMT7 DSCB
++ */
++void 
++vtoc_update_format7_label_add (format7_label_t *f7, int verbose, 
++			       u_int32_t a, u_int32_t b) 
++{
++	PDEBUG
++	ds7ext_t *ext = NULL, *tmp = NULL;
++	int i;	
++
++	for (i=0; i<16; i++)
++	{
++		if (i<5) 
++			ext = &f7->DS7EXTNT[i]; 
++		else 
++			ext = &f7->DS7ADEXT[i-5];
++
++		if (((a < ext->a) && (b > ext->a) && (b < ext->b)) || 
++		    ((a > ext->a) && (a < ext->b) && (b > ext->b)))
++		{
++			printf("BUG: overlapping free space extents " \
++			       "in FMT7 DSCB!\nexiting...\n");
++			exit(1);
++		}
++
++		if ((ext->a + ext->b) == 0x00000000)
++		{
++			ext->a = a;
++			ext->b = b;
++			tmp = ext;
++			if (verbose) 
++				printf("FMT7 add extent: " \
++				       "add new extent\n");
++			break;
++		}
++	}
++
++	if (tmp == NULL)
++	{
++		/* BUG: no free extent found */
++		printf("BUG: no free FMT7 DSCB extent found!\nexiting...\n");
++		exit(1);
++	}
++
++	for (i=0; i<16; i++)
++	{
++		if (i<5) 
++			ext = &f7->DS7EXTNT[i]; 
++		else 
++			ext = &f7->DS7ADEXT[i-5];
++
++		if ((ext->a + ext->b) == 0x00000000)
++			continue;
++
++		if ((ext->b + 1) == tmp->a)
++		{
++			/* this extent precedes the new one */
++			ext->b = tmp->b;
++			bzero(tmp, sizeof(ds7ext_t));
++			tmp = ext;
++			if (verbose) 
++				printf("FMT7 add extent: " \
++				       "merge with predecessor\n");
++			i = -1;
++			continue;
++		} 
++
++		if (ext->a == (tmp->b + 1))
++		{
++			/* this extent succeeds the new one */
++			ext->a = tmp->a;
++			bzero(tmp, sizeof(ds7ext_t));
++			tmp = ext;
++			if (verbose) 
++				printf("FMT7 add extent: " \
++				       "merge with successor\n");
++			i = -1;
++			continue;
++		} 
++	}
++}
++
++
++/*
++ * remove a free space extent description from the VTOC FMT7 DSCB
++ */
++void 
++vtoc_update_format7_label_del (format7_label_t *f7, int verbose, 
++			       u_int32_t a, u_int32_t b) 
++{
++	PDEBUG
++	ds7ext_t *ext;
++	int i, counter=0;
++	
++	for (i=0; i<16; i++)
++	{
++		if (i<5) 
++			ext = &f7->DS7EXTNT[i]; 
++		else 
++			ext = &f7->DS7ADEXT[i-5];
++
++		if ((a == ext->a) && (b == ext->b))
++		{
++			/* fills up whole free space gap */
++			bzero(ext, sizeof(ds7ext_t));
++			if (verbose) 
++				printf("FMT7 del extent: " \
++				       "fills whole gap\n");
++			counter++;
++			break;
++		}
++
++		if ((a == ext->a) && (b < ext->b))
++		{
++			/* left-bounded in free space gap */
++			ext->a = b + 1;
++			if (verbose) 
++				printf("FMT7 add extent: " \
++				       "left-bounded\n");
++			counter++;
++			break;
++		}
++
++		if ((a > ext->a) && (b == ext->b))
++		{
++			/* right-bounded in free space gap */
++			ext->b = a - 1;
++			if (verbose) 
++				printf("FMT7 add extent: " \
++				       "right-bounded\n");
++			counter++;
++			break;
++		}
++
++		if ((a > ext->a) && (b < ext->b))
++		{
++			/* partition devides free space into 2 pieces */
++			vtoc_update_format7_label_add(f7, verbose, 
++						      b+1, ext->b);
++			ext->b = a - 1;
++			if (verbose) 
++				printf("FMT7 add extent: " \
++				       "2 pieces\n");
++			counter++;
++			break;
++		}
++
++		if (((a < ext->a) && (b > ext->a)) || ((a < ext->b) && (b > ext->b)))
++		{
++			printf ("BUG: specified free space extent for deleting "
++				"doesn't match free space currently shown in "
++				"FMT7 DSCB!\nexiting...\n");
++			printf ("%d %d %d %d\n", a, b, ext->a, ext->b);
++			exit(1);
++		}
++	}
++
++	if (counter > 0) return;
++
++	printf("BUG: specified free space extent for " \
++	       "deleting not found in FMT7 DSCB!\n" \
++	       "exiting...\n");
++	exit(1);
++}
++
++
++/*
++ *
++ */
++void
++vtoc_set_freespace(format4_label_t *f4,
++		   format5_label_t *f5,
++		   format7_label_t *f7,
++		   char ch,
++		   int verbose,
++		   u_int32_t start,
++		   u_int32_t stop,
++		   int cyl,
++		   int trk)
++{
++	PDEBUG
++	if ((cyl * trk) > BIG_DISK_SIZE)
++	{
++		if (ch == '+')
++		{
++			vtoc_update_format7_label_add(f7, verbose, 
++						      start, stop);
++		}
++		else if (ch == '-')
++		{
++			vtoc_update_format7_label_del(f7, verbose, 
++						      start, stop);
++		}
++		else
++		{
++			printf("BUG: syntax error in " \
++			       "vtoc_set_freespace call\n");
++		}
++
++		vtoc_reorganize_FMT7_extents (f7);
++
++		f4->DS4VTOCI = 0xa0;
++		f4->DS4EFLVL = 0x07;
++		vtoc_set_cchhb(&f4->DS4EFPTR, 0x0000, 0x0001, 0x03);
++	}
++	else
++	{
++		u_int16_t x,y;
++		u_int8_t z;
++
++		x = (u_int16_t) start;
++		y = (u_int16_t) ((stop - start + 1) / trk);
++		z =  (u_int8_t) ((stop - start + 1) % trk);
++
++		if (ch == '+')
++		{
++			vtoc_update_format5_label_add(f5, verbose,
++						      cyl, trk,
++						      x, y, z);
++		}
++		else if (ch == '-')
++		{
++			vtoc_update_format5_label_del(f5, verbose, 
++						      cyl, trk,
++						      x, y, z);
++		}
++		else
++		{
++			printf("BUG: syntax error in " \
++			       "vtoc_set_freespace call\n");
++		}
++		vtoc_reorganize_FMT5_extents (f5);
++	}
++		
++}
++
++
++
++
++
++
++
++
++
+diff -ruN --minimal parted-1.6.21.orig/libparted/vtoc.h parted-1.6.21/libparted/vtoc.h
+--- parted-1.6.21.orig/libparted/vtoc.h	1969-12-31 19:00:00.000000000 -0500
++++ parted-1.6.21/libparted/vtoc.h	2005-01-21 15:00:40.455627637 -0500
+@@ -0,0 +1,371 @@
++/*
++ * File...........: s390-tools/dasdview/vtoc.h
++ * Author(s)......: Horst Hummel <horst.hummel@de.ibm.com>
++ * Bugreports.to..: <Linux390@de.ibm.com>
++ *
++ * This is a user-space copy of the kernel vtoc,h. 
++ * 
++ * (C) IBM Corporation, IBM Deutschland Entwicklung GmbH, 2002
++ *
++ * History of changes (starts March 2002)
++ * 2002-03-12 initial
++ */
++
++#ifndef VTOC_H
++#define VTOC_H
++
++#include <string.h>
++#include <stdlib.h>
++#include <stdio.h>
++#include <errno.h>
++#include <ctype.h>
++#include <time.h>
++#include <fcntl.h>
++#include <unistd.h>
++
++#include <sys/stat.h>
++#include <sys/ioctl.h>
++
++#define LINE_LENGTH 80
++#define VTOC_START_CC 0x0
++#define VTOC_START_HH 0x1
++#define FIRST_USABLE_CYL 1
++#define FIRST_USABLE_TRK 2
++
++#define DASD_3380_TYPE 13148
++#define DASD_3390_TYPE 13200
++#define DASD_9345_TYPE 37701
++
++#define DASD_3380_VALUE 0xbb60
++#define DASD_3390_VALUE 0xe5a2
++#define DASD_9345_VALUE 0xbc98
++
++#define VOLSER_LENGTH 6
++#define BIG_DISK_SIZE 0x10000
++
++#define VTOC_ERROR "VTOC error:"
++
++
++typedef struct ttr 
++{
++        u_int16_t tt;
++        u_int8_t  r;
++} __attribute__ ((packed)) ttr_t;
++
++typedef struct cchhb 
++{
++        u_int16_t cc;
++        u_int16_t hh;
++        u_int8_t b;
++} __attribute__ ((packed)) cchhb_t;
++
++typedef struct cchh 
++{
++        u_int16_t cc;
++        u_int16_t hh;
++} __attribute__ ((packed)) cchh_t;
++
++typedef struct labeldate 
++{
++        u_int8_t  year;
++        u_int16_t day;
++} __attribute__ ((packed)) labeldate_t;
++
++
++typedef struct volume_label 
++{
++        char volkey[4];         /* volume key = volume label                 */
++	char vollbl[4];	        /* volume label                              */
++	char volid[6];	        /* volume identifier                         */
++	u_int8_t security;	        /* security byte                             */
++	cchhb_t vtoc;           /* VTOC address                              */
++	char res1[5];	        /* reserved                                  */
++        char cisize[4];	        /* CI-size for FBA,...                       */
++                                /* ...blanks for CKD                         */
++	char blkperci[4];       /* no of blocks per CI (FBA), blanks for CKD */
++	char labperci[4];       /* no of labels per CI (FBA), blanks for CKD */
++	char res2[4];	        /* reserved                                  */
++	char lvtoc[14];	        /* owner code for LVTOC                      */
++	char res3[29];	        /* reserved                                  */
++} __attribute__ ((packed)) volume_label_t;
++
++
++typedef struct extent 
++{
++        u_int8_t  typeind;          /* extent type indicator                     */
++        u_int8_t  seqno;            /* extent sequence number                    */
++        cchh_t llimit;          /* starting point of this extent             */
++        cchh_t ulimit;          /* ending point of this extent               */
++} __attribute__ ((packed)) extent_t;
++
++
++typedef struct dev_const 
++{
++        u_int16_t DS4DSCYL;           /* number of logical cyls                  */
++        u_int16_t DS4DSTRK;           /* number of tracks in a logical cylinder  */
++        u_int16_t DS4DEVTK;           /* device track length                     */
++        u_int8_t  DS4DEVI;            /* non-last keyed record overhead          */
++        u_int8_t  DS4DEVL;            /* last keyed record overhead              */
++        u_int8_t  DS4DEVK;            /* non-keyed record overhead differential  */
++        u_int8_t  DS4DEVFG;           /* flag byte                               */
++        u_int16_t DS4DEVTL;           /* device tolerance                        */
++        u_int8_t  DS4DEVDT;           /* number of DSCB's per track              */
++        u_int8_t  DS4DEVDB;           /* number of directory blocks per track    */
++} __attribute__ ((packed)) dev_const_t;
++
++
++typedef struct format1_label 
++{
++	char  DS1DSNAM[44];       /* data set name                           */
++	u_int8_t  DS1FMTID;           /* format identifier                       */
++	char  DS1DSSN[6];         /* data set serial number                  */
++	u_int16_t DS1VOLSQ;           /* volume sequence number                  */
++	labeldate_t DS1CREDT;     /* creation date: ydd                      */
++	labeldate_t DS1EXPDT;     /* expiration date                         */
++	u_int8_t  DS1NOEPV;           /* number of extents on volume             */
++        u_int8_t  DS1NOBDB;           /* no. of bytes used in last direction blk */
++	u_int8_t  DS1FLAG1;           /* flag 1                                  */
++	char  DS1SYSCD[13];       /* system code                             */
++	labeldate_t DS1REFD;      /* date last referenced                    */
++        u_int8_t  DS1SMSFG;           /* system managed storage indicators       */
++        u_int8_t  DS1SCXTF;           /* sec. space extension flag byte          */
++        u_int16_t DS1SCXTV;           /* secondary space extension value         */
++        u_int8_t  DS1DSRG1;           /* data set organisation byte 1            */
++        u_int8_t  DS1DSRG2;           /* data set organisation byte 2            */
++  	u_int8_t  DS1RECFM;           /* record format                           */
++	u_int8_t  DS1OPTCD;           /* option code                             */
++	u_int16_t DS1BLKL;            /* block length                            */
++	u_int16_t DS1LRECL;           /* record length                           */
++	u_int8_t  DS1KEYL;            /* key length                              */
++	u_int16_t DS1RKP;             /* relative key position                   */
++	u_int8_t  DS1DSIND;           /* data set indicators                     */
++        u_int8_t  DS1SCAL1;           /* secondary allocation flag byte          */
++  	char DS1SCAL3[3];         /* secondary allocation quantity           */
++	ttr_t DS1LSTAR;           /* last used track and block on track      */
++	u_int16_t DS1TRBAL;           /* space remaining on last used track      */
++        u_int16_t res1;               /* reserved                                */
++	extent_t DS1EXT1;         /* first extent description                */
++	extent_t DS1EXT2;         /* second extent description               */
++	extent_t DS1EXT3;         /* third extent description                */
++	cchhb_t DS1PTRDS;         /* possible pointer to f2 or f3 DSCB       */
++} __attribute__ ((packed)) format1_label_t;
++
++
++typedef struct format4_label 
++{
++	char  DS4KEYCD[44];       /* key code for VTOC labels: 44 times 0x04 */
++        u_int8_t  DS4IDFMT;           /* format identifier                       */
++	cchhb_t DS4HPCHR;         /* highest address of a format 1 DSCB      */
++        u_int16_t DS4DSREC;           /* number of available DSCB's              */
++        cchh_t DS4HCCHH;          /* CCHH of next available alternate track  */
++        u_int16_t DS4NOATK;           /* number of remaining alternate tracks    */
++        u_int8_t  DS4VTOCI;           /* VTOC indicators                         */
++        u_int8_t  DS4NOEXT;           /* number of extents in VTOC               */
++        u_int8_t  DS4SMSFG;           /* system managed storage indicators       */
++        u_int8_t  DS4DEVAC;           /* number of alternate cylinders. 
++                                     Subtract from first two bytes of 
++                                     DS4DEVSZ to get number of usable
++				     cylinders. can be zero. valid
++				     only if DS4DEVAV on.                    */
++        dev_const_t DS4DEVCT;     /* device constants                        */
++        char DS4AMTIM[8];         /* VSAM time stamp                         */
++        char DS4AMCAT[3];         /* VSAM catalog indicator                  */
++        char DS4R2TIM[8];         /* VSAM volume/catalog match time stamp    */
++        char res1[5];             /* reserved                                */
++        char DS4F6PTR[5];         /* pointer to first format 6 DSCB          */
++        extent_t DS4VTOCE;        /* VTOC extent description                 */
++        char res2[10];            /* reserved                                */
++        u_int8_t DS4EFLVL;            /* extended free-space management level    */
++        cchhb_t DS4EFPTR;         /* pointer to extended free-space info     */
++        char res3[9];             /* reserved                                */
++} __attribute__ ((packed)) format4_label_t;
++
++
++typedef struct ds5ext 
++{
++	u_int16_t t;                  /* RTA of the first track of free extent   */
++	u_int16_t fc;                 /* number of whole cylinders in free ext.  */
++	u_int8_t  ft;                 /* number of remaining free tracks         */
++} __attribute__ ((packed)) ds5ext_t;
++
++
++typedef struct format5_label 
++{
++	char DS5KEYID[4];         /* key identifier                          */
++	ds5ext_t DS5AVEXT;        /* first available (free-space) extent.    */
++	ds5ext_t DS5EXTAV[7];     /* seven available extents                 */
++	u_int8_t DS5FMTID;            /* format identifier                       */
++	ds5ext_t DS5MAVET[18];    /* eighteen available extents              */
++	cchhb_t DS5PTRDS;         /* pointer to next format5 DSCB            */
++} __attribute__ ((packed)) format5_label_t;
++
++
++typedef struct ds7ext 
++{
++	u_int32_t a;                  /* starting RTA value                      */
++	u_int32_t b;                  /* ending RTA value + 1                    */
++} __attribute__ ((packed)) ds7ext_t;
++
++
++typedef struct format7_label 
++{
++	char DS7KEYID[4];         /* key identifier                          */
++	ds7ext_t DS7EXTNT[5];     /* space for 5 extent descriptions         */
++	u_int8_t DS7FMTID;            /* format identifier                       */
++	ds7ext_t DS7ADEXT[11];    /* space for 11 extent descriptions        */
++	char res1[2];             /* reserved                                */
++	cchhb_t DS7PTRDS;         /* pointer to next FMT7 DSCB               */
++} __attribute__ ((packed)) format7_label_t;
++
++
++char * vtoc_ebcdic_enc (
++        char source[LINE_LENGTH],
++        char target[LINE_LENGTH],
++	int l);
++char * vtoc_ebcdic_dec (
++        char source[LINE_LENGTH],
++	char target[LINE_LENGTH],
++	int l);
++void vtoc_set_extent (
++        extent_t * ext,
++        u_int8_t typeind,
++        u_int8_t seqno,
++        cchh_t * lower,
++        cchh_t * upper);
++void vtoc_set_cchh (
++        cchh_t * addr,
++	u_int16_t cc,
++	u_int16_t hh);
++void vtoc_set_cchhb (
++        cchhb_t * addr,
++        u_int16_t cc,
++        u_int16_t hh,
++        u_int8_t b);
++void vtoc_set_date (
++        labeldate_t * d,
++        u_int8_t year,
++        u_int16_t day);
++
++void vtoc_volume_label_init (
++	volume_label_t *vlabel);
++
++int vtoc_read_volume_label (
++        int fd,
++        unsigned long vlabel_start,
++        volume_label_t * vlabel);
++
++int vtoc_write_volume_label (
++        int fd,
++        unsigned long vlabel_start,
++        volume_label_t *vlabel);
++
++void vtoc_volume_label_set_volser (
++	volume_label_t *vlabel,
++	char *volser);
++
++char *vtoc_volume_label_get_volser (
++	volume_label_t *vlabel,
++	char *volser);
++
++void vtoc_volume_label_set_key (
++        volume_label_t *vlabel,
++        char *key);     
++
++void vtoc_volume_label_set_label (
++	volume_label_t *vlabel,
++	char *lbl);
++
++char *vtoc_volume_label_get_label (
++	volume_label_t *vlabel,
++	char *lbl);
++
++void vtoc_read_label (
++        int fd,
++        unsigned long position,
++        format1_label_t *f1,
++        format4_label_t *f4,
++        format5_label_t *f5,
++        format7_label_t *f7);
++
++void vtoc_write_label (
++        int fd,
++        unsigned long position,
++        format1_label_t *f1,
++	format4_label_t *f4,
++	format5_label_t *f5,
++	format7_label_t *f7);
++
++
++void vtoc_init_format1_label (
++        char *volid,
++        unsigned int blksize,
++        extent_t *part_extent,
++        format1_label_t *f1);
++
++
++void vtoc_init_format4_label (
++        format4_label_t *f4lbl,
++	unsigned int usable_partitions,
++	unsigned int cylinders,
++	unsigned int tracks,
++	unsigned int blocks,
++	unsigned int blksize,
++	u_int16_t dev_type);
++
++void vtoc_update_format4_label (
++	format4_label_t *f4,
++	cchhb_t *highest_f1,
++	u_int16_t unused_update);
++
++
++void vtoc_init_format5_label (
++	format5_label_t *f5);
++
++void vtoc_update_format5_label_add (
++	format5_label_t *f5,
++	int verbose,
++	int cyl,
++	int trk,
++	u_int16_t a, 
++	u_int16_t b, 
++	u_int8_t c);
++ 
++void vtoc_update_format5_label_del (
++	format5_label_t *f5,
++	int verbose,
++	int cyl,
++	int trk,
++	u_int16_t a, 
++	u_int16_t b, 
++	u_int8_t c);
++
++
++void vtoc_init_format7_label (
++	format7_label_t *f7);
++
++void vtoc_update_format7_label_add (
++	format7_label_t *f7,
++	int verbose,
++	u_int32_t a, 
++	u_int32_t b);
++
++void vtoc_update_format7_label_del (
++	format7_label_t *f7, 
++	int verbose,
++	u_int32_t a, 
++	u_int32_t b);
++
++
++void vtoc_set_freespace(
++	format4_label_t *f4,
++	format5_label_t *f5,
++	format7_label_t *f7,
++	char ch,
++	int verbose,
++	u_int32_t start,
++	u_int32_t stop,
++	int cyl,
++	int trk);
++
++
++#endif /* VTOC_H */
