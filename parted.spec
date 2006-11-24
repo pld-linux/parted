@@ -168,6 +168,8 @@ install doc/pt_BR/*.8 $RPM_BUILD_ROOT%{_mandir}/pt_BR/man8
 
 %{?with_nls:%find_lang %{name}}
 
+rm -f $RPM_BUILD_ROOT%{_infodir}/dir
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
