@@ -15,12 +15,12 @@ Summary(pt_BR):	Ferramenta flexМvel de particionamento
 Summary(ru):	Программа GNU манипуляции дисковыми разделами
 Summary(uk):	Програма GNU ман╕пуляц╕╖ дисковими розд╕лами
 Name:		parted
-Version:	1.8.0
+Version:	1.8.1
 Release:	1
 License:	GPL
 Group:		Applications/System
-Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.gz
-# Source0-md5:	52d3e565fc3369d3388a9e02d4b17410
+Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.bz2
+# Source0-md5:	c430b38fd5f3c7530e2c3a3bdf605a29
 Patch0:		%{name}-pl.po-update.patch
 Patch1:		%{name}-no_wrap.patch
 Patch2:		%{name}-BIG_FAT_WARNING.patch
