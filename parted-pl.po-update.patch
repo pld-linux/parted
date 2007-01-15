@@ -1,120 +1,164 @@
---- parted-1.8.1/po/pl.po.orig	2006-12-04 03:16:24.000000000 +0100
-+++ parted-1.8.1/po/pl.po	2006-12-07 18:51:35.890014660 +0100
-@@ -5,10 +5,10 @@
+--- parted-1.8.2/po/pl.po.orig	2007-01-12 18:49:21.000000000 +0100
++++ parted-1.8.2/po/pl.po	2007-01-15 20:52:41.564150684 +0100
+@@ -1,14 +1,14 @@
+ # Polish translations for GNU Parted package.
+ # Copyright (C) 2003, 2005, 2006 Free Software Foundation, Inc.
+ # Wojciech Polak <polak@gnu.org>, 2003, 2005, 2006.
+-# Jakub Bogusz <qboosh@pld-linux.org>, 2006.
++# Jakub Bogusz <qboosh@pld-linux.org>, 2006-2007.
  #
  msgid ""
  msgstr ""
--"Project-Id-Version: parted 1.8.0rc2\n"
-+"Project-Id-Version: parted 1.8.1\n"
+-"Project-Id-Version: parted 1.8.1\n"
++"Project-Id-Version: parted 1.8.2\n"
  "Report-Msgid-Bugs-To: bug-parted@gnu.org\n"
- "POT-Creation-Date: 2006-12-03 21:16-0500\n"
--"PO-Revision-Date: 2006-10-12 19:21+0200\n"
-+"PO-Revision-Date: 2006-12-07 18:01+0100\n"
+ "POT-Creation-Date: 2007-01-12 12:44-0500\n"
+-"PO-Revision-Date: 2006-12-07 18:01+0100\n"
++"PO-Revision-Date: 2007-01-15 20:40+0100\n"
  "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
  "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
  "MIME-Version: 1.0\n"
-@@ -993,6 +993,8 @@
+@@ -991,11 +991,10 @@
+ "URZ¡DZENIE', a nastêpnie 'e2fsck -fD URZ¡DZENIE'."
+ 
  #: libparted/fs/ext2/ext2_resize.c:692
- msgid "GNU Parted cannot resize this file system, please useresize2fs."
+-#, fuzzy
+ msgid "GNU Parted cannot resize this file system, please use 'resize2fs'."
  msgstr ""
-+"GNU Parted nie potrafi zmieniæ rozmiaru tego systemu plików, proszê u¿yæ "
-+"resize2fs."
+ "GNU Parted nie potrafi zmieniæ rozmiaru tego systemu plików, proszê u¿yæ "
+-"resize2fs."
++"'resize2fs'."
  
  #: libparted/fs/ext2/ext2_block_relocator.c:198
  msgid "Cross-linked blocks found!  Better go run e2fsck first!"
-@@ -1632,7 +1634,7 @@
+@@ -1635,7 +1634,7 @@
  
  #: parted/parted.c:79
- msgid "lists partition tables of all detected devices"
+ msgid "displays machine parseable output"
 -msgstr ""
-+msgstr "wypisuje tablice partycji wszystkich wykrytych urz±dzeñ"
++msgstr "wy¶wietla dane w formacie czytelnym dla maszyny"
  
  #: parted/parted.c:80
  msgid "never prompts for user intervention"
-@@ -1730,11 +1732,13 @@
- msgstr "%0.f%%\t(czas do koñca %.2d:%.2d)"
+@@ -1707,7 +1706,6 @@
+ msgstr "Informacje o wersji GNU Parteda:\n"
  
- #: parted/parted.c:174
+ #: parted/parted.c:110
+-#, fuzzy
+ msgid ""
+ "Copyright (C) 1998 - 2006 Free Software Foundation, Inc.\n"
+ "This program is free software, covered by the GNU General Public License.\n"
+@@ -1740,7 +1738,7 @@
+ "Parted."
+ msgstr ""
+ "Partycja %s jest u¿ywana.  Nale¿y j± od³±czyæ przed jej modyfikacj± "
+-"Parteddem."
++"Partedem."
+ 
+ #: parted/parted.c:191
+ #, c-format
+@@ -2071,12 +2069,11 @@
+ msgstr "drukuj"
+ 
+ #: parted/parted.c:2130
+-#, fuzzy
+ msgid ""
+ "print [devices|free|list,all|NUMBER]     display the partition table, a "
+ "partition, or all devices"
+ msgstr ""
+-"print [free|NUMER|all]        wy¶wietla tablicê partycji, partycjê lub "
++"print [devices|free|list,all|NUMER]   wy¶wietla tablicê partycji, partycjê lub "
+ "wszystkie urz±dzenia"
+ 
+ #: parted/parted.c:2134
+@@ -2084,26 +2081,28 @@
+ "Without arguments, print displays the entire partition table. However with "
+ "the following arguments it performs the various other actions.\n"
+ msgstr ""
++"Bez argumentów print wy¶wietla ca³± tablicê partycji. Jednak z nastêpuj±cymi parametrami wykonuje ró¿ne inne akcje:\n"
+ 
+ #: parted/parted.c:2136
+ msgid "a. devices : display all active block devices\n"
+-msgstr ""
++msgstr "a. devices : wy¶wietla wszystkie aktywne urz±dzenia blokowe\n"
+ 
+ #: parted/parted.c:2137
+ msgid ""
+ "b. free    : display information about free unpartitioned space on the "
+ "current block device\n"
+ msgstr ""
++"b. free    : wy¶wietla informacje o wolnym, niespartycjonowanym miejscu na aktualnym urz±dzeniu blokowym\n"
+ 
+ #: parted/parted.c:2139
+-#, fuzzy
+ msgid "c. list,all: display partition tables of all active block devices\n"
+-msgstr "wypisuje tablice partycji wszystkich wykrytych urz±dzeñ"
++msgstr "c. list,all: wy¶wietla tablice partycji wszystkich aktywnych urz±dzeñ blokowych\n"
+ 
+ #: parted/parted.c:2140
+ msgid ""
+ "d. NUMBER  : display more detail information about particular partition\n"
+ msgstr ""
++"d. NUMER   : wy¶wietla bardziej szczegó³owe informacje o okre¶lonej partycji\n"
+ 
+ #: parted/parted.c:2144
+ msgid "quit"
+@@ -2291,31 +2290,31 @@
+ "i dodatkowymi informacjami o konfiguracji, które uwa¿asz za istotne.\n"
+ 
+ #: parted/ui.c:253
 -#, fuzzy, c-format
 +#, c-format
  msgid ""
- "Partition %s is being used. You must unmount it before you modify it with "
- "Parted."
--msgstr "Partycja %s jest u¿ywana.  Nale¿y j± od³±czyæ przed jej modyfikacj±."
-+msgstr ""
-+"Partycja %s jest u¿ywana.  Nale¿y j± od³±czyæ przed jej modyfikacj± "
-+"Parteddem."
- 
- #: parted/parted.c:190
- #, c-format
-@@ -1746,6 +1750,8 @@
- "The existing file system will be destroyed and all data on the partition "
- "will be lost. Do you want to continue?"
+ "\n"
+ "Error: SEGV_MAPERR (Address not mapped to object)\n"
  msgstr ""
-+"Istniej±cy system plików zostanie zniszczony, a wszystkie dane na partycji "
-+"zostan± utracone. Kontynuowaæ?"
+ "\n"
+-"B³±d: SEGV_MAPERR (Adres nie odwzorowany na obiekcie)"
++"B³±d: SEGV_MAPERR (Adres nie odwzorowany na obiekcie)\n"
  
- #: parted/parted.c:215
- #, c-format
-@@ -1753,6 +1759,8 @@
- "The existing disk label on %s will be destroyed and all data on this disk "
- "will be lost. Do you want to continue?"
- msgstr ""
-+"Istniej±ca etykieta dysku na %s zostanie zniszczona, a wszystkie dane na tym "
-+"dysku zostan± utracone. Kontynuowaæ?"
- 
- #: parted/parted.c:440 parted/parted.c:625 parted/parted.c:1010
- #: parted/parted.c:1090 parted/parted.c:1627 parted/parted.c:1704
-@@ -1992,17 +2000,15 @@
- msgstr "mklabel"
- 
- #: parted/parted.c:1964
--#, fuzzy
- msgid "mktable"
--msgstr "mklabel"
-+msgstr "mktable"
- 
- #: parted/parted.c:1967
--#, fuzzy
+ #: parted/ui.c:259
+-#, fuzzy, c-format
++#, c-format
  msgid ""
- "mklabel,mktable LABEL-TYPE               create a new disklabel (partition "
- "table)"
+ "\n"
+ "Error: SEGV_ACCERR (Invalid permissions for mapped object)\n"
  msgstr ""
--"mklabel TYP-ETYKIETY          tworzy now± etykietê dysku (tablicê partycji)"
-+"mklabel,mktable TYP-ETYKIETY  tworzy now± etykietê dysku (tablicê partycji)"
+ "\n"
+-"B³±d: SEGV_ACCERR (Nieprawid³owe uprawnienia dla odwzorowanego obiektu)"
++"B³±d: SEGV_ACCERR (Nieprawid³owe uprawnienia dla odwzorowanego obiektu)\n"
  
- #: parted/parted.c:1973
- msgid "mkfs"
-@@ -2071,7 +2077,6 @@
- "wszystkie urz±dzenia"
- 
- #: parted/parted.c:2028
--#, fuzzy
+ #: parted/ui.c:264
+-#, fuzzy, c-format
++#, c-format
  msgid ""
- "Without arguments, print displays the entire partition table. With 'free'\n"
- "argument, information about free space will be displayed otherwise if a\n"
-@@ -2083,7 +2088,7 @@
- "Z argumentem 'free' wy¶wietla informacje o wolnym miejscu, natomiast\n"
- "je¶li podano NUMER partycji, wtedy wy¶wietlone zostan± bardziej\n"
- "szczegó³owe informacje odno¶nie podanej partycji. Je¶li podano argument\n"
--"'all', wy¶wietlone zostan± informacje dla wszystkich urz±dzeñ."
-+"'all', wy¶wietlone zostan± informacje dla wszystkich urz±dzeñ.\n"
+ "\n"
+ "Error: A general SIGSEGV signal was encountered.\n"
+ msgstr ""
+ "\n"
+-"B³±d: Wyst±pi³ ogólny sygna³ SIGSEGV."
++"B³±d: Wyst±pi³ ogólny sygna³ SIGSEGV.\n"
  
- #: parted/parted.c:2036
- msgid "quit"
-@@ -2508,15 +2513,3 @@
+ #: parted/ui.c:289
+ #, c-format
+@@ -2528,20 +2527,3 @@
  #, c-format
  msgid "Using %s\n"
  msgstr "U¿ycie %s\n"
 -
+-#~ msgid "where necessary, prompts for user intervention"
+-#~ msgstr "gdy jest potrzeba, prosi o interwencjê u¿ytkownika"
+-
 -#~ msgid ""
--#~ "A resize operation on this file system will use EXPERIMENTAL code\n"
--#~ "that MAY CORRUPT it (although it hasn't doneso yet\n"
--#~ "in the past).\n"
--#~ "You should at least backup your data and run 'e2fsck -f' afterwards."
+-#~ "Without arguments, print displays the entire partition table. With "
+-#~ "'free'\n"
+-#~ "argument, information about free space will be displayed otherwise if a\n"
+-#~ "partition number is given, then more detailed information is displayed\n"
+-#~ "about that partition. If the 'all' argument is passed instead, partition\n"
+-#~ "information for all devices will be displayed.\n"
 -#~ msgstr ""
--#~ "Operacja zmiany rozmiaru na tym systemie plików u¿yje EKSPERYMENTALNEGO "
--#~ "kodu,\n"
--#~ "który MO¯E GO USZKODZIÆ (choæ jeszcze tak nie zrobi³ dotychczas).\n"
--#~ "Nale¿a³oby przynajmniej wykonaæ kopiê zapasow± danych, a potem 'e2fsck -"
--#~ "f'."
+-#~ "Bez podania argumentów, komenda print wy¶wietla ca³± tablicê partycji.\n"
+-#~ "Z argumentem 'free' wy¶wietla informacje o wolnym miejscu, natomiast\n"
+-#~ "je¶li podano NUMER partycji, wtedy wy¶wietlone zostan± bardziej\n"
+-#~ "szczegó³owe informacje odno¶nie podanej partycji. Je¶li podano argument\n"
+-#~ "'all', wy¶wietlone zostan± informacje dla wszystkich urz±dzeñ.\n"
