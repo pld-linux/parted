@@ -9,11 +9,11 @@
 #				# shouldn't cause problems, but who knows...
 #
 Summary:	Flexible partitioning tool
-Summary(es):	Herramienta de particionamiento flexible
-Summary(pl):	GNU Parted - narzêdzie do zarz±dzania partycjami na dyskach
-Summary(pt_BR):	Ferramenta flexível de particionamento
-Summary(ru):	ðÒÏÇÒÁÍÍÁ GNU ÍÁÎÉÐÕÌÑÃÉÉ ÄÉÓËÏ×ÙÍÉ ÒÁÚÄÅÌÁÍÉ
-Summary(uk):	ðÒÏÇÒÁÍÁ GNU ÍÁÎ¦ÐÕÌÑÃ¦§ ÄÉÓËÏ×ÉÍÉ ÒÏÚÄ¦ÌÁÍÉ
+Summary(es.UTF-8):   Herramienta de particionamiento flexible
+Summary(pl.UTF-8):   GNU Parted - narzÄ™dzie do zarzÄ…dzania partycjami na dyskach
+Summary(pt_BR.UTF-8):   Ferramenta flexÃ­vel de particionamento
+Summary(ru.UTF-8):   ÐŸÑ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ð° GNU Ð¼Ð°Ð½Ð¸Ð¿ÑƒÐ»ÑÑ†Ð¸Ð¸ Ð´Ð¸ÑÐºÐ¾Ð²Ñ‹Ð¼Ð¸ Ñ€Ð°Ð·Ð´ÐµÐ»Ð°Ð¼Ð¸
+Summary(uk.UTF-8):   ÐŸÑ€Ð¾Ð³Ñ€Ð°Ð¼Ð° GNU Ð¼Ð°Ð½Ñ–Ð¿ÑƒÐ»ÑÑ†Ñ–Ñ— Ð´Ð¸ÑÐºÐ¾Ð²Ð¸Ð¼Ð¸ Ñ€Ð¾Ð·Ð´Ñ–Ð»Ð°Ð¼Ð¸
 Name:		parted
 Version:	1.8.2
 Release:	1
@@ -52,42 +52,42 @@ move and copy hard disk partitions. This is useful for creating space
 for new operating systems, reorganising disk usage, and copying data
 to new hard disks.
 
-%description -l es
+%description -l es.UTF-8
 GNU Parted es un programa que permite crear, destruir, redimensionar,
-mover y copiar particiones de discos duros. Es útil para crear espacio
+mover y copiar particiones de discos duros. Es Ãºtil para crear espacio
 para nuevos sistemas operacionales, reorganizar el uso del disco, y
 copiar datos para nuevos discos duros.
 
-%description -l pl
-GNU Parted jest programem który umo¿liwia tworzenie, usuwanie, zmianê
-rozmiaru, przesuwanie i kopiowanie partycji na dyskach. Mo¿e byæ
-u¿yteczny przy tworzeniu partycji pod nowy system jak i przy
-reorganizacji sposobu wykorzystywania dysków, a tak¿e ich kopiowaniu.
+%description -l pl.UTF-8
+GNU Parted jest programem ktÃ³ry umoÅ¼liwia tworzenie, usuwanie, zmianÄ™
+rozmiaru, przesuwanie i kopiowanie partycji na dyskach. MoÅ¼e byÄ‡
+uÅ¼yteczny przy tworzeniu partycji pod nowy system jak i przy
+reorganizacji sposobu wykorzystywania dyskÃ³w, a takÅ¼e ich kopiowaniu.
 
-%description -l pt_BR
-O GNU Parted é um programa que permite criar, destruir, redimensionar,
-mover e copiar partições de discos rígidos. É útil para criar espaço
+%description -l pt_BR.UTF-8
+O GNU Parted Ã© um programa que permite criar, destruir, redimensionar,
+mover e copiar partiÃ§Ãµes de discos rÃ­gidos. Ã‰ Ãºtil para criar espaÃ§o
 para novos sistemas operacionais, reorganizar o uso do disco, e copiar
-dados para novos discos rígidos.
+dados para novos discos rÃ­gidos.
 
-%description -l ru
-GNU Parted - ÜÔÏ ÐÒÏÇÒÁÍÍÁ, ÐÏÚ×ÏÌÑÀÝÁÑ ×ÁÍ ÓÏÚÄÁ×ÁÔØ, ÕÄÁÌÑÔØ, ÍÅÎÑÔØ
-ÒÁÚÍÅÒ, ÐÅÒÅÍÅÝÁÔØ É ËÏÐÉÒÏ×ÁÔØ ÒÁÚÄÅÌÙ ÎÁ ÖÅÓÔËÉÈ ÄÉÓËÁÈ. üÔÏ ÐÏÌÅÚÎÏ
-ÄÌÑ ÓÏÚÄÁÎÉÑ ÍÅÓÔÁ ÄÌÑ ÒÁÚÍÅÝÅÎÉÑ ÎÏ×ÙÈ ÏÐÅÒÁÃÉÏÎÎÙÈ ÓÉÓÔÅÍ,
-ÒÅÏÒÇÁÎÉÚÁÃÉÉ ÉÓÐÏÌØÚÏ×ÁÎÉÑ ÄÉÓËÁ É ËÏÐÉÒÏ×ÁÎÉÑ ÄÁÎÎÙÈ ÎÁ ÎÏ×ÙÅ ÄÉÓËÉ.
+%description -l ru.UTF-8
+GNU Parted - ÑÑ‚Ð¾ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ð°, Ð¿Ð¾Ð·Ð²Ð¾Ð»ÑÑŽÑ‰Ð°Ñ Ð²Ð°Ð¼ ÑÐ¾Ð·Ð´Ð°Ð²Ð°Ñ‚ÑŒ, ÑƒÐ´Ð°Ð»ÑÑ‚ÑŒ, Ð¼ÐµÐ½ÑÑ‚ÑŒ
+Ñ€Ð°Ð·Ð¼ÐµÑ€, Ð¿ÐµÑ€ÐµÐ¼ÐµÑ‰Ð°Ñ‚ÑŒ Ð¸ ÐºÐ¾Ð¿Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ Ñ€Ð°Ð·Ð´ÐµÐ»Ñ‹ Ð½Ð° Ð¶ÐµÑÑ‚ÐºÐ¸Ñ… Ð´Ð¸ÑÐºÐ°Ñ…. Ð­Ñ‚Ð¾ Ð¿Ð¾Ð»ÐµÐ·Ð½Ð¾
+Ð´Ð»Ñ ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ Ð¼ÐµÑÑ‚Ð° Ð´Ð»Ñ Ñ€Ð°Ð·Ð¼ÐµÑ‰ÐµÐ½Ð¸Ñ Ð½Ð¾Ð²Ñ‹Ñ… Ð¾Ð¿ÐµÑ€Ð°Ñ†Ð¸Ð¾Ð½Ð½Ñ‹Ñ… ÑÐ¸ÑÑ‚ÐµÐ¼,
+Ñ€ÐµÐ¾Ñ€Ð³Ð°Ð½Ð¸Ð·Ð°Ñ†Ð¸Ð¸ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ð½Ð¸Ñ Ð´Ð¸ÑÐºÐ° Ð¸ ÐºÐ¾Ð¿Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ñ Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð½Ð° Ð½Ð¾Ð²Ñ‹Ðµ Ð´Ð¸ÑÐºÐ¸.
 
-%description -l uk
-GNU Parted - ÃÅ ÐÒÏÇÒÁÍÁ, ÑËÁ ÄÏÚ×ÏÌÑ¤ ×ÁÍ ÓÔ×ÏÒÀ×ÁÔÉ, ×ÉÄÁÌÑÔÉ,
-ÚÍ¦ÎÀ×ÁÔÉ ÒÏÚÍ¦Ò, ÐÅÒÅÍ¦ÝÕ×ÁÔÉ ÔÁ ËÏÐ¦À×ÁÔÉ ÒÏÚÄ¦ÌÉ ÎÁ ÖÏÒÓÔËÉÈ
-ÄÉÓËÁÈ. ãÅ ËÏÒÉÓÎÏ ÄÌÑ ÓÔ×ÏÒÅÎÎÑ Í¦ÓÃÑ ÄÌÑ ÒÏÚÍ¦ÝÅÎÎÑ ÎÏ×ÉÈ
-ÏÐÅÒÁÃ¦ÊÎÉÈ ÓÉÓÔÅÍ, ÒÅÏÒÇÁÎ¦ÚÁÃ¦§ ×ÉËÏÒÉÓÔÁÎÎÑ ÄÉÓËÕ ÔÁ ËÏÐ¦À×ÁÎÎÑ
-ÄÁÎÉÈ ÎÁ ÎÏ×¦ ÄÉÓËÉ.
+%description -l uk.UTF-8
+GNU Parted - Ñ†Ðµ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð°, ÑÐºÐ° Ð´Ð¾Ð·Ð²Ð¾Ð»ÑÑ” Ð²Ð°Ð¼ ÑÑ‚Ð²Ð¾Ñ€ÑŽÐ²Ð°Ñ‚Ð¸, Ð²Ð¸Ð´Ð°Ð»ÑÑ‚Ð¸,
+Ð·Ð¼Ñ–Ð½ÑŽÐ²Ð°Ñ‚Ð¸ Ñ€Ð¾Ð·Ð¼Ñ–Ñ€, Ð¿ÐµÑ€ÐµÐ¼Ñ–Ñ‰ÑƒÐ²Ð°Ñ‚Ð¸ Ñ‚Ð° ÐºÐ¾Ð¿Ñ–ÑŽÐ²Ð°Ñ‚Ð¸ Ñ€Ð¾Ð·Ð´Ñ–Ð»Ð¸ Ð½Ð° Ð¶Ð¾Ñ€ÑÑ‚ÐºÐ¸Ñ…
+Ð´Ð¸ÑÐºÐ°Ñ…. Ð¦Ðµ ÐºÐ¾Ñ€Ð¸ÑÐ½Ð¾ Ð´Ð»Ñ ÑÑ‚Ð²Ð¾Ñ€ÐµÐ½Ð½Ñ Ð¼Ñ–ÑÑ†Ñ Ð´Ð»Ñ Ñ€Ð¾Ð·Ð¼Ñ–Ñ‰ÐµÐ½Ð½Ñ Ð½Ð¾Ð²Ð¸Ñ…
+Ð¾Ð¿ÐµÑ€Ð°Ñ†Ñ–Ð¹Ð½Ð¸Ñ… ÑÐ¸ÑÑ‚ÐµÐ¼, Ñ€ÐµÐ¾Ñ€Ð³Ð°Ð½Ñ–Ð·Ð°Ñ†Ñ–Ñ— Ð²Ð¸ÐºÐ¾Ñ€Ð¸ÑÑ‚Ð°Ð½Ð½Ñ Ð´Ð¸ÑÐºÑƒ Ñ‚Ð° ÐºÐ¾Ð¿Ñ–ÑŽÐ²Ð°Ð½Ð½Ñ
+Ð´Ð°Ð½Ð¸Ñ… Ð½Ð° Ð½Ð¾Ð²Ñ– Ð´Ð¸ÑÐºÐ¸.
 
 %package devel
 Summary:	Files required to compile software that uses libparted
-Summary(es):	Archivos de desarrollo para libparted
-Summary(pl):	Pliki wymagane przy kompilacji programów u¿ywaj±cych libparted
-Summary(pt_BR):	Arquivos de desenvolvimento para a libparted
+Summary(es.UTF-8):   Archivos de desarrollo para libparted
+Summary(pl.UTF-8):   Pliki wymagane przy kompilacji programÃ³w uÅ¼ywajÄ…cych libparted
+Summary(pt_BR.UTF-8):   Arquivos de desenvolvimento para a libparted
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	device-mapper-devel >= 1.02.02
@@ -96,31 +96,31 @@ Requires:	libuuid-devel
 %description devel
 Files required to compile software that uses libparted.
 
-%description devel -l es
+%description devel -l es.UTF-8
 Este paquete incluye los archivos de encabezamiento y bibliotecas
-necesarios para ligar estáticamente programas con libparted.
+necesarios para ligar estÃ¡ticamente programas con libparted.
 
-%description devel -l pl
-Pliki wymagane przy kompilacji programów u¿ywaj±cych libparted.
+%description devel -l pl.UTF-8
+Pliki wymagane przy kompilacji programÃ³w uÅ¼ywajÄ…cych libparted.
 
-%description devel -l pt_BR
-O GNU Parted é um programa que permite criar, destruir, redimensionar,
-mover e copiar partições de discos rígidos. É útil para criar espaço
+%description devel -l pt_BR.UTF-8
+O GNU Parted Ã© um programa que permite criar, destruir, redimensionar,
+mover e copiar partiÃ§Ãµes de discos rÃ­gidos. Ã‰ Ãºtil para criar espaÃ§o
 para novos sistemas operacionais, reorganizar o uso do disco, e copiar
-dados para novos discos rígidos. Este pacote inclui os arquivos de
-cabeçalho e bibliotecas necessários para ligar estaticamente programas
+dados para novos discos rÃ­gidos. Este pacote inclui os arquivos de
+cabeÃ§alho e bibliotecas necessÃ¡rios para ligar estaticamente programas
 com a libparted.
 
 %package static
 Summary:	Static libparted library
-Summary(pl):	Biblioteka statyczna libparted
+Summary(pl.UTF-8):   Biblioteka statyczna libparted
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 Static libparted library.
 
-%description static -l pl
+%description static -l pl.UTF-8
 Biblioteka statyczna libparted.
 
 %prep
