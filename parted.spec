@@ -9,11 +9,11 @@
 #				# shouldn't cause problems, but who knows...
 #
 Summary:	Flexible partitioning tool
-Summary(es.UTF-8):   Herramienta de particionamiento flexible
-Summary(pl.UTF-8):   GNU Parted - narzędzie do zarządzania partycjami na dyskach
-Summary(pt_BR.UTF-8):   Ferramenta flexível de particionamento
-Summary(ru.UTF-8):   Программа GNU манипуляции дисковыми разделами
-Summary(uk.UTF-8):   Програма GNU маніпуляції дисковими розділами
+Summary(es.UTF-8):	Herramienta de particionamiento flexible
+Summary(pl.UTF-8):	GNU Parted - narzędzie do zarządzania partycjami na dyskach
+Summary(pt_BR.UTF-8):	Ferramenta flexível de particionamento
+Summary(ru.UTF-8):	Программа GNU манипуляции дисковыми разделами
+Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
 Version:	1.8.2
 Release:	1
@@ -85,9 +85,9 @@ GNU Parted - це програма, яка дозволяє вам створю�
 
 %package devel
 Summary:	Files required to compile software that uses libparted
-Summary(es.UTF-8):   Archivos de desarrollo para libparted
-Summary(pl.UTF-8):   Pliki wymagane przy kompilacji programów używających libparted
-Summary(pt_BR.UTF-8):   Arquivos de desenvolvimento para a libparted
+Summary(es.UTF-8):	Archivos de desarrollo para libparted
+Summary(pl.UTF-8):	Pliki wymagane przy kompilacji programów używających libparted
+Summary(pt_BR.UTF-8):	Arquivos de desenvolvimento para a libparted
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	device-mapper-devel >= 1.02.02
@@ -113,7 +113,7 @@ com a libparted.
 
 %package static
 Summary:	Static libparted library
-Summary(pl.UTF-8):   Biblioteka statyczna libparted
+Summary(pl.UTF-8):	Biblioteka statyczna libparted
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
