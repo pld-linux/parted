@@ -15,27 +15,28 @@ Summary(pt_BR.UTF-8):	Ferramenta flexível de particionamento
 Summary(ru.UTF-8):	Программа GNU манипуляции дисковыми разделами
 Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
-Version:	1.8.2
+Version:	1.8.6
 Release:	1
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.bz2
-# Source0-md5:	f29d377592273fd3e874ebe6d492a93c
+# Source0-md5:	03c967ae0e915e08da90605d68ba93d7
+# restored from git repository
+Source1:	%{name}.m4
 Patch0:		%{name}-pl.po-update.patch
 Patch1:		%{name}-no_wrap.patch
 Patch2:		%{name}-BIG_FAT_WARNING.patch
 Patch3:		%{name}-uClibc.patch
 Patch4:		%{name}-info.patch
-Patch5:		%{name}-link.patch
-Patch6:		%{name}-etherd.patch
-Patch7:		%{name}-segv.patch
-Patch8:		%{name}-headers.patch
-Patch9:		%{name}-man-pt.patch
+Patch5:		%{name}-etherd.patch
+Patch6:		%{name}-segv.patch
+Patch7:		%{name}-headers.patch
+Patch8:		%{name}-man-pt.patch
 URL:		http://www.gnu.org/software/parted/
-BuildRequires:	autoconf >= 2.50
-BuildRequires:	automake
+BuildRequires:	autoconf >= 2.61
+BuildRequires:	automake >= 1:1.10
 BuildRequires:	device-mapper-devel >= 1.02.02
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-devel >= 0.15
 BuildRequires:	libtool
 BuildRequires:	libuuid-devel
 %{?with_static:BuildRequires:	libuuid-static}
@@ -134,14 +135,13 @@ Biblioteka statyczna libparted.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
 
 rm -f po/stamp-po
 
 %build
 %{__gettextize}
 %{__libtoolize}
-%{__aclocal}
+%{__aclocal} -I m4
 %{__autoheader}
 %{__autoconf}
 %{__automake}
@@ -165,6 +165,9 @@ rm -rf $RPM_BUILD_ROOT
 # not supported yet by am
 install -d $RPM_BUILD_ROOT%{_mandir}/pt_BR/man8
 install doc/pt_BR/*.8 $RPM_BUILD_ROOT%{_mandir}/pt_BR/man8
+
+# missing in sources
+install -D %{SOURCE1} $RPM_BUILD_ROOT%{_aclocaldir}/parted.m4
 
 %{?with_nls:%find_lang %{name}}
 
@@ -196,6 +199,7 @@ rm -rf $RPM_BUILD_ROOT
 %{!?with_static:%attr(755,root,root) %{_libdir}/libparted.so}
 %{_libdir}/libparted.la
 %{_includedir}/parted
+%{_pkgconfigdir}/libparted.pc
 %{_aclocaldir}/parted.m4
 
 %files static
