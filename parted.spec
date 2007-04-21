@@ -145,6 +145,7 @@ rm -f po/stamp-po
 %{__autoheader}
 %{__autoconf}
 %{__automake}
+CFLAGS="%{rpmcflags} -fgnu89-inline"; export CFLAGS
 %configure \
 	%{!?with_readline:--without-readline} \
 	%{?with_readline:--with-readline} \
