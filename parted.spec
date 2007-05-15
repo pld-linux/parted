@@ -15,12 +15,12 @@ Summary(pt_BR.UTF-8):	Ferramenta flexível de particionamento
 Summary(ru.UTF-8):	Программа GNU манипуляции дисковыми разделами
 Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
-Version:	1.8.6
+Version:	1.8.7
 Release:	1
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.bz2
-# Source0-md5:	03c967ae0e915e08da90605d68ba93d7
+# Source0-md5:	4d64746c559720307ba646f4e06e99a3
 # restored from git repository
 Source1:	%{name}.m4
 Patch0:		%{name}-pl.po-update.patch
@@ -29,9 +29,8 @@ Patch2:		%{name}-BIG_FAT_WARNING.patch
 Patch3:		%{name}-uClibc.patch
 Patch4:		%{name}-info.patch
 Patch5:		%{name}-etherd.patch
-Patch6:		%{name}-segv.patch
-Patch7:		%{name}-headers.patch
-Patch8:		%{name}-man-pt.patch
+Patch6:		%{name}-headers.patch
+Patch7:		%{name}-man-pt.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.61
 BuildRequires:	automake >= 1:1.10
@@ -134,7 +133,6 @@ Biblioteka statyczna libparted.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
 
 rm -f po/stamp-po
 
@@ -145,7 +143,8 @@ rm -f po/stamp-po
 %{__autoheader}
 %{__autoconf}
 %{__automake}
-CFLAGS="%{rpmcflags} -fgnu89-inline"; export CFLAGS
+# fix glibc instead, this flag forces gcc 4.2 requirement
+#CFLAGS="%{rpmcflags} -fgnu89-inline"; export CFLAGS
 %configure \
 	%{!?with_readline:--without-readline} \
 	%{?with_readline:--with-readline} \
