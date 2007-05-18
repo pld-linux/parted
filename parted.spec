@@ -143,8 +143,6 @@ rm -f po/stamp-po
 %{__autoheader}
 %{__autoconf}
 %{__automake}
-# fix glibc instead, this flag forces gcc 4.2 requirement
-#CFLAGS="%{rpmcflags} -fgnu89-inline"; export CFLAGS
 %configure \
 	%{!?with_readline:--without-readline} \
 	%{?with_readline:--with-readline} \
