@@ -16,7 +16,7 @@ Summary(ru.UTF-8):	Программа GNU манипуляции дисковы�
 Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
 Version:	1.8.7
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.bz2
@@ -31,6 +31,7 @@ Patch4:		%{name}-info.patch
 Patch5:		%{name}-etherd.patch
 Patch6:		%{name}-headers.patch
 Patch7:		%{name}-man-pt.patch
+Patch8:		%{name}-inline.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.61
 BuildRequires:	automake >= 1:1.10
@@ -133,6 +134,7 @@ Biblioteka statyczna libparted.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 rm -f po/stamp-po
 
