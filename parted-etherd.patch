@@ -1,17 +1,12 @@
---- parted-1.8.0/include/parted/device.h.orig	2006-11-17 16:43:51.000000000 +0100
-+++ parted-1.8.0/include/parted/device.h	2006-11-23 20:53:35.820291000 +0100
-@@ -45,11 +45,9 @@
-         PED_DEVICE_UBD          = 8,
-         PED_DEVICE_DASD         = 9,
-         PED_DEVICE_VIODASD      = 10,
--        PED_DEVICE_SX8          = 11
--#ifdef ENABLE_DEVICE_MAPPER
--                                    ,
--        PED_DEVICE_DM           = 12
--#endif
-+        PED_DEVICE_SX8          = 11,
-+        PED_DEVICE_DM           = 12,
-+	PED_DEVICE_AOE		= 13
+--- parted-1.8.8/include/parted/device.h.orig	2007-07-31 21:03:53.000000000 +0200
++++ parted-1.8.8/include/parted/device.h	2007-08-22 22:20:18.024824864 +0200
+@@ -48,7 +48,8 @@
+ #ifdef ENABLE_DEVICE_MAPPER
+         PED_DEVICE_DM           = 12,
+ #endif
+-        PED_DEVICE_XVD          = 13
++        PED_DEVICE_XVD          = 13,
++        PED_DEVICE_AOE          = 14
  } PedDeviceType;
  
  typedef struct _PedDevice PedDevice;

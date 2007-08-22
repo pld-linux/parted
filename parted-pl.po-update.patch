@@ -1,1299 +1,367 @@
---- parted-1.8.7/po/pl.po.orig	2007-05-09 23:03:01.000000000 +0200
-+++ parted-1.8.7/po/pl.po	2007-05-15 20:03:10.914899701 +0200
-@@ -1,14 +1,14 @@
- # Polish translations for GNU Parted package.
--# Copyright (C) 2003, 2005, 2006 Free Software Foundation, Inc.
-+# Copyright (C) 2003, 2005, 2006, 2007 Free Software Foundation, Inc.
- # Wojciech Polak <polak@gnu.org>, 2003, 2005, 2006.
--# Jakub Bogusz <qboosh@pld-linux.org>, 2006.
-+# Jakub Bogusz <qboosh@pld-linux.org>, 2006-2007.
+--- parted-1.8.8/po/pl.po.orig	2007-08-09 20:50:24.000000000 +0200
++++ parted-1.8.8/po/pl.po	2007-08-22 22:17:46.804207292 +0200
+@@ -5,10 +5,10 @@
  #
  msgid ""
  msgstr ""
--"Project-Id-Version: parted 1.8.1\n"
-+"Project-Id-Version: parted 1.8.7\n"
+-"Project-Id-Version: parted 1.8.7\n"
++"Project-Id-Version: parted 1.8.8\n"
  "Report-Msgid-Bugs-To: bug-parted@gnu.org\n"
- "POT-Creation-Date: 2007-05-09 17:02-0400\n"
--"PO-Revision-Date: 2006-12-07 18:01+0100\n"
-+"PO-Revision-Date: 2007-05-15 17:40+0200\n"
+ "POT-Creation-Date: 2007-08-09 14:50-0400\n"
+-"PO-Revision-Date: 2007-05-15 17:40+0200\n"
++"PO-Revision-Date: 2007-08-20 18:22+0200\n"
  "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
  "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
  "MIME-Version: 1.0\n"
-@@ -19,67 +19,66 @@
- 
- #: lib/closeout.c:74
- msgid "write error"
--msgstr ""
-+msgstr "b³±d zapisu"
- 
- #: lib/error.c:125
--#, fuzzy
- msgid "Unknown system error"
--msgstr "Nieznany typ systemu plików \"%s\"."
-+msgstr "Nieznany b³±d systemowy"
- 
- #: lib/getopt.c:531 lib/getopt.c:547
- #, c-format
- msgid "%s: option `%s' is ambiguous\n"
--msgstr ""
-+msgstr "%s: opcja `%s' jest niejednoznaczna\n"
- 
- #: lib/getopt.c:580 lib/getopt.c:584
- #, c-format
- msgid "%s: option `--%s' doesn't allow an argument\n"
--msgstr ""
-+msgstr "%s: opcja `--%s' nie mo¿e mieæ argumentów\n"
- 
- #: lib/getopt.c:593 lib/getopt.c:598
- #, c-format
- msgid "%s: option `%c%s' doesn't allow an argument\n"
--msgstr ""
-+msgstr "%s: opcja `%c%s' nie mo¿e mieæ argumentów\n"
- 
- #: lib/getopt.c:641 lib/getopt.c:660 lib/getopt.c:976 lib/getopt.c:995
- #, c-format
- msgid "%s: option `%s' requires an argument\n"
--msgstr ""
-+msgstr "%s: opcja `%s' musi mieæ argument\n"
- 
- #: lib/getopt.c:698 lib/getopt.c:701
- #, c-format
- msgid "%s: unrecognized option `--%s'\n"
--msgstr ""
-+msgstr "%s: nieznana opcja `--%s'\n"
- 
- #: lib/getopt.c:709 lib/getopt.c:712
- #, c-format
- msgid "%s: unrecognized option `%c%s'\n"
--msgstr ""
-+msgstr "%s: nieznana opcja `%c%s'\n"
- 
- #: lib/getopt.c:764 lib/getopt.c:767
- #, c-format
- msgid "%s: illegal option -- %c\n"
--msgstr ""
-+msgstr "%s: niew³a¶ciwa opcja -- %c\n"
- 
- #: lib/getopt.c:773 lib/getopt.c:776
- #, c-format
- msgid "%s: invalid option -- %c\n"
--msgstr ""
-+msgstr "%s: b³êdna opcja -- %c\n"
- 
- #: lib/getopt.c:828 lib/getopt.c:844 lib/getopt.c:1048 lib/getopt.c:1066
- #, c-format
- msgid "%s: option requires an argument -- %c\n"
--msgstr ""
-+msgstr "%s: opcja musi mieæ argument -- %c\n"
- 
- #: lib/getopt.c:897 lib/getopt.c:913
- #, c-format
- msgid "%s: option `-W %s' is ambiguous\n"
--msgstr ""
-+msgstr "%s: opcja `-W %s' jest niejednoznaczna\n"
- 
- #: lib/getopt.c:937 lib/getopt.c:955
- #, c-format
- msgid "%s: option `-W %s' doesn't allow an argument\n"
--msgstr ""
-+msgstr "%s: opcja `-W %s' nie mo¿e mieæ argumentów\n"
- 
- #. TRANSLATORS:
- #. Get translations for open and closing quotation marks.
-@@ -102,99 +101,98 @@
- #. and use glyphs suitable for your language.
- #: lib/quotearg.c:229
- msgid "`"
--msgstr ""
-+msgstr "`"
- 
- #: lib/quotearg.c:230
- msgid "'"
--msgstr ""
-+msgstr "'"
- 
- #: lib/regcomp.c:131
- msgid "Success"
--msgstr ""
-+msgstr "Sukces"
- 
- #: lib/regcomp.c:134
- msgid "No match"
--msgstr ""
-+msgstr "Nic nie pasuje"
- 
- #: lib/regcomp.c:137
- msgid "Invalid regular expression"
--msgstr ""
-+msgstr "B³êdne wyra¿enie regularne"
- 
- #: lib/regcomp.c:140
- msgid "Invalid collation character"
--msgstr ""
-+msgstr "B³êdny znak sortowany"
- 
- #: lib/regcomp.c:143
- msgid "Invalid character class name"
--msgstr ""
-+msgstr "B³êdna nazwa klasy znaku"
- 
- #: lib/regcomp.c:146
- msgid "Trailing backslash"
--msgstr ""
-+msgstr "Koñcz±cy znak `\\'"
- 
- #: lib/regcomp.c:149
- msgid "Invalid back reference"
--msgstr ""
-+msgstr "B³êdne odnosienie wstecz"
- 
- #: lib/regcomp.c:152
- msgid "Unmatched [ or [^"
--msgstr ""
-+msgstr "Niesparowane [ lub [^"
- 
- #: lib/regcomp.c:155
- msgid "Unmatched ( or \\("
--msgstr ""
-+msgstr "Niesparowane ( lub \\("
- 
- #: lib/regcomp.c:158
- msgid "Unmatched \\{"
--msgstr ""
-+msgstr "Niesparowane \\{"
- 
- #: lib/regcomp.c:161
- msgid "Invalid content of \\{\\}"
--msgstr ""
-+msgstr "B³êdna zawarto¶æ \\{\\}"
- 
- #: lib/regcomp.c:164
--#, fuzzy
- msgid "Invalid range end"
--msgstr "Nieprawid³owy numer."
-+msgstr "B³êdny koniec zakresu"
- 
- #: lib/regcomp.c:167
- msgid "Memory exhausted"
--msgstr ""
-+msgstr "Pamiêæ wyczerpana"
- 
- #: lib/regcomp.c:170
- msgid "Invalid preceding regular expression"
--msgstr ""
-+msgstr "B³êdne poprzedzaj±ce wyra¿enie regularne"
- 
- #: lib/regcomp.c:173
- msgid "Premature end of regular expression"
--msgstr ""
-+msgstr "Przedwczesny koniec wyra¿enia regularnego"
- 
- #: lib/regcomp.c:176
- msgid "Regular expression too big"
--msgstr ""
-+msgstr "Wyra¿enie regularne zbyt du¿e"
- 
- #: lib/regcomp.c:179
- msgid "Unmatched ) or \\)"
--msgstr ""
-+msgstr "Niesparowane ) lub \\)"
- 
- #: lib/regcomp.c:680
- msgid "No previous regular expression"
--msgstr ""
-+msgstr "Brak poprzedniego wyra¿enia regularnego"
- 
- #: lib/rpmatch.c:70
- msgid "^[yY]"
--msgstr ""
-+msgstr "^[yYtT]"
- 
- #: lib/rpmatch.c:73
- msgid "^[nN]"
--msgstr ""
-+msgstr "^[nN]"
- 
- #. TRANSLATORS: Translate "(C)" to the copyright symbol
- #. (C-in-a-circle), if this symbol is available in the user's
- #. locale.  Otherwise, do not translate "(C)"; leave it as-is.
- #: lib/version-etc.c:66
- msgid "(C)"
--msgstr ""
-+msgstr "(C)"
+@@ -195,7 +195,6 @@
+ msgstr "(C)"
  
  #: lib/version-etc.c:68
+-#, fuzzy
  msgid ""
-@@ -205,24 +203,30 @@
- "There is NO WARRANTY, to the extent permitted by law.\n"
+ "\n"
+ "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
+@@ -205,7 +204,7 @@
  "\n"
  msgstr ""
-+"\n"
-+"Licencja GPLv2+: GNU GPL w wersji 2 lub pó¼niejszej:\n"
-+"<http://gnu.org/licenses/gpl.html>\n"
-+"Ten program jest wolnodostêpny: mo¿na go modyfikowaæ i rozprowadzaæ.\n"
-+"NIE MA ¯ADNEJ GWARANCJI w zakresie dopuszczalnym przez prawo.\n"
-+"\n"
+ "\n"
+-"Licencja GPLv2+: GNU GPL w wersji 2 lub pó¼niejszej:\n"
++"Licencja GPLv3+: GNU GPL w wersji 3 lub pó¼niejszej:\n"
+ "<http://gnu.org/licenses/gpl.html>\n"
+ "Ten program jest wolnodostêpny: mo¿na go modyfikowaæ i rozprowadzaæ.\n"
+ "NIE MA ¯ADNEJ GWARANCJI w zakresie dopuszczalnym przez prawo.\n"
+@@ -427,7 +426,6 @@
+ msgstr "Sk³adnia: %s [OPCJA] [URZ¡DZENIE]...\n"
  
- #. TRANSLATORS: %s denotes an author name.
- #: lib/version-etc.c:84
- #, c-format
- msgid "Written by %s.\n"
--msgstr ""
-+msgstr "Autor: %s.\n"
- 
- #. TRANSLATORS: Each %s denotes an author name.
- #: lib/version-etc.c:88
- #, c-format
- msgid "Written by %s and %s.\n"
--msgstr ""
-+msgstr "Autorzy: %s i %s.\n"
- 
- #. TRANSLATORS: Each %s denotes an author name.
- #: lib/version-etc.c:92
- #, c-format
- msgid "Written by %s, %s, and %s.\n"
--msgstr ""
-+msgstr "Autorzy: %s, %s i %s.\n"
- 
- #. TRANSLATORS: Each %s denotes an author name.
- #. You can use line breaks, estimating that each author name occupies
-@@ -233,6 +237,8 @@
- "Written by %s, %s, %s,\n"
- "and %s.\n"
- msgstr ""
-+"Autorzy: %s, %s, %s\n"
-+"i %s.\n"
- 
- #. TRANSLATORS: Each %s denotes an author name.
- #. You can use line breaks, estimating that each author name occupies
-@@ -243,6 +249,8 @@
- "Written by %s, %s, %s,\n"
- "%s, and %s.\n"
- msgstr ""
-+"Autorzy: %s, %s, %s,\n"
-+"%s i %s.\n"
- 
- #. TRANSLATORS: Each %s denotes an author name.
- #. You can use line breaks, estimating that each author name occupies
-@@ -253,6 +261,8 @@
- "Written by %s, %s, %s,\n"
- "%s, %s, and %s.\n"
- msgstr ""
-+"Autorzy: %s, %s, %s,\n"
-+"%s, %s i %s.\n"
- 
- #. TRANSLATORS: Each %s denotes an author name.
- #. You can use line breaks, estimating that each author name occupies
-@@ -263,6 +273,8 @@
- "Written by %s, %s, %s,\n"
- "%s, %s, %s, and %s.\n"
- msgstr ""
-+"Autorzy: %s, %s, %s,\n"
-+"%s, %s, %s i %s.\n"
- 
- #. TRANSLATORS: Each %s denotes an author name.
- #. You can use line breaks, estimating that each author name occupies
-@@ -274,6 +286,9 @@
- "%s, %s, %s, %s,\n"
- "and %s.\n"
- msgstr ""
-+"Autorzy: %s, %s, %s,\n"
-+"%s, %s, %s, %s\n"
-+"i %s.\n"
- 
- #. TRANSLATORS: Each %s denotes an author name.
- #. You can use line breaks, estimating that each author name occupies
-@@ -285,6 +300,9 @@
- "%s, %s, %s, %s,\n"
- "%s, and %s.\n"
- msgstr ""
-+"Autorzy: %s, %s, %s,\n"
-+"%s, %s, %s, %s,\n"
-+"%s i %s.\n"
- 
- #. TRANSLATORS: Each %s denotes an author name.
- #. You can use line breaks, estimating that each author name occupies
-@@ -296,14 +314,17 @@
- "%s, %s, %s, %s,\n"
- "%s, %s, and others.\n"
- msgstr ""
-+"Autorzy: %s, %s, %s,\n"
-+"%s, %s, %s, %s,\n"
-+"%s, %s i inni.\n"
- 
- #: lib/xalloc-die.c:35
- msgid "memory exhausted"
--msgstr ""
-+msgstr "pamiêæ wyczerpana"
- 
- #: libparted/arch/beos.c:237
- msgid "Disk Image"
--msgstr ""
-+msgstr "Obraz dysku"
- 
- #: libparted/arch/beos.c:338 libparted/arch/gnu.c:261
- #: libparted/arch/linux.c:1272
-@@ -352,7 +373,7 @@
- #: debug/clearfat/clearfat.c:63 partprobe/partprobe.c:137
- #, c-format
- msgid "Try `%s --help' for more information.\n"
--msgstr ""
-+msgstr "Polecenie `%s --help' pozwoli uzyskaæ wiêcej informacji.\n"
- 
- #: debug/clearfat/clearfat.c:67
- #, c-format
-@@ -360,20 +381,25 @@
- "Usage: %s [OPTION]\n"
- "  or:  %s DEVICE MINOR\n"
- msgstr ""
-+"Sk³adnia: %s [OPCJA]\n"
-+"     lub: %s URZ¡DZENIE MINOR\n"
- 
- #: debug/clearfat/clearfat.c:70
+ #: partprobe/partprobe.c:144
+-#, fuzzy
  msgid ""
- "Clear unused space on a FAT partition (a GNU Parted testing tool).\n"
+ "Inform the operating system about partition table changes.\n"
  "\n"
+@@ -438,13 +436,12 @@
  msgstr ""
-+"Czyszczenie nieu¿ywanego miejsca na partycji FAT (narzêdzie testuj±ce\n"
-+"GNU Parteda).\n"
-+"\n"
- 
- #: debug/clearfat/clearfat.c:74
- msgid "      --help     display this help and exit\n"
--msgstr ""
-+msgstr "      --help     wy¶wietlenie tego opisu i zakoñczenie\n"
- 
- #: debug/clearfat/clearfat.c:75
- msgid "      --version  output version information and exit\n"
--msgstr ""
-+msgstr "      --version  wy¶wietlenie informacji o wersji i zakoñczenie\n"
- 
- #: debug/clearfat/clearfat.c:77 partprobe/partprobe.c:154
- #, c-format
-@@ -381,21 +407,23 @@
+ "Poinformowanie systemu operacyjnego o zmianach w tablicy partycji.\n"
  "\n"
- "Report bugs to <%s>.\n"
- msgstr ""
-+"\n"
-+"Prosimy zg³aszaæ b³êdy na adres <%s>.\n"
+-"  -d, --no-update  nie uaktualnianie j±dra\n"
++"  -d, --dry-run    pominiêcie informowania systemu operacyjnego\n"
+ "  -s, --summary    wypisanie podsumowania zawarto¶ci\n"
+ "  -h, --help       wy¶wietlenie tego opisu i zakoñczenie\n"
+ "  -v, --version    wy¶wietlenie informacji o wersji i zakoñczenie\n"
  
- #: debug/clearfat/clearfat.c:285
- #, c-format
- msgid "too few arguments"
+ #: partprobe/partprobe.c:152
+-#, fuzzy
+ msgid ""
+ "\n"
+ "When no DEVICE is given, probe all partitions.\n"
+@@ -618,7 +615,7 @@
+ 
+ #: libparted/arch/linux.c:1197
+ msgid "Xen Virtual Block Device"
 -msgstr ""
-+msgstr "za ma³o argumentów"
++msgstr "Wirtualne urz±dzenie blokowe Xena"
  
- #: debug/clearfat/clearfat.c:290
+ #: libparted/arch/linux.c:1202
+ msgid "Unknown"
+@@ -689,9 +686,9 @@
+ msgstr "Zapewnienie (%s) w %s:%d w funkcji %s() nie powiod³o siê."
+ 
+ #: libparted/disk.c:202
 -#, fuzzy, c-format
 +#, c-format
- msgid "too many arguments"
--msgstr "Zbyt du¿o nieprawid³owych stron."
-+msgstr "za du¿o argumentów"
+ msgid "%s: unrecognised disk label"
+-msgstr "Nie mo¿na otworzyæ %s - nierozpoznana etykieta dysku."
++msgstr "%s: nierozpoznana etykieta dysku"
  
- #: partprobe/partprobe.c:141
+ #: libparted/disk.c:470
  #, c-format
- msgid "Usage: %s [OPTION] [DEVICE]...\n"
+@@ -1152,137 +1149,103 @@
+ msgstr "Zbyt du¿o partycji g³ównych"
+ 
+ #: libparted/labels/fdasd.c:103
+-#, fuzzy
+ msgid "open error"
 -msgstr ""
-+msgstr "Sk³adnia: %s [OPCJA] [URZ¡DZENIE]...\n"
+-"%s b³±d otwierania\n"
+-"%s\n"
++msgstr "b³±d otwierania"
  
- #: partprobe/partprobe.c:142
- msgid ""
-@@ -406,12 +434,20 @@
- "  -h, --help       display this help and exit\n"
- "  -v, --version    output version information and exit\n"
- msgstr ""
-+"Poinformowanie systemu operacyjnego o zmianach w tablicy partycji.\n"
-+"\n"
-+"  -d, --no-update  nie uaktualnianie j±dra\n"
-+"  -s, --summary    wypisanie podsumowania zawarto¶ci\n"
-+"  -h, --help       wy¶wietlenie tego opisu i zakoñczenie\n"
-+"  -v, --version    wy¶wietlenie informacji o wersji i zakoñczenie\n"
- 
- #: partprobe/partprobe.c:150
- msgid ""
- "\n"
- "With no DEVICE, probe all partitions.\n"
- msgstr ""
-+"\n"
-+"Je¶li nie podano URZ¡DZENIA, sprawdzane s± wszystkie partycje.\n"
- 
- #: libparted/arch/gnu.c:94
- #, c-format
-@@ -638,12 +674,12 @@
- #: libparted/debug.c:102
- #, c-format
- msgid "Backtrace has %d calls on stack:\n"
+ #: libparted/labels/fdasd.c:106
+-#, fuzzy
+ msgid "seek error"
 -msgstr ""
-+msgstr "Backtrace zawiera %d wywo³añ na stosie:\n"
+-"%s b³±d seek\n"
+-"%s\n"
++msgstr "b³±d seek"
  
- #: libparted/debug.c:114
- #, c-format
- msgid "Assertion (%s) at %s:%d in function %s() failed."
--msgstr ""
-+msgstr "Zapewnienie (%s) w %s:%d w funkcji %s() nie powiod³o siê."
- 
- #: libparted/disk.c:203
- #, c-format
-@@ -916,47 +952,48 @@
- 
- #: libparted/fs/reiserfs/reiserfs.c:315
- msgid "creating"
--msgstr ""
-+msgstr "tworzenie"
- 
- #: libparted/fs/reiserfs/reiserfs.c:402
+ #: libparted/labels/fdasd.c:109
 -#, fuzzy
- msgid "The file system is in an invalid state.  Perhaps it is mounted?"
--msgstr "System plików jest wiêkszy ni¿ jego wolumen!"
-+msgstr "System plików jest w nieprawid³owym stanie. Mo¿e jest zamontowany?"
+ msgid "read error"
+-msgstr "b³±d zapisu"
++msgstr "b³±d odczytu"
  
- #: libparted/fs/reiserfs/reiserfs.c:410
- msgid "The file system is in old (unresizeable) format."
- msgstr ""
-+"System plików jest w starym formacie, nie pozwalaj±cym na zmianê rozmiaru."
- 
- #: libparted/fs/reiserfs/reiserfs.c:416
- msgid "Invalid free blocks count.  Run reiserfsck --check first."
- msgstr ""
-+"B³êdna liczba wolnych bloków. Proszê uruchomiæ najpierw reiserfsck --check."
- 
- #: libparted/fs/reiserfs/reiserfs.c:431
+ #: libparted/labels/fdasd.c:115
 -#, fuzzy
- msgid "checking"
--msgstr "sprawd¼"
-+msgstr "sprawdzanie"
- 
- #: libparted/fs/reiserfs/reiserfs.c:437
- msgid "Reiserfs tree seems to be corrupted.  Run reiserfsck --check first."
- msgstr ""
-+"Drzewo reiserfs wygl±da na uszkodzone. Proszê uruchomiæ najpierw reiserfsck "
-+"--check."
- 
- #: libparted/fs/reiserfs/reiserfs.c:449
--#, fuzzy
- msgid ""
- "The reiserfs file system passed a basic check.  For a more comprehensive "
- "check, run reiserfsck --check."
- msgstr ""
--"System plików ext2 przeszed³ pomy¶lnie podstawowe sprawdzenie.  U¿yj program "
--"e2fsck, aby wykonaæ bardziej wyczerpuj±ce sprawdzenie."
-+"System plików reiserfs przeszed³ pomy¶lnie podstawowe sprawdzenie. "
-+"Dok³adniejszego sprawdzenia mo¿na dokonaæ poleceniem reiserfsck --check."
- 
- #: libparted/fs/reiserfs/reiserfs.c:474
--#, fuzzy
- msgid "Sorry, can't move the start of reiserfs partitions yet."
--msgstr "Przepraszam, ale na razie nie mo¿na przesun±æ pocz±tku partycji ext2!"
-+msgstr "Niestety nie mo¿na jeszcze przesun±æ pocz±tku partycji reiserfs."
- 
- #: libparted/fs/reiserfs/reiserfs.c:490
- msgid "Couldn't reopen device abstraction layer for read/write."
- msgstr ""
-+"Nie mo¿na ponownie otworzyæ warstwy abstrakcji urz±dzenia do odczytu/zapisu."
- 
- #: libparted/fs/reiserfs/reiserfs.c:508 libparted/fs/ext2/ext2_resize.c:552
- #: libparted/fs/hfs/hfs.c:250 libparted/fs/hfs/hfs.c:629
-@@ -964,31 +1001,30 @@
- msgstr "zmniejszanie"
- 
- #: libparted/fs/reiserfs/reiserfs.c:520
--#, fuzzy
- msgid "expanding"
--msgstr "Ostrze¿enie"
-+msgstr "rozszerzanie"
- 
- #: libparted/fs/reiserfs/reiserfs.c:592
- msgid "Couldn't create reiserfs device abstraction handler."
--msgstr ""
-+msgstr "Nie uda³o siê utworzyæ obs³ugi abstrakcji urz±dzenia reiserfs."
- 
- #: libparted/fs/reiserfs/reiserfs.c:606
--#, fuzzy, c-format
-+#, c-format
- msgid "Device is too small for %lu blocks."
--msgstr "System plików jest zbyt ma³y dla ext2."
-+msgstr "Urz±dzenie jest zbyt ma³e na %lu bloków."
- 
- #: libparted/fs/reiserfs/reiserfs.c:615
- msgid "copying"
--msgstr ""
-+msgstr "kopiowanie"
- 
- #: libparted/fs/reiserfs/reiserfs.c:682
- #, c-format
- msgid "Couldn't resolve symbol %s.  Error: %s."
--msgstr ""
-+msgstr "Nie uda³o siê rozwi±zaæ symbolu %s. B³±d: %s."
- 
- #: libparted/fs/reiserfs/reiserfs.c:704
- msgid "GNU Parted found an invalid libreiserfs library."
--msgstr ""
-+msgstr "GNU Parted znalaz³ b³êdn± bibliotekê libreiserfs."
- 
- #: libparted/fs/reiserfs/reiserfs.c:715
- #, c-format
-@@ -996,52 +1032,46 @@
- "GNU Parted has detected libreiserfs interface version mismatch.  Found %d-%"
- "d, required %d. ReiserFS support will be disabled."
- msgstr ""
-+"GNU Parted wykry³ niezgodno¶æ wersji interfejsu libreiserfs. Znaleziono %d-%"
-+"d, wymagana jest %d. Obs³uga ReiserFS bêdzie wy³±czona."
- 
- #: libparted/labels/aix.c:137
--#, fuzzy
- msgid "Support for reading AIX disk labels is is not implemented yet."
- msgstr ""
--"Wsparcie dla tworzenia systemów plików %s nie zosta³o jeszcze "
--"zaimplementowane."
-+"Obs³uga odczytu etykiet dyskowych AIX jeszcze nie zosta³a zaimplementowana."
- 
- #: libparted/labels/aix.c:148
--#, fuzzy
- msgid "Support for writing AIX disk labels is is not implemented yet."
- msgstr ""
--"Wsparcie dla tworzenia systemów plików %s nie zosta³o jeszcze "
--"zaimplementowane."
-+"Obs³uga zapisu etykiet dyskowych AIX jeszcze nie zosta³a zaimplementowana."
- 
- #: libparted/labels/aix.c:161
--#, fuzzy
- msgid ""
- "Support for adding partitions to AIX disk labels is not implemented yet."
- msgstr ""
--"Wsparcie dla tworzenia systemów plików %s nie zosta³o jeszcze "
--"zaimplementowane."
-+"Obs³uga dodawania partycji do etykiet dyskowych AIX jeszcze nie zosta³a "
-+"zaimplementowana."
- 
- #: libparted/labels/aix.c:171
--#, fuzzy
- msgid ""
- "Support for duplicating partitions in AIX disk labels is not implemented yet."
- msgstr ""
--"Wsparcie dla tworzenia systemów plików %s nie zosta³o jeszcze "
--"zaimplementowane."
-+"Obs³uga powielania partycji na etykietach dyskowych AIX jeszcze nie zosta³a "
-+"zaimplementowana."
- 
- #: libparted/labels/aix.c:189
--#, fuzzy
- msgid ""
- "Support for setting system type of partitions in AIX disk labels is not "
- "implemented yet."
- msgstr ""
--"Wsparcie dla tworzenia systemów plików %s nie zosta³o jeszcze "
--"zaimplementowane."
-+"Obs³uga ustawiania rodzaju systemu partycji na etykietach dyskowych AIX "
-+"jeszcze nie zosta³a zaimplementowana."
- 
- #: libparted/labels/aix.c:199
--#, fuzzy
- msgid "Support for setting flags in AIX disk labels is not implemented yet."
- msgstr ""
--"Wsparcie dla tworzenia systemów plików %s nie zosta³o jeszcze "
--"zaimplementowane."
-+"Obs³uga ustawiania flag na etykietach dyskowych AIX jeszcze nie zosta³a "
-+"zaimplementowana."
- 
- #: libparted/labels/bsd.c:501 libparted/labels/dasd.c:755
- #: libparted/labels/dos.c:1974 libparted/labels/dvh.c:770
-@@ -1056,14 +1086,12 @@
- msgstr "Nie mo¿na przydzieliæ miejsca na etykietê dysku bsd."
- 
- #: libparted/labels/dasd.c:166
--#, fuzzy
- msgid "Unable to determine the block size of this dasd"
--msgstr "Nie mo¿na ustaliæ rozmiaru %s (%s)."
-+msgstr "Nie mo¿na ustaliæ rozmiaru bloku dla tego dasd"
- 
- #: libparted/labels/dasd.c:781
--#, fuzzy
- msgid "Unable to allocate a dasd disklabel slot"
--msgstr "Nie mo¿na przydzieliæ miejsca na etykietê dysku bsd."
-+msgstr "Nie mo¿na przydzieliæ miejsca na etykiecie dysku dasd."
- 
- #: libparted/labels/dos.c:827
- #, c-format
-@@ -1122,6 +1150,8 @@
- "%s open error\n"
- "%s\n"
- msgstr ""
-+"%s b³±d otwierania\n"
-+"%s\n"
- 
- #: libparted/labels/fdasd.c:107
- #, c-format
-@@ -1129,6 +1159,8 @@
- "%s seek error\n"
- "%s\n"
- msgstr ""
-+"%s b³±d seek\n"
-+"%s\n"
- 
- #: libparted/labels/fdasd.c:110
- #, c-format
-@@ -1136,13 +1168,17 @@
- "%s read error\n"
- "%s\n"
- msgstr ""
-+"%s b³±d odczytu\n"
-+"%s\n"
- 
- #: libparted/labels/fdasd.c:113
--#, fuzzy, c-format
-+#, c-format
- msgid ""
- "%s write error\n"
- "%s\n"
--msgstr "%s podczas zapisu %s"
-+msgstr ""
-+"%s b³±d zapisu\n"
-+"%s\n"
- 
- #: libparted/labels/fdasd.c:116
- #, c-format
-@@ -1150,6 +1186,8 @@
- "%s IOCTL error\n"
- "%s\n"
- msgstr ""
-+"%s b³±d IOCTL\n"
-+"%s\n"
+ msgid "ioctl() error"
+-msgstr "b³±d zapisu"
++msgstr "b³±d ioctl()"
  
  #: libparted/labels/fdasd.c:119
- #, c-format
-@@ -1157,6 +1195,8 @@
- "%s API version mismatch\n"
- "%s\n"
- msgstr ""
-+"%s niezgodno¶æ wersji API\n"
-+"%s\n"
- 
- #: libparted/labels/fdasd.c:122
- #, c-format
-@@ -1164,6 +1204,8 @@
- "%s Unsupported disk type\n"
- "%s\n"
- msgstr ""
-+"%s Nieobs³ugiwany typ dysku\n"
-+"%s\n"
- 
- #: libparted/labels/fdasd.c:126
- #, c-format
-@@ -1171,13 +1213,17 @@
- "%s Unsupported disk format\n"
- "%s\n"
- msgstr ""
-+"%s Nieobs³ugiwany format dysku\n"
-+"%s\n"
- 
- #: libparted/labels/fdasd.c:130
--#, fuzzy, c-format
-+#, c-format
- msgid ""
- "%s Disk in use\n"
- "%s\n"
--msgstr "Dysk %s: %s\n"
-+msgstr ""
-+"%s Dysk jest w u¿yciu\n"
-+"%s\n"
- 
- #: libparted/labels/fdasd.c:133
- #, c-format
-@@ -1185,6 +1231,8 @@
- "%s Config file syntax error\n"
- "%s\n"
- msgstr ""
-+"%s B³±d sk³adni pliku konfiguracyjnego\n"
-+"%s\n"
- 
- #: libparted/labels/fdasd.c:137
- #, c-format
-@@ -1192,6 +1240,8 @@
- "%s Volume label is corrupted.\n"
- "%s\n"
- msgstr ""
-+"%s Uszkodzona etykieta wolumenu.\n"
-+"%s\n"
- 
- #: libparted/labels/fdasd.c:141
- #, c-format
-@@ -1199,6 +1249,8 @@
- "%s a data set name is corrupted.\n"
- "%s\n"
- msgstr ""
-+"%s uszkodzona nazwa zbioru danych.\n"
-+"%s\n"
- 
- #: libparted/labels/fdasd.c:145
- #, c-format
-@@ -1206,6 +1258,8 @@
- "%s space allocation\n"
- "%s\n"
- msgstr ""
-+"%s przydzielanie miejsca\n"
-+"%s\n"
- 
- #: libparted/labels/fdasd.c:149
- #, c-format
-@@ -1213,6 +1267,8 @@
- "%s device verification failed\n"
- "The specified device is not a valid DASD device\n"
- msgstr ""
-+"%s weryfikacja urz±dzenia nie powiod³a siê\n"
-+"Podane urz±dzenie nie jest poprawnym urz±dzeniem DASD\n"
- 
- #: libparted/labels/fdasd.c:154
- #, c-format
-@@ -1220,6 +1276,8 @@
- "%s Fatal error\n"
- "%s\n"
- msgstr ""
-+"%s B³±d krytyczny\n"
-+"%s\n"
- 
- #: libparted/labels/gpt.c:454
- #, c-format
-@@ -1480,6 +1538,8 @@
- "%s opening device '%s' failed.\n"
- "%s\n"
- msgstr ""
-+"%s otwieranie urz±dzenia '%s' nie powiod³o siê.\n"
-+"%s\n"
- 
- #: libparted/labels/vtoc.c:167
- #, c-format
-@@ -1487,6 +1547,8 @@
- "%s seeking device '%s' failed.\n"
- "%s\n"
- msgstr ""
-+"%s ustawianie pozycji na urz±dzeniu '%s' nie powiod³o siê.\n"
-+"%s\n"
- 
- #: libparted/labels/vtoc.c:171
- #, c-format
-@@ -1494,6 +1556,8 @@
- "%s writing to device '%s' failed,\n"
- "%s\n"
- msgstr ""
-+"%s zapis na urz±dzeniu '%s' nie powiód³ siê,\n"
-+"%s\n"
- 
- #: libparted/labels/vtoc.c:175
- #, c-format
-@@ -1501,55 +1565,57 @@
- "%s reading from device '%s' failed.\n"
- "%s\n"
- msgstr ""
-+"%s odczyt z urz±dzenia '%s' nie powiód³ siê.\n"
-+"%s\n"
- 
- #: libparted/labels/vtoc.c:179
- #, c-format
- msgid "Fatal error\n"
+-#, fuzzy
+ msgid "API version mismatch"
 -msgstr ""
-+msgstr "B³±d krytyczny\n"
+-"%s niezgodno¶æ wersji API\n"
+-"%s\n"
++msgstr "niezgodno¶æ wersji API"
+ 
+ #: libparted/labels/fdasd.c:123
+-#, fuzzy
+ msgid "Unsupported disk type"
+-msgstr ""
+-"%s Nieobs³ugiwany typ dysku\n"
+-"%s\n"
++msgstr "Nieobs³ugiwany typ dysku"
+ 
+ #: libparted/labels/fdasd.c:127
+-#, fuzzy
+ msgid "Unsupported disk format"
+-msgstr ""
+-"%s Nieobs³ugiwany format dysku\n"
+-"%s\n"
++msgstr "Nieobs³ugiwany format dysku"
+ 
+ #: libparted/labels/fdasd.c:131
+-#, fuzzy
+ msgid "Disk is in use"
+-msgstr ""
+-"%s Dysk jest w u¿yciu\n"
+-"%s\n"
++msgstr "Dysk jest w u¿yciu"
+ 
+ #: libparted/labels/fdasd.c:135
+ msgid "Syntax error in config file"
+-msgstr ""
++msgstr "B³±d sk³adni w pliku konfiguracyjnym"
+ 
+ #: libparted/labels/fdasd.c:139
+-#, fuzzy
+ msgid "Volume label is corrupted"
+-msgstr ""
+-"%s Uszkodzona etykieta wolumenu.\n"
+-"%s\n"
++msgstr "Uszkodzona etykieta wolumenu"
+ 
+ #: libparted/labels/fdasd.c:143
+-#, fuzzy
+ msgid "A data set name is corrupted"
+-msgstr ""
+-"%s uszkodzona nazwa zbioru danych.\n"
+-"%s\n"
++msgstr "Uszkodzona nazwa zbioru danych"
+ 
+ #: libparted/labels/fdasd.c:147
+-#, fuzzy
+ msgid "Memory allocation failed"
+-msgstr "Relokacja danych nie powiod³a siê."
++msgstr "Przydzielanie pamiêci powiod³o siê"
+ 
+ #: libparted/labels/fdasd.c:151
+-#, fuzzy
+ msgid "Device verification failed"
+-msgstr "Relokacja danych nie powiod³a siê."
++msgstr "Weryfikacja urz±dzenia nie powiod³o siê"
+ 
+ #: libparted/labels/fdasd.c:152
+-#, fuzzy
+ msgid "The specified device is not a valid DASD device"
+-msgstr ""
+-"%s weryfikacja urz±dzenia nie powiod³a siê\n"
+-"Podane urz±dzenie nie jest poprawnym urz±dzeniem DASD\n"
++msgstr "Podane urz±dzenie nie jest poprawnym urz±dzeniem DASD"
+ 
+ #: libparted/labels/fdasd.c:155 libparted/labels/vtoc.c:179
+-#, fuzzy
+ msgid "Fatal error"
+-msgstr "B³±d krytyczny\n"
++msgstr "B³±d krytyczny"
+ 
+ #: libparted/labels/fdasd.c:231
+ msgid "No room for volume label."
+-msgstr ""
++msgstr "Brak miejsca na etykietê wolumenu."
+ 
+ #: libparted/labels/fdasd.c:239
+-#, fuzzy
+ msgid "No room for partition info."
+-msgstr "Nie znaleziono prawid³owej mapy partycji."
++msgstr "Brak miejsca na informacjê o partycji."
+ 
+ #: libparted/labels/fdasd.c:709
+-#, fuzzy
+ msgid "Invalid VTOC."
+-msgstr "Nieprawid³owy numer."
++msgstr "Nieprawid³owe dane VTOC."
+ 
+ #: libparted/labels/fdasd.c:764
+-#, fuzzy
+ msgid "Could not retrieve API version."
+-msgstr "Nie uda³o siê zapisaæ etykiet VTOC."
++msgstr "Nie uda³o siê odczytaæ wersji API."
+ 
+ #: libparted/labels/fdasd.c:767
+ #, c-format
+ msgid ""
+ "The current API version '%d' doesn't match dasd driver API version '%d'!"
+ msgstr ""
++"Aktualna wersja API '%d' nie zgadza siê z wersj± API sterownika dasd '%d'!"
+ 
+ #: libparted/labels/fdasd.c:787
+ msgid "Could not retrieve disk geometry information."
+-msgstr ""
++msgstr "Nie uda³o siê odczytaæ informacji o geometrii dysku."
+ 
+ #: libparted/labels/fdasd.c:791
+ msgid "Could not retrieve blocksize information."
+-msgstr ""
++msgstr "Nie uda³o siê odczytaæ informacji o rozmiarze bloku."
+ 
+ #: libparted/labels/fdasd.c:796
+ msgid "Could not retrieve disk information."
+-msgstr ""
++msgstr "Nie uda³o siê odczytaæ informacji o dysku."
+ 
+ #: libparted/labels/fdasd.c:800
+ msgid "This is not an ECKD disk!  This disk type is not supported!"
+-msgstr ""
++msgstr "To nie jest dysk ECKD! Ten typ dysku nie jest obs³ugiwany!"
+ 
+ #: libparted/labels/gpt.c:453
+ #, c-format
+@@ -1538,42 +1501,28 @@
+ msgstr "Etykieta dysku Sun jest pe³na."
+ 
+ #: libparted/labels/vtoc.c:164
+-#, fuzzy
+ msgid "opening of device failed"
+-msgstr ""
+-"%s otwieranie urz±dzenia '%s' nie powiod³o siê.\n"
+-"%s\n"
++msgstr "otwieranie urz±dzenia nie powiod³o siê"
+ 
+ #: libparted/labels/vtoc.c:168
+-#, fuzzy
+ msgid "seeking on device failed"
+-msgstr ""
+-"%s ustawianie pozycji na urz±dzeniu '%s' nie powiod³o siê.\n"
+-"%s\n"
++msgstr "ustawianie pozycji na urz±dzeniu nie powiod³o siê"
+ 
+ #: libparted/labels/vtoc.c:172
+-#, fuzzy
+ msgid "writing to device failed"
+-msgstr ""
+-"%s zapis na urz±dzeniu '%s' nie powiód³ siê,\n"
+-"%s\n"
++msgstr "zapis na urz±dzeniu nie powiód³ siê"
+ 
+ #: libparted/labels/vtoc.c:176
+-#, fuzzy
+ msgid "reading from device failed"
+-msgstr ""
+-"%s odczyt z urz±dzenia '%s' nie powiód³ siê.\n"
+-"%s\n"
++msgstr "odczyt z urz±dzenia nie powiód³ siê"
+ 
+ #: libparted/labels/vtoc.c:281 libparted/labels/vtoc.c:288
+-#, fuzzy
+ msgid "Could not read volume label."
+-msgstr "Nie uda³o siê odczytaæ etykiet VTOC."
++msgstr "Nie uda³o siê odczytaæ etykiety wolumenu."
+ 
+ #: libparted/labels/vtoc.c:307 libparted/labels/vtoc.c:312
+-#, fuzzy
+ msgid "Could not write volume label."
+-msgstr "Nie uda³o siê zapisaæ etykiet VTOC."
++msgstr "Nie uda³o siê zapisaæ etykiety wolumenu."
  
  #: libparted/labels/vtoc.c:418
  msgid "Could not read VTOC labels."
--msgstr ""
-+msgstr "Nie uda³o siê odczytaæ etykiet VTOC."
- 
- #: libparted/labels/vtoc.c:424
- msgid "Could not read VTOC FMT1 DSCB."
--msgstr ""
-+msgstr "Nie uda³o siê odczytaæ VTOC FMT1 DSCB."
- 
- #: libparted/labels/vtoc.c:431
- msgid "Could not read VTOC FMT4 DSCB."
--msgstr ""
-+msgstr "Nie uda³o siê odczytaæ VTOC FMT4 DSCB."
- 
- #: libparted/labels/vtoc.c:438
- msgid "Could not read VTOC FMT5 DSCB."
--msgstr ""
-+msgstr "Nie uda³o siê odczytaæ VTOC FMT5 DSCB."
- 
- #: libparted/labels/vtoc.c:445
- msgid "Could not read VTOC FMT7 DSCB."
--msgstr ""
-+msgstr "Nie uda³o siê odczytaæ VTOC FMT7 DSCB."
- 
- #: libparted/labels/vtoc.c:462
- msgid "Could not write VTOC labels."
--msgstr ""
-+msgstr "Nie uda³o siê zapisaæ etykiet VTOC."
- 
- #: libparted/labels/vtoc.c:468
- msgid "Could not write VTOC FMT1 DSCB."
--msgstr ""
-+msgstr "Nie uda³o siê zapisaæ VTOC FMT1 DSCB."
- 
- #: libparted/labels/vtoc.c:475
- msgid "Could not write VTOC FMT4 DSCB."
--msgstr ""
-+msgstr "Nie uda³o siê zapisaæ VTOC FMT4 DSCB."
- 
- #: libparted/labels/vtoc.c:482
- msgid "Could not write VTOC FMT5 DSCB."
--msgstr ""
-+msgstr "Nie uda³o siê zapisaæ VTOC FMT5 DSCB."
- 
- #: libparted/labels/vtoc.c:489
- msgid "Could not write VTOC FMT7 DSCB."
--msgstr ""
-+msgstr "Nie uda³o siê zapisaæ VTOC FMT7 DSCB."
- 
- #: libparted/libparted.c:296 libparted/libparted.c:316
- msgid "Out of memory."
--msgstr "Brak pamiêci"
-+msgstr "Brak pamiêci."
- 
- #: libparted/unit.c:139
- msgid "Cannot get unit size for special unit 'COMPACT'."
-@@ -1582,61 +1648,61 @@
- 
- #: libparted/fs/amiga/affs.c:63 libparted/fs/amiga/apfs.c:56
- #: libparted/fs/amiga/asfs.c:70
--#, fuzzy, c-format
-+#, c-format
- msgid "%s : Failed to allocate partition block\n"
--msgstr "%s : Wypisanie bloków partycji nie powiod³o siê."
-+msgstr "%s : Nie powiod³o siê przydzielanie bloku partycji\n"
- 
- #: libparted/fs/amiga/affs.c:78 libparted/fs/amiga/apfs.c:70
- #: libparted/fs/amiga/asfs.c:86
--#, fuzzy, c-format
-+#, c-format
- msgid "%s : Failed to allocate block\n"
--msgstr "%s : Nie powiod³o siê wypisanie bloków rozruchowych."
-+msgstr "%s : Nie powiod³o siê przydzielanie bloku\n"
- 
- #: libparted/fs/amiga/affs.c:83 libparted/fs/amiga/apfs.c:75
--#, fuzzy, c-format
-+#, c-format
- msgid "%s : Couldn't read boot block %llu\n"
--msgstr "%s : Wykryto pêtlê na bloku %d."
-+msgstr "%s : Nie uda³o siê odczytaæ bloku startowego %llu\n"
- 
- #: libparted/fs/amiga/affs.c:99 libparted/fs/amiga/apfs.c:86
- #: libparted/fs/amiga/asfs.c:92 libparted/fs/amiga/asfs.c:106
--#, fuzzy, c-format
-+#, c-format
- msgid "%s : Couldn't read root block %llu\n"
--msgstr "%s : Wykryto pêtlê na bloku %d."
-+msgstr "%s : Nie uda³o siê odczytaæ bloku g³ównego %llu\n"
- 
- #: libparted/fs/amiga/amiga.c:72
--#, fuzzy, c-format
-+#, c-format
- msgid "%s : Failed to allocate id list element\n"
--msgstr "%s : Nie powiod³o siê wypisanie uszkodzonych bloków."
-+msgstr "%s : Nie powiod³o siê przydzielanie elementu id listy\n"
- 
- #: libparted/fs/amiga/amiga.c:189
- #, c-format
- msgid "%s : Couldn't read block %llu\n"
--msgstr ""
-+msgstr "%s : Nie uda³o siê odczytaæ bloku %llu\n"
- 
- #: libparted/fs/amiga/amiga.c:202
--#, fuzzy, c-format
-+#, c-format
- msgid "%s : Bad checksum on block %llu of type %s\n"
--msgstr "%s : Nieprawid³owa suma kontrolna bloku %llu typu %s."
-+msgstr "%s : Nieprawid³owa suma kontrolna bloku %llu typu %s\n"
- 
- #: libparted/fs/amiga/amiga.c:212
--#, fuzzy, c-format
-+#, c-format
- msgid "%s : Couldn't write block %d\n"
--msgstr "%s : Wykryto pêtlê na bloku %d."
-+msgstr "%s : Nie uda³o siê zapisaæ bloku %d\n"
- 
- #: libparted/fs/amiga/amiga.c:278
--#, fuzzy, c-format
-+#, c-format
- msgid "%s : Failed to allocate disk_specific rdb block\n"
--msgstr "%s : Nie powiod³o siê wypisanie uszkodzonych bloków."
-+msgstr "%s : Nie powiod³o siê przydzielanie bloku rdb disk_specific\n"
- 
- #: libparted/fs/amiga/amiga.c:289
--#, fuzzy, c-format
-+#, c-format
- msgid "%s : Didn't find rdb block, should never happen\n"
--msgstr "%s : Nie znaleziono bloku rdb, co nie powinno siê zdarzyæ."
-+msgstr "%s : Nie znaleziono bloku rdb, co nie powinno siê zdarzyæ\n"
- 
- #: libparted/fs/amiga/amiga.c:318
--#, fuzzy, c-format
-+#, c-format
- msgid "%s : Failed to read partition block %llu\n"
--msgstr "%s : Wypisanie bloków partycji nie powiod³o siê."
-+msgstr "%s : Nie powiód³ siê odczyt bloku partycji %llu\n"
- 
- #: libparted/fs/ext2/ext2.c:87 libparted/fs/ext2/ext2.c:112
- msgid "Inconsistent group descriptors!"
-@@ -1732,6 +1798,10 @@
- "that MAY CORRUPT it (although no one has reported any such damage yet).\n"
- "You should at least backup your data first, and run 'e2fsck -f' afterwards."
- msgstr ""
-+"Operacja zmiana rozmiaru na tym systemie plików u¿yje EKSPERYMENTALNEGO\n"
-+"kodu, który MO¯E GO USZKODZIÆ (choæ nie zrobi³ tego jeszcze dotychczas).\n"
-+"Nale¿y przynajmniej wykonaæ kopiê zapasow± danych, a potem uruchomiæ\n"
-+"'e2fsck -f'."
- 
- #: libparted/fs/ext2/ext2_block_relocator.c:198
- msgid "Cross-linked blocks found!  Better go run e2fsck first!"
-@@ -1753,8 +1823,8 @@
- "The ext2 file system passed a basic check.  For a more comprehensive check, "
- "use the e2fsck program."
- msgstr ""
--"System plików ext2 przeszed³ pomy¶lnie podstawowe sprawdzenie.  U¿yj program "
--"e2fsck, aby wykonaæ bardziej wyczerpuj±ce sprawdzenie."
-+"System plików ext2 przeszed³ pomy¶lnie podstawowe sprawdzenie. "
-+"Dok³adniejszego sprawdzenia mo¿na dokonaæ programem e2fsck."
- 
- #: libparted/fs/ext2/interface.c:203
- msgid "Sorry, can't move the start of ext2 partitions yet!"
-@@ -2066,19 +2136,19 @@
+@@ -2138,9 +2087,9 @@
  msgstr "fat_table_alloc_cluster: brak wolnych klastrów"
  
- #: libparted/fs/linux_swap/linux_swap.c:275
+ #: libparted/fs/linux_swap/linux_swap.c:238
 -#, fuzzy, c-format
 +#, c-format
- msgid "Unrecognised old style linux swap signature '%10s'."
--msgstr "Nierozpoznany podpis linuksowej partycji wymiany `%10s'."
-+msgstr "Nierozpoznany podpis linuksowej partycji wymiany starego typu '%10s'."
+ msgid "Unrecognised linux swap signature '%10s'."
+-msgstr "Nierozpoznany podpis linuksowej partycji wymiany starego typu '%10s'."
++msgstr "Nierozpoznany podpis linuksowej partycji wymiany '%10s'."
  
- #: libparted/fs/linux_swap/linux_swap.c:318
--#, fuzzy, c-format
-+#, c-format
- msgid "Unrecognised new style linux swap signature '%10s'."
--msgstr "Nierozpoznany podpis linuksowej partycji wymiany `%10s'."
-+msgstr "Nierozpoznany podpis linuksowej partycji wymiany nowego typu '%10s'."
- 
- #: libparted/fs/linux_swap/linux_swap.c:358
--#, fuzzy, c-format
-+#, c-format
- msgid "Unrecognised swsusp linux swap signature '%9s'."
--msgstr "Nierozpoznany podpis linuksowej partycji wymiany `%10s'."
-+msgstr "Nierozpoznany podpis linuksowej partycji wymiany swsusp '%9s'."
- 
- #: libparted/fs/linux_swap/linux_swap.c:434
+ #: libparted/fs/linux_swap/linux_swap.c:314
  msgid "Too many bad pages."
-@@ -2376,13 +2446,12 @@
- msgstr "wy¶wietla tê oto pomoc"
+@@ -3277,9 +3226,9 @@
+ "B³±d: Wyst±pi³ ogólny sygna³ SIGILL."
  
- #: parted/parted.c:95
--#, fuzzy
- msgid "lists partition layout on all block devices"
--msgstr "wypisuje tablice partycji wszystkich wykrytych urz±dzeñ"
-+msgstr "wypisuje rozk³ad partycji na wszystkich wykrytych urz±dzeniach"
- 
- #: parted/parted.c:96
- msgid "displays machine parseable output"
--msgstr ""
-+msgstr "wy¶wietla dane w formacie czytelnym dla maszyny"
- 
- #: parted/parted.c:97
- msgid "never prompts for user intervention"
-@@ -2450,7 +2519,6 @@
- msgstr "Partycja musi posiadaæ jeden z nastêpuj±cych systemów plików: "
- 
- #: parted/parted.c:130
--#, fuzzy
- msgid ""
- "Copyright (C) 1998 - 2006 Free Software Foundation, Inc.\n"
- "This program is free software, covered by the GNU General Public License.\n"
-@@ -2462,13 +2530,13 @@
- "\n"
- msgstr ""
- "Copyright (C) 1998 - 2006 Free Software Foundation, Inc.\n"
--"Program ten jest wolno dostêpny, zgodnie z Powszechn± Licencj± Publiczn± "
-+"Program ten jest wolnodostêpny, zgodnie z Powszechn± Licencj± Publiczn± "
- "GNU.\n"
- "\n"
--"Program ten udostêpniany jest w nadziei, ¿e bêdzie przydatny, ale BEZ ¯ADNEJ "
--"GWARANCJI, nawet bez domy¶lnej gwarancji PRZYDATNO¦CI HANDLOWEJ albo "
--"PRZYDATNO¦CI DO KONKRETNYCH ZASTOSOWAÑ. Wiêcej szczegó³ów znajduje siê w "
--"Powszechnej Licencji Publicznej GNU.\n"
-+"Program ten udostêpniany jest w nadziei, ¿e bêdzie przydatny, ale BEZ\n"
-+"¯ADNEJ GWARANCJI, nawet bez domy¶lnej gwarancji PRZYDATNO¦CI HANDLOWEJ albo\n"
-+"PRZYDATNO¦CI DO KONKRETNYCH ZASTOSOWAÑ. Wiêcej szczegó³ów znajduje siê\n"
-+"w Powszechnej Licencji Publicznej GNU.\n"
- "\n"
- 
- #: parted/parted.c:176
-@@ -2482,8 +2550,7 @@
- "Partition %s is being used. You must unmount it before you modify it with "
- "Parted."
- msgstr ""
--"Partycja %s jest u¿ywana.  Nale¿y j± od³±czyæ przed jej modyfikacj± "
--"Parteddem."
-+"Partycja %s jest u¿ywana.  Nale¿y j± od³±czyæ przed jej modyfikacj± Partedem."
- 
- #: parted/parted.c:211
- #, c-format
-@@ -2731,12 +2798,11 @@
- msgstr "pomoc"
- 
- #: parted/parted.c:2114
--#, fuzzy
- msgid ""
- "help [COMMAND]                           print general help, or help on "
- "COMMAND"
- msgstr ""
--"pomoc [KOMENDA]               wy¶wietla pomoc ogóln± lub dotycz±c± KOMENDY"
-+"pomoc [POLECENIE]             wy¶wietla pomoc ogóln± lub dotycz±c± POLECENIA"
- 
- #: parted/parted.c:2120
- msgid "mklabel"
-@@ -2772,13 +2838,12 @@
- msgstr "mkpart TYP-PARTYCJI [SYSTEM-PLIKÓW] POCZ¡TEK KONIEC   tworzy partycjê"
- 
- #: parted/parted.c:2147
--#, fuzzy
- msgid ""
- "'mkpart' makes a partition without creating a new file system on the "
- "partition.  FS-TYPE may be specified to set an appropriate partition ID.\n"
- msgstr ""
--"Komenda mkpart tworzy partycjê bez tworzenia nowego systemu plików na tej "
--"partycji.  Opcjonalny SYSTEM-PLIKÓW mo¿e zostaæ podany do okre¶lenia "
-+"Polecenie 'mkpart' tworzy partycjê bez tworzenia nowego systemu plików na "
-+"tej partycji.  Opcjonalny SYSTEM-PLIKÓW mo¿e zostaæ podany do okre¶lenia "
- "w³a¶ciwego identyfikatora partycji.\n"
- 
- #: parted/parted.c:2152
-@@ -2818,34 +2883,43 @@
- "available devices, free space, all found partitions, or a particular "
- "partition"
- msgstr ""
-+"print [devices|free|list,all|NUMER]   wy¶wietla tablicê partycji, dostêpne "
-+"urz±dzenia, wolne miejsce, znalezione partycje lub okre¶lon± partycjê"
- 
- #: parted/parted.c:2185
- msgid ""
- "Without arguments, 'print' displays the entire partition table. However with "
- "the following arguments it performs various other actions.\n"
- msgstr ""
-+"Bez argumentów 'print' wy¶wietla ca³± tablicê partycji. Jednak z "
-+"nastêpuj±cymi parametrami wykonuje ró¿ne inne akcje:\n"
- 
- #: parted/parted.c:2187
- msgid "  devices   : display all active block devices\n"
--msgstr ""
-+msgstr "  devices   : wy¶wietla wszystkie aktywne urz±dzenia blokowe\n"
- 
- #: parted/parted.c:2188
- msgid ""
- "  free      : display information about free unpartitioned space on the "
- "current block device\n"
- msgstr ""
-+"  free      : wy¶wietla informacje o wolnym, niespartycjonowanym miejscu na "
-+"aktualnym urz±dzeniu blokowym\n"
- 
- #: parted/parted.c:2190
--#, fuzzy
- msgid ""
- "  list, all : display the partition tables of all active block devices\n"
--msgstr "wypisuje tablice partycji wszystkich wykrytych urz±dzeñ"
-+msgstr ""
-+"  list, all : wy¶wietla tablice partycji wszystkich aktywnych urz±dzeñ "
-+"blokowych\n"
- 
- #: parted/parted.c:2191
- msgid ""
- "  NUMBER    : display more detailed information about this particular "
- "partition\n"
- msgstr ""
-+"  NUMER     : wy¶wietla bardziej szczegó³owe informacje o okre¶lonej "
-+"partycji\n"
- 
- #: parted/parted.c:2196
- msgid "quit"
-@@ -2926,47 +3000,42 @@
- msgstr "wersja"
- 
- #: parted/parted.c:2269
--#, fuzzy
- msgid ""
- "version                                  display the version number and "
- "copyright information of GNU Parted"
- msgstr ""
--"version                       wy¶wietla aktualn± wersjê GNU Parteda i "
-+"version                       wy¶wietla numer wersji GNU Parteda i "
- "informacje o prawach autorskich"
- 
- #: parted/parted.c:2273
--#, fuzzy
- msgid ""
- "'version' displays copyright and version information corresponding to this "
- "copy of GNU Parted\n"
- msgstr ""
--"version wy¶wietla informacje o prawach autorskich i wersji dla tej kopii GNU "
--"Parteda\n"
-+"'version' wy¶wietla informacje o prawach autorskich i wersji dla tej kopii "
-+"GNU Parteda\n"
- 
- #: parted/parted.c:2335
- #, c-format
- msgid "Usage: %s [-hlmsv] [DEVICE [COMMAND [PARAMETERS]]...]\n"
--msgstr ""
-+msgstr "Sk³adnia: %s [-hlmsv] [URZ¡DZENIE [POLECENIE [PARAMETRY]]...]\n"
- 
- #: parted/parted.c:2379
- msgid "No device found"
- msgstr "Nie znaleziono urz±dzenia"
- 
- #: parted/parted.c:2412
--#, fuzzy
- msgid "WARNING: You are not superuser.  Watch out for permissions."
--msgstr "UWAGA: Nie jeste¶ superu¿ytkownikiem. Uwa¿aj na uprawnienia.\n"
-+msgstr "UWAGA: Nie jeste¶ superu¿ytkownikiem. Uwa¿aj na uprawnienia."
- 
- #: parted/parted.c:2450
--#, fuzzy
- msgid "You may need to update /etc/fstab.\n"
--msgstr ""
--"Nie zapomnij o aktualizacji /etc/fstab, je¶li istnieje taka potrzeba.\n"
-+msgstr "Mo¿e wyst±piæ potrzeba aktualizacji /etc/fstab.\n"
- 
- #: parted/ui.c:160
- msgid "Welcome to GNU Parted! Type 'help' to view a list of commands.\n"
- msgstr ""
--"Witamy w GNU Partedzie! Listê komend mo¿na zobaczyæ po napisaniu 'help'.\n"
-+"Witamy w GNU Partedzie! Listê poleceñ mo¿na zobaczyæ po napisaniu 'help'.\n"
- 
- #: parted/ui.c:163
- msgid ""
-@@ -2975,12 +3044,12 @@
- "in\n"
- "interactive mode.\n"
- msgstr ""
--"Sk³adnia: parted [OPCJA]... [URZ¡DZENIE [KOMENDA [PARAMETRY]...]...]\n"
--"Wykonuje KOMENDY z PARAMETRAMI dla URZ¡DZENIA.  Je¶li nie podano KOMEND(Y),\n"
-+"Sk³adnia: parted [OPCJA]... [URZ¡DZENIE [POLECENIE [PARAMETRY]...]...]\n"
-+"Wykonuje POLECENIA z PARAMETRAMI dla URZ¡DZENIA.  Je¶li nie podano POLECEÑ,\n"
- "program zostanie uruchomiony w trybie interaktywnym.\n"
- 
- #: parted/ui.c:168
+ #: parted/ui.c:876
 -#, fuzzy, c-format
 +#, c-format
- msgid ""
- "\n"
- "\n"
-@@ -3014,15 +3083,14 @@
- msgstr ""
- "\n"
- "\n"
--"Znalaz³e¶ b³±d w programie GNU Parted! Poni¿ej znajduje siê instrukcja "
-+"Znalaz³e¶ b³±d w programie GNU Parted! Poni¿ej znajduje siê instrukcja\n"
- "postêpowania:\n"
- "\n"
- "Nie panikuj! B³±d najprawdopodobniej nie dotkn±³ ¿adnych twoich danych.\n"
- "Pomó¿ nam poprawiæ ten b³±d wykonuj±c nastêpuj±ce czynno¶ci:\n"
- "\n"
--"Sprawd¼, czy b³±d zosta³ ju¿ poprawiony sprawdzaj±c najnowsz± wersjê GNU "
--"Parteda\n"
--"dostêpn± pod adresem:\n"
-+"Sprawd¼, czy b³±d zosta³ ju¿ poprawiony sprawdzaj±c najnowsz± wersjê GNU\n"
-+"Parteda dostêpn± pod adresem:\n"
- "\n"
- "\thttp://ftp.gnu.org/gnu/parted/\n"
- "\n"
-@@ -3040,40 +3108,41 @@
- "\n"
- "\tparted URZ¡DZENIE unit co print unit s print\n"
- "\n"
--"i dodatkowymi informacjami o konfiguracji, które uwa¿asz za istotne.\n"
-+"i nastêpuj±c± histori± wprowadzonych poleceñ.\n"
-+"Do³±cz tak¿e dodatkowe informacje o konfiguracji, które uwa¿asz\n"
-+"za istotne.\n"
+ msgid "invalid token: %s"
+-msgstr "Nie mo¿na otworzyæ %s."
++msgstr "nieprawid³owy token: %s"
  
- #: parted/ui.c:284
- msgid ""
- "\n"
- "Command History:\n"
- msgstr ""
-+"\n"
-+"Historia poleceñ:\n"
- 
- #: parted/ui.c:366
--#, fuzzy
- msgid ""
- "\n"
- "Error: SEGV_MAPERR (Address not mapped to object)\n"
- msgstr ""
- "\n"
--"B³±d: SEGV_MAPERR (Adres nie odwzorowany na obiekcie)"
-+"B³±d: SEGV_MAPERR (Adres nie odwzorowany na obiekcie)\n"
- 
- #: parted/ui.c:372
--#, fuzzy
- msgid ""
- "\n"
- "Error: SEGV_ACCERR (Invalid permissions for mapped object)\n"
- msgstr ""
- "\n"
--"B³±d: SEGV_ACCERR (Nieprawid³owe uprawnienia dla odwzorowanego obiektu)"
-+"B³±d: SEGV_ACCERR (Nieprawid³owe uprawnienia dla odwzorowanego obiektu)\n"
- 
- #: parted/ui.c:377
--#, fuzzy
- msgid ""
- "\n"
- "Error: A general SIGSEGV signal was encountered.\n"
- msgstr ""
- "\n"
--"B³±d: Wyst±pi³ ogólny sygna³ SIGSEGV."
-+"B³±d: Wyst±pi³ ogólny sygna³ SIGSEGV.\n"
- 
- #: parted/ui.c:410
- msgid ""
-@@ -3262,7 +3331,7 @@
- 
- #: parted/ui.c:1436
- msgid "COMMANDs:"
--msgstr "KOMENDY:"
-+msgstr "POLECENIA:"
- 
- #: parted/ui.c:1445
- #, c-format
-@@ -3271,36 +3340,4 @@
- 
- #: parted/ui.c:1519
+ #: parted/ui.c:1034
+ msgid "Expecting a partition number."
+@@ -3334,55 +3283,3 @@
+ #: parted/ui.c:1529
  msgid "This command does not make sense in non-interactive mode.\n"
--msgstr ""
--
--#~ msgid "GNU Parted cannot resize this file system, please useresize2fs."
--#~ msgstr ""
--#~ "GNU Parted nie potrafi zmieniæ rozmiaru tego systemu plików, proszê u¿yæ "
--#~ "resize2fs."
--
--#~ msgid "where necessary, prompts for user intervention"
--#~ msgstr "gdy jest potrzeba, prosi o interwencjê u¿ytkownika"
--
--#~ msgid "GNU Parted Version information:\n"
--#~ msgstr "Informacje o wersji GNU Parteda:\n"
+ msgstr "To polecenie nie ma sensu w trybie nieinteraktywnym.\n"
 -
 -#~ msgid ""
--#~ "print [free|NUMBER|all]                  display the partition table, a "
--#~ "partition, or all devices"
+-#~ "%s read error\n"
+-#~ "%s\n"
 -#~ msgstr ""
--#~ "print [free|NUMER|all]        wy¶wietla tablicê partycji, partycjê lub "
--#~ "wszystkie urz±dzenia"
+-#~ "%s b³±d odczytu\n"
+-#~ "%s\n"
 -
 -#~ msgid ""
--#~ "Without arguments, print displays the entire partition table. With "
--#~ "'free'\n"
--#~ "argument, information about free space will be displayed otherwise if a\n"
--#~ "partition number is given, then more detailed information is displayed\n"
--#~ "about that partition. If the 'all' argument is passed instead, partition\n"
--#~ "information for all devices will be displayed.\n"
+-#~ "%s write error\n"
+-#~ "%s\n"
 -#~ msgstr ""
--#~ "Bez podania argumentów, komenda print wy¶wietla ca³± tablicê partycji.\n"
--#~ "Z argumentem 'free' wy¶wietla informacje o wolnym miejscu, natomiast\n"
--#~ "je¶li podano NUMER partycji, wtedy wy¶wietlone zostan± bardziej\n"
--#~ "szczegó³owe informacje odno¶nie podanej partycji. Je¶li podano argument\n"
--#~ "'all', wy¶wietlone zostan± informacje dla wszystkich urz±dzeñ.\n"
-+msgstr "To polecenie nie ma sensu w trybie nieinteraktywnym.\n"
+-#~ "%s b³±d zapisu\n"
+-#~ "%s\n"
+-
+-#~ msgid ""
+-#~ "%s IOCTL error\n"
+-#~ "%s\n"
+-#~ msgstr ""
+-#~ "%s b³±d IOCTL\n"
+-#~ "%s\n"
+-
+-#~ msgid ""
+-#~ "%s Config file syntax error\n"
+-#~ "%s\n"
+-#~ msgstr ""
+-#~ "%s B³±d sk³adni pliku konfiguracyjnego\n"
+-#~ "%s\n"
+-
+-#~ msgid ""
+-#~ "%s space allocation\n"
+-#~ "%s\n"
+-#~ msgstr ""
+-#~ "%s przydzielanie miejsca\n"
+-#~ "%s\n"
+-
+-#~ msgid ""
+-#~ "%s Fatal error\n"
+-#~ "%s\n"
+-#~ msgstr ""
+-#~ "%s B³±d krytyczny\n"
+-#~ "%s\n"
+-
+-#~ msgid "Unrecognised new style linux swap signature '%10s'."
+-#~ msgstr ""
+-#~ "Nierozpoznany podpis linuksowej partycji wymiany nowego typu '%10s'."
+-
+-#~ msgid "Unrecognised swsusp linux swap signature '%9s'."
+-#~ msgstr "Nierozpoznany podpis linuksowej partycji wymiany swsusp '%9s'."
+-
+-#~ msgid "File system?"
+-#~ msgstr "System plików?"
