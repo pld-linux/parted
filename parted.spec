@@ -15,12 +15,12 @@ Summary(pt_BR.UTF-8):	Ferramenta flexível de particionamento
 Summary(ru.UTF-8):	Программа GNU манипуляции дисковыми разделами
 Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
-Version:	1.8.7
-Release:	2
-License:	GPL
+Version:	1.8.8
+Release:	1
+License:	GPL v3+
 Group:		Applications/System
 Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.bz2
-# Source0-md5:	4d64746c559720307ba646f4e06e99a3
+# Source0-md5:	607ab4c3cfd8455af6588b97d99ad0ba
 # restored from git repository
 Source1:	%{name}.m4
 Patch0:		%{name}-pl.po-update.patch
