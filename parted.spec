@@ -19,7 +19,7 @@ Version:	1.8.8
 Release:	1
 License:	GPL v3+
 Group:		Applications/System
-Source0:	ftp://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.bz2
+Source0:	http://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.bz2
 # Source0-md5:	607ab4c3cfd8455af6588b97d99ad0ba
 # restored from git repository
 Source1:	%{name}.m4
