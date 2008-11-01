@@ -16,7 +16,7 @@ Summary(ru.UTF-8):	Программа GNU манипуляции дисковы�
 Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
 Version:	1.8.8
-Release:	1
+Release:	2
 License:	GPL v3+
 Group:		Applications/System
 Source0:	http://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.bz2
@@ -137,6 +137,9 @@ Biblioteka statyczna libparted.
 %patch8 -p1
 
 rm -f po/stamp-po
+
+rm m4/extensions.m4
+sed -i -e 's#gl_USE_SYSTEM_EXTENSIONS#AC_USE_SYSTEM_EXTENSIONS#g' configure.ac m4/*.m4
 
 %build
 %{__gettextize}
