@@ -1,12 +1,12 @@
 --- parted-1.8.8/include/parted/device.h.orig	2007-07-31 21:03:53.000000000 +0200
 +++ parted-1.8.8/include/parted/device.h	2007-08-22 22:20:18.024824864 +0200
-@@ -48,7 +48,8 @@
- #ifdef ENABLE_DEVICE_MAPPER
+@@ -46,7 +46,8 @@
          PED_DEVICE_DM           = 12,
- #endif
--        PED_DEVICE_XVD          = 13
-+        PED_DEVICE_XVD          = 13,
-+        PED_DEVICE_AOE          = 14
+         PED_DEVICE_XVD          = 13,
+         PED_DEVICE_SDMMC        = 14,
+-        PED_DEVICE_VIRTBLK      = 15
++        PED_DEVICE_VIRTBLK      = 15,
++        PED_DEVICE_AOE          = 16
  } PedDeviceType;
  
  typedef struct _PedDevice PedDevice;

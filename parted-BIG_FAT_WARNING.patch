@@ -1,7 +1,7 @@
 --- parted-1.8.6/parted/ui.c.orig	2007-04-04 10:38:45.596415889 +0200
 +++ parted-1.8.6/parted/ui.c	2007-04-04 10:39:49.904080574 +0200
-@@ -159,6 +159,11 @@
- static char* banner_msg = N_(
+@@ -160,6 +160,11 @@
+ static const char* banner_msg = N_(
  "Welcome to GNU Parted! Type 'help' to view a list of commands.\n");
  
 +static char* warning_msg = N_(
@@ -9,7 +9,7 @@
 +"exit to write changes to partition table, you're experimenting on your\n"
 +"disk's live body.\n");
 +
- static char* usage_msg = N_(
+ static const char* usage_msg = N_(
  "Usage: parted [OPTION]... [DEVICE [COMMAND [PARAMETERS]...]...]\n"
  "Apply COMMANDs with PARAMETERS to DEVICE.  If no COMMAND(s) are given, "
 @@ -1463,7 +1468,7 @@

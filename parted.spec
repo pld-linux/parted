@@ -15,12 +15,12 @@ Summary(pt_BR.UTF-8):	Ferramenta flexível de particionamento
 Summary(ru.UTF-8):	Программа GNU манипуляции дисковыми разделами
 Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
-Version:	1.8.8
-Release:	4
+Version:	1.9.0
+Release:	1
 License:	GPL v3+
 Group:		Applications/System
-Source0:	http://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.bz2
-# Source0-md5:	607ab4c3cfd8455af6588b97d99ad0ba
+Source0:	http://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.xz
+# Source0-md5:	a9ffa9b69f0b6099b75c32a03bb12f7f
 # restored from git repository
 Source1:	%{name}.m4
 Patch0:		%{name}-pl.po-update.patch
@@ -31,7 +31,6 @@ Patch4:		%{name}-info.patch
 Patch5:		%{name}-etherd.patch
 Patch6:		%{name}-headers.patch
 Patch7:		%{name}-man-pt.patch
-Patch8:		%{name}-inline.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.61
 BuildRequires:	automake >= 1:1.10
@@ -126,7 +125,7 @@ Biblioteka statyczna libparted.
 
 %prep
 %setup -q
-%patch0 -p1
+#%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %{?with_uClibc:%patch3 -p1}
@@ -134,7 +133,6 @@ Biblioteka statyczna libparted.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
 
 rm -f po/stamp-po
 
@@ -191,6 +189,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc doc/{API,FAT} AUTHORS BUGS ChangeLog NEWS README THANKS TODO
 %lang(ja) %doc doc/USER.jp
+%attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/*
 %{!?with_static:%attr(755,root,root) %{_libdir}/libparted-*.so.*.*}
 %{_mandir}/man8/*
