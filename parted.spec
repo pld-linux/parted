@@ -192,6 +192,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/*
 %{!?with_static:%attr(755,root,root) %{_libdir}/libparted-*.so.*.*}
+%{!?with_static:%attr(755,root,root) %ghost %{_libdir}/libparted-*.so.0}
 %{_mandir}/man8/*
 %lang(pt) %{_mandir}/pt_BR/man8/*
 %{_infodir}/parted.info*
