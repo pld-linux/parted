@@ -34,12 +34,14 @@ Patch7:		%{name}-man-pt.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.61
 BuildRequires:	automake >= 1:1.10
+BuildRequires:	check >= 0.9.3
 BuildRequires:	device-mapper-devel >= 1.02.02
 BuildRequires:	gettext-devel >= 0.15
 BuildRequires:	libtool
 BuildRequires:	libuuid-devel
 %{?with_static:BuildRequires:	libuuid-static}
 %{?with_readline:BuildRequires:	ncurses-devel >= 5.2}
+BuildRequires:	pkgconfig
 BuildRequires:	po4a
 %{?with_readline:BuildRequires:	readline-devel >= 5.0}
 BuildRequires:	texinfo >= 4.2
