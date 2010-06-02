@@ -44,6 +44,7 @@ BuildRequires:	libuuid-devel
 BuildRequires:	pkgconfig
 BuildRequires:	po4a
 %{?with_readline:BuildRequires:	readline-devel >= 5.0}
+BuildRequires:	tar >= 1:1.22
 BuildRequires:	texinfo >= 4.2
 Requires(post,postun):	/sbin/ldconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
