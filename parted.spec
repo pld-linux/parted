@@ -13,12 +13,12 @@ Summary(pt_BR.UTF-8):	Ferramenta flexível de particionamento
 Summary(ru.UTF-8):	Программа GNU манипуляции дисковыми разделами
 Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
-Version:	2.3
-Release:	3
+Version:	2.4
+Release:	1
 License:	GPL v3+
 Group:		Applications/System
 Source0:	http://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.xz
-# Source0-md5:	01d93eaaa3f290a17dd9d5dbfc7bb927
+# Source0-md5:	b6cc55fd6e04b37b1745bc2e10d1a888
 # restored from git repository
 Source1:	%{name}.m4
 Patch0:		%{name}-pl.po-update.patch
@@ -41,7 +41,7 @@ BuildRequires:	libuuid-devel
 %{?with_readline:BuildRequires:	ncurses-devel >= 5.2}
 BuildRequires:	pkgconfig
 BuildRequires:	po4a
-%{?with_readline:BuildRequires:	readline-devel >= 5.0}
+%{?with_readline:BuildRequires:	readline-devel >= 5.2}
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	texinfo >= 4.2
 BuildRequires:	xz

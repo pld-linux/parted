@@ -1,147 +1,90 @@
---- parted-2.3/po/pl.po.orig	2010-09-03 19:49:47.450531741 +0200
-+++ parted-2.3/po/pl.po	2010-09-03 20:09:53.214526712 +0200
-@@ -6,7 +6,7 @@
+--- parted-2.4/po/pl.po.orig	2011-05-18 18:34:55.000000000 +0200
++++ parted-2.4/po/pl.po	2011-05-19 17:28:39.986822307 +0200
+@@ -1,15 +1,15 @@
+ # Polish translations for GNU Parted package.
+-# Copyright (C) 2003, 2005, 2006, 2007, 2009, 2010 Free Software Foundation, Inc.
++# Copyright (C) 2003, 2005, 2006, 2007, 2009, 2010, 2011 Free Software Foundation, Inc.
+ # This file is distributed under the same license as the parted package.
+ # Wojciech Polak <polak@gnu.org>, 2003, 2005, 2006.
+-# Jakub Bogusz <qboosh@pld-linux.org>, 2006-2010.
++# Jakub Bogusz <qboosh@pld-linux.org>, 2006-2011.
  #
  msgid ""
  msgstr ""
--"Project-Id-Version: parted 2.2\n"
-+"Project-Id-Version: parted 2.3\n"
+-"Project-Id-Version: parted 2.3\n"
++"Project-Id-Version: parted 2.4\n"
  "Report-Msgid-Bugs-To: bug-parted@gnu.org\n"
- "POT-Creation-Date: 2010-05-28 20:30+0200\n"
- "PO-Revision-Date: 2010-02-26 22:32+0100\n"
-@@ -58,9 +58,9 @@
- msgstr "%s: opcja '%c%s' nie mo¿e mieæ argumentów\n"
+ "POT-Creation-Date: 2011-05-18 18:34+0200\n"
+-"PO-Revision-Date: 2010-05-29 23:51+0200\n"
++"PO-Revision-Date: 2011-05-19 16:45+0200\n"
+ "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
+ "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
+ "Language: pl\n"
+@@ -660,13 +660,13 @@
+ msgstr "B³±d podczas inicjalizacji urz±dzenia SCSI %s - %s"
  
- #: lib/getopt.c:637 lib/getopt.c:656
--#, fuzzy, c-format
-+#, c-format
- msgid "%s: option '--%s' requires an argument\n"
--msgstr "%s: opcja '%s' musi mieæ argument\n"
-+msgstr "%s: opcja '--%s' musi mieæ argument\n"
- 
- #: lib/getopt.c:694 lib/getopt.c:697
- #, c-format
-@@ -93,9 +93,9 @@
- msgstr "%s: opcja '-W %s' nie mo¿e mieæ argumentów\n"
- 
- #: lib/getopt.c:962 lib/getopt.c:980
--#, fuzzy, c-format
-+#, c-format
- msgid "%s: option '-W %s' requires an argument\n"
--msgstr "%s: opcja '%s' musi mieæ argument\n"
-+msgstr "%s: opcja '-W %s' musi mieæ argument\n"
- 
- #. TRANSLATORS:
- #. Get translations for open and closing quotation marks.
-@@ -692,7 +692,7 @@
- 
- #: libparted/arch/linux.c:1313
- msgid "ATA over Ethernet Device"
--msgstr ""
-+msgstr "Urz±dzenie ATA over Ethernet"
- 
- #: libparted/arch/linux.c:1319
- msgid "IBM S390 DASD drive"
-@@ -737,7 +737,7 @@
- 
- #: libparted/arch/linux.c:1388
- msgid "Linux Software RAID Array"
--msgstr ""
-+msgstr "Linuksowa programowa macierz RAID"
- 
- #: libparted/arch/linux.c:1395
- msgid "ped_device_new()  Unsupported device type"
-@@ -759,17 +759,17 @@
- "Error informing the kernel about modifications to partition %s -- %s.  This "
- "means Linux won't know about any changes you made to %s until you reboot -- "
- "so you shouldn't mount it or use it in any way before rebooting."
--msgstr ""
-+msgstr "B³±d przy informowaniu j±dra o modyfikacji partycji %s - %s. Oznacza to, ¿e Linux nie bêdzie wiedzia³ o zmianach wykonanych na %s do czasu restartu systemu - wiêc nie bêdzie mo¿na zamontowaæ tej partycji ani u¿yæ jej w inny sposób przed restartem."
- 
- #: libparted/arch/linux.c:2503
--#, fuzzy, c-format
-+#, c-format
- msgid "Unable to determine the size and length of %s."
--msgstr "Nie mo¿na ustaliæ rozmiaru %s (%s)."
-+msgstr "Nie mo¿na ustaliæ rozmiaru i d³ugo¶ci %s."
- 
- #: libparted/arch/linux.c:2528
--#, fuzzy, c-format
-+#, c-format
- msgid "Failed to add partition %d (%s)"
--msgstr "%s : Nie powiód³ siê odczyt bloku partycji %llu\n"
-+msgstr "Nie uda³o siê dodaæ partycji %d (%s)"
- 
- #: libparted/arch/linux.c:2555
- #, c-format
-@@ -778,7 +778,7 @@
- "the kernel of the change, probably because it/they are in use.  As a result, "
- "the old partition(s) will remain in use.  You should reboot now before "
- "making further changes."
--msgstr ""
-+msgstr "Partycja %s na %s zosta³a zapisana, ale nie uda³o siê poinformowaæ j±dra o tej zmianie, prawdopodobnie poniewa¿ partycje s± w u¿yciu. W efekcie w u¿yciu pozostan± stare partycje; przed dalszymi zmianami trzeba zrestartowaæ system."
- 
- #: libparted/arch/linux.c:2681
- #, c-format
-@@ -963,7 +963,7 @@
- 
- #: libparted/disk.c:2445
- msgid "diag"
--msgstr ""
-+msgstr "diag"
- 
- #: libparted/disk.c:2451
- #, c-format
-@@ -2939,12 +2939,12 @@
- #: parted/parted.c:2093
- #, c-format
- msgid "%d aligned\n"
--msgstr ""
-+msgstr "%d wyrównana\n"
- 
- #: parted/parted.c:2093
- #, c-format
- msgid "%d not aligned\n"
--msgstr ""
-+msgstr "%d niewyrównana\n"
- 
- #: parted/parted.c:2124
- msgid "Flag to Invert?"
-@@ -3561,15 +3561,14 @@
- msgstr "POLECENIA:"
- 
- #: parted/ui.c:1520
+ #: libparted/arch/linux.c:1101
 -#, fuzzy, c-format
 +#, c-format
  msgid ""
- "\n"
- "Report bugs to %s\n"
+ "The device %s is so small that it cannot possibly store a file system or "
+ "partition table.  Perhaps you selected the wrong device?"
  msgstr ""
- "\n"
- "Prosimy zg³aszaæ b³êdy na adres <%s>.\n"
--"B³êdy w t³umaczeniu prosimy zg³aszaæ na adres: <translation-team-pl@lists."
--"sourceforge.net>.\n"
-+"B³êdy w t³umaczeniu prosimy zg³aszaæ na adres: <translation-team-pl@lists.sourceforge.net>.\n"
+-"Urz±dzenie %s posiada zerow± d³ugo¶æ i mo¿e nie byæ w stanie przechowywaæ "
+-"systemu plików lub tablicy partycji.  Byæ mo¿e dokonano niew³a¶ciwego wyboru "
++"Urz±dzenie %s jest tak ma³e, ¿e mo¿e nie byæ w stanie przechowywaæ systemu "
++"plików lub tablicy partycji.  Byæ mo¿e dokonano niew³a¶ciwego wyboru "
+ "urz±dzenia?"
  
- #: parted/ui.c:1527
+ #: libparted/arch/linux.c:1214
+@@ -975,7 +975,7 @@
+ 
+ #: libparted/disk.c:2439
+ msgid "legacy_boot"
+-msgstr ""
++msgstr "legacy_boot"
+ 
+ #: libparted/disk.c:2445
  #, c-format
-@@ -3579,19 +3578,3 @@
- #: parted/ui.c:1601
+@@ -1035,7 +1035,6 @@
+ msgstr "Poniechaj"
+ 
+ #: libparted/exception.c:132
+-#, fuzzy, c-format
+ msgid ""
+ "A bug has been detected in GNU Parted.  Refer to the web site of parted "
+ "http://www.gnu.org/software/parted/parted.html for more information of what "
+@@ -1044,8 +1043,8 @@
+ msgstr ""
+ "Zosta³ wykryty b³±d w dzia³aniu programu GNU Parted.  Odwied¼ stronê http://"
+ "www.gnu.org/software/parted/parted.html w celu uzyskania informacji na temat "
+-"zg³aszania b³êdów.  Proszê wys³aæ raport na temat b³êdu na adres bug-"
+-"parted@gnu.org, do³±czaj±c numer wersji (%s) oraz nastêpuj±cy komunikat:  "
++"zg³aszania b³êdów.  Proszê wys³aæ raport na temat b³êdu na adres %s, "
++"do³±czaj±c przynajmniej numer wersji (%s) oraz nastêpuj±cy komunikat:  "
+ 
+ #: libparted/filesys.c:462
+ msgid "Could not detect file system."
+@@ -1424,13 +1423,13 @@
+ "jest tablica partycji msdos.  Czy to jest tablica partycji GPT?"
+ 
+ #: libparted/labels/gpt.c:693
+-#, fuzzy, c-format
++#, c-format
+ msgid ""
+ "The format of the GPT partition table is version %x, which is newer than "
+ "what Parted can recognise.  Please report this!"
+ msgstr ""
+ "Format tablicy partycji GPT (wersja %x) jest nowszy ni¿ program Parted jest "
+-"w stanie rozpoznaæ.  Poinformuj nas o tym!  bug-parted@gnu.org"
++"w stanie rozpoznaæ.  Poinformuj nas o tym!"
+ 
+ #: libparted/labels/gpt.c:740
+ #, c-format
+@@ -3575,6 +3574,3 @@
+ #: parted/ui.c:1600
  msgid "This command does not make sense in non-interactive mode.\n"
  msgstr "To polecenie nie ma sensu w trybie nieinteraktywnym.\n"
 -
--#~ msgid ""
--#~ "WARNING: the kernel failed to re-read the partition table on %s (%s).  As "
--#~ "a result, it may not reflect all of your changes until after reboot."
--#~ msgstr ""
--#~ "UWAGA: próba ponownego odczytu tablicy partycji przez j±dro nie powiod³a "
--#~ "siê dla %s (%s). W efekcie zmiany mog± nie byæ uwzglêdnione do restartu "
--#~ "komputera."
--
--#~ msgid ""
--#~ "Device %s has a logical sector size of %lld.  Not all parts of GNU Parted "
--#~ "support this at the moment, and the working code is HIGHLY EXPERIMENTAL.\n"
--#~ msgstr ""
--#~ "Logiczny rozmiar sektora dla %s wynosi %lld. Nie wszystkie czê¶ci GNU "
--#~ "Parteda aktualnie to obs³uguj±, a dzia³aj±cy kod jest WYSOCE "
--#~ "EKSPERYMENTALNY.\n"
+-#~ msgid "This is not an ECKD disk!  This disk type is not supported!"
+-#~ msgstr "To nie jest dysk ECKD! Ten typ dysku nie jest obs³ugiwany!"
