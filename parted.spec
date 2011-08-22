@@ -13,21 +13,20 @@ Summary(pt_BR.UTF-8):	Ferramenta flexível de particionamento
 Summary(ru.UTF-8):	Программа GNU манипуляции дисковыми разделами
 Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
-Version:	2.4
-Release:	1
+Version:	3.0
+Release:	0.1
 License:	GPL v3+
 Group:		Applications/System
 Source0:	http://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.xz
-# Source0-md5:	b6cc55fd6e04b37b1745bc2e10d1a888
+# Source0-md5:	c415e5c97f86b5ff65a2d925e5a3feb7
 # restored from git repository
 Source1:	%{name}.m4
-Patch0:		%{name}-pl.po-update.patch
 Patch1:		%{name}-no_wrap.patch
 Patch2:		%{name}-BIG_FAT_WARNING.patch
 Patch3:		%{name}-uClibc.patch
 Patch4:		%{name}-info.patch
 Patch5:		%{name}-man-pt.patch
-Patch6:		%{name}-sonames.patch
+Patch7:		static.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.63
 BuildRequires:	automake >= 1:1.11
@@ -143,13 +142,12 @@ Biblioteka statyczna libparted.
 
 %prep
 %setup -q
-%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %{?with_uClibc:%patch3 -p1}
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
+%patch7 -p1
 
 %{__rm} po/stamp-po
 
@@ -188,6 +186,7 @@ install -D %{SOURCE1} $RPM_BUILD_ROOT%{_aclocaldir}/parted.m4
 %{?with_nls:%find_lang %{name}}
 
 rm -f $RPM_BUILD_ROOT%{_infodir}/dir
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -216,14 +215,13 @@ rm -rf $RPM_BUILD_ROOT
 %files libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libparted.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libparted.so.0
+%attr(755,root,root) %ghost %{_libdir}/libparted.so.1
 %endif
 
 %files devel
 %defattr(644,root,root,755)
 %doc doc/{API,FAT}
 %{!?with_static:%attr(755,root,root) %{_libdir}/libparted.so}
-%{_libdir}/libparted.la
 %{_includedir}/parted
 %{_pkgconfigdir}/libparted.pc
 %{_aclocaldir}/parted.m4

@@ -1,0 +1,8 @@
+--- parted-2.3/libparted.pc.in.wiget	2011-05-16 21:25:53.285796270 +0200
++++ parted-2.3/libparted.pc.in	2011-05-16 21:27:22.956412967 +0200
+@@ -7,4 +7,5 @@ Name: libparted
+ Description: The GNU Parted disk partitioning shared library
+ Version: @VERSION@
+ Libs: -L${libdir} -lparted
++Libs.private: @OS_LIBS@ @DL_LIBS@ @DM_LIBS@ @SELINUX_LIBS@ @LIB_BLKID@ @INTLLIBS@
+ Cflags: -I${includedir}
