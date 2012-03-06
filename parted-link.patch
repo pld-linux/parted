@@ -1,0 +1,31 @@
+--- parted-3.1/libparted/fs/Makefile.am.orig	2012-02-26 16:03:17.000000000 +0100
++++ parted-3.1/libparted/fs/Makefile.am	2012-03-06 18:52:58.519355591 +0100
+@@ -66,6 +66,7 @@
+ AGE = 0
+ 
+ sym_file = $(srcdir)/fsresize.sym
++libparted_fs_resize_la_LIBADD = $(top_builddir)/libparted/libparted.la $(UUID_LIBS)
+ libparted_fs_resize_la_LDFLAGS =		\
+   -Wl,--version-script=$(sym_file)		\
+   -version-info $(CURRENT):$(REVISION):$(AGE)
+--- parted-3.1/libparted/Makefile.am.orig	2012-03-02 17:05:13.000000000 +0100
++++ parted-3.1/libparted/Makefile.am	2012-03-06 19:00:48.832704671 +0100
+@@ -12,7 +12,7 @@
+ 
+ AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
+ 
+-SUBDIRS       = labels fs . $(SUBDIRS_CHECK)
++SUBDIRS       = labels . fs $(SUBDIRS_CHECK)
+ 
+ 
+ partedincludedir = \
+@@ -60,6 +60,9 @@
+   $(LIB_BLKID)		\
+   $(INTLLIBS)
+ 
++fs/libfs.la:
++	$(MAKE) -C $(top_builddir)/libparted/fs libfs.la
++
+ EXTRA_DIST	      = mbr.s
+ 
+ INCLUDES = $(partedincludedir) $(INTLINCS)

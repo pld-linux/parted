@@ -1,6 +1,6 @@
---- parted-1.8.6/parted/ui.c.orig	2007-04-04 10:38:45.596415889 +0200
-+++ parted-1.8.6/parted/ui.c	2007-04-04 10:39:49.904080574 +0200
-@@ -160,6 +160,11 @@
+--- parted-3.1/parted/ui.c.orig	2012-03-04 21:39:46.283904709 +0100
++++ parted-3.1/parted/ui.c	2012-03-06 15:55:54.862325698 +0100
+@@ -161,6 +161,11 @@
  static const char* banner_msg = N_(
  "Welcome to GNU Parted! Type 'help' to view a list of commands.\n");
  
@@ -12,13 +12,13 @@
  static const char* usage_msg = N_(
  "Usage: parted [OPTION]... [DEVICE [COMMAND [PARAMETERS]...]...]\n"
  "Apply COMMANDs with PARAMETERS to DEVICE.  If no COMMAND(s) are given, "
-@@ -1463,7 +1468,7 @@
+@@ -1577,7 +1582,7 @@
  
          print_using_dev (*dev);
  
 -        list = str_list_create (_(banner_msg), NULL);
 +        list = str_list_create (_(banner_msg), _(warning_msg), NULL);
-         str_list_print_wrap (list, screen_width (), 0, 0);
+         str_list_print_wrap (list, screen_width (), 0, 0, stdout);
          str_list_destroy (list);
  
 --- parted-1.7.1/po/pl.po.orig	2006-05-27 21:38:39.582850750 +0200

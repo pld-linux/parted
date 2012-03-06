@@ -3,6 +3,7 @@
 %bcond_with	static		# link statically
 %bcond_without	nls		# build without NLS
 %bcond_without	readline	# build without readline support
+%bcond_with	selinux		# SELinux support
 %bcond_with	uClibc		# add somewhat nasty uClibc patch, that
 #				# shouldn't cause problems, but who knows...
 #
@@ -13,12 +14,12 @@ Summary(pt_BR.UTF-8):	Ferramenta flexível de particionamento
 Summary(ru.UTF-8):	Программа GNU манипуляции дисковыми разделами
 Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
-Version:	3.0
-Release:	3
+Version:	3.1
+Release:	1
 License:	GPL v3+
 Group:		Applications/System
 Source0:	http://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.xz
-# Source0-md5:	c415e5c97f86b5ff65a2d925e5a3feb7
+# Source0-md5:	5d89d64d94bcfefa9ce8f59f4b81bdcb
 # restored from git repository
 Source1:	%{name}.m4
 Patch1:		%{name}-no_wrap.patch
@@ -26,6 +27,7 @@ Patch2:		%{name}-BIG_FAT_WARNING.patch
 Patch3:		%{name}-uClibc.patch
 Patch4:		%{name}-info.patch
 Patch5:		%{name}-man-pt.patch
+Patch6:		%{name}-link.patch
 Patch7:		static.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.63
@@ -34,6 +36,10 @@ BuildRequires:	check >= 0.9.3
 BuildRequires:	device-mapper-devel >= 1.02.02
 BuildRequires:	gettext-devel >= 0.18
 BuildRequires:	libblkid-devel >= 2.17
+%if %{with selinux}
+BuildRequires:	libselinux-devel
+BuildRequires:	libsepol-devel
+%endif
 BuildRequires:	libtool
 BuildRequires:	libuuid-devel
 %{?with_static:BuildRequires:	libuuid-static}
@@ -147,6 +153,7 @@ Biblioteka statyczna libparted.
 %{?with_uClibc:%patch3 -p1}
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 %patch7 -p1
 
 %{__rm} po/stamp-po
@@ -159,11 +166,11 @@ Biblioteka statyczna libparted.
 %{__autoheader}
 %{__automake}
 %configure \
-	%{!?with_readline:--without-readline} \
-	%{?with_readline:--with-readline} \
 	%{!?with_nls:--disable-nls} \
+	--disable-silent-rules \
+	%{?with_selinux:--enable-selinux} \
 	%{?with_static:--without-pic} \
-	--disable-silent-rules
+	--with-readline%{!?with_readline:=no}
 
 %{!?with_nls:touch include/libintl.h}
 
@@ -215,13 +222,18 @@ rm -rf $RPM_BUILD_ROOT
 %files libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libparted.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libparted.so.1
+%attr(755,root,root) %ghost %{_libdir}/libparted.so.2
+%attr(755,root,root) %{_libdir}/libparted-fs-resize.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libparted-fs-resize.so.0
 %endif
 
 %files devel
 %defattr(644,root,root,755)
 %doc doc/{API,FAT}
-%{!?with_static:%attr(755,root,root) %{_libdir}/libparted.so}
+%if %{without static}
+%attr(755,root,root) %{_libdir}/libparted.so
+%attr(755,root,root) %{_libdir}/libparted-fs-resize.so
+%endif
 %{_includedir}/parted
 %{_pkgconfigdir}/libparted.pc
 %{_aclocaldir}/parted.m4
@@ -229,3 +241,4 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libparted.a
+%{_libdir}/libparted-fs-resize.a
