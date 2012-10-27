@@ -5,6 +5,7 @@
 %bcond_without	readline	# build without readline support
 %bcond_with	selinux		# SELinux support
 %bcond_with	uClibc		# add somewhat nasty uClibc patch, that
+%bcond_without	po4a		# do not use po4a (for pt_BR manual)
 #				# shouldn't cause problems, but who knows...
 #
 Summary:	Flexible partitioning tool
@@ -45,7 +46,7 @@ BuildRequires:	libuuid-devel
 %{?with_static:BuildRequires:	libuuid-static}
 %{?with_readline:BuildRequires:	ncurses-devel >= 5.2}
 BuildRequires:	pkgconfig
-BuildRequires:	po4a
+%{?with_po4a:BuildRequires:	po4a}
 %{?with_readline:BuildRequires:	readline-devel >= 5.2}
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	texinfo >= 4.2
@@ -183,9 +184,11 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT \
 	aclocaldir=%{_aclocaldir}
 
+%if %{with po4a}
 # not supported yet by am
 install -d $RPM_BUILD_ROOT%{_mandir}/pt_BR/man8
 install doc/pt_BR/*.8 $RPM_BUILD_ROOT%{_mandir}/pt_BR/man8
+%endif
 
 # missing in sources
 install -D %{SOURCE1} $RPM_BUILD_ROOT%{_aclocaldir}/parted.m4
@@ -215,7 +218,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/partprobe
 %{_mandir}/man8/parted.8*
 %{_mandir}/man8/partprobe.8*
+%if %{with po4a}
 %lang(pt) %{_mandir}/pt_BR/man8/*
+%endif
 %{_infodir}/parted.info*
 
 %if %{without static}
