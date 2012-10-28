@@ -5,8 +5,8 @@
 %bcond_without	readline	# build without readline support
 %bcond_with	selinux		# SELinux support
 %bcond_with	uClibc		# add somewhat nasty uClibc patch, that
-%bcond_without	po4a		# do not use po4a (for pt_BR manual)
 #				# shouldn't cause problems, but who knows...
+%bcond_without	po4a		# do not use po4a (for pt_BR manual)
 #
 Summary:	Flexible partitioning tool
 Summary(es.UTF-8):	Herramienta de particionamiento flexible
