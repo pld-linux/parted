@@ -21,8 +21,8 @@
          str_list_print_wrap (list, screen_width (), 0, 0, stdout);
          str_list_destroy (list);
  
---- parted-1.7.1/po/pl.po.orig	2006-05-27 21:38:39.582850750 +0200
-+++ parted-1.7.1/po/pl.po	2006-05-27 21:41:33.121696250 +0200
+--- parted-3.2/po/pl.po.orig	2006-05-27 21:38:39.582850750 +0200
++++ parted-3.2/po/pl.po	2006-05-27 21:41:33.121696250 +0200
 @@ -1717,6 +1717,18 @@
  
  #: parted/ui.c:71
@@ -33,9 +33,9 @@
 +"disk's live body.\n"
 +msgstr ""
 +"\n"
-+"UWAGA: w przeciwieñstwie do innych programów do partycjonowania, Parted\n"
-+"*NIE* nie czeka na wyj¶cie z programu z zapisaniem zmian w tablicy partycji\n"
-+"- u¿ywaj±c go eksperymentuje siê na ¿ywym organizmie dysku.\n"
++"UWAGA: w przeciwieÅ„stwie do innych programÃ³w do partycjonowania, Parted\n"
++"*NIE* nie czeka na wyjÅ›cie z programu z zapisaniem zmian w tablicy partycji\n"
++"- uÅ¼ywajÄ…c go eksperymentuje siÄ™ na Å¼ywym organizmie dysku.\n"
 +
 +#: parted/ui.c:71
 +msgid ""

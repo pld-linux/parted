@@ -15,12 +15,12 @@ Summary(pt_BR.UTF-8):	Ferramenta flexível de particionamento
 Summary(ru.UTF-8):	Программа GNU манипуляции дисковыми разделами
 Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
-Version:	3.1
+Version:	3.2
 Release:	1
 License:	GPL v3+
 Group:		Applications/System
 Source0:	http://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.xz
-# Source0-md5:	5d89d64d94bcfefa9ce8f59f4b81bdcb
+# Source0-md5:	0247b6a7b314f8edeb618159fa95f9cb
 # restored from git repository
 Source1:	%{name}.m4
 Patch1:		%{name}-no_wrap.patch
@@ -32,7 +32,7 @@ Patch6:		%{name}-link.patch
 Patch7:		static.patch
 URL:		http://www.gnu.org/software/parted/
 BuildRequires:	autoconf >= 2.63
-BuildRequires:	automake >= 1:1.11
+BuildRequires:	automake >= 1:1.11.6
 BuildRequires:	check >= 0.9.3
 BuildRequires:	device-mapper-devel >= 1.02.02
 BuildRequires:	gettext-devel >= 0.18
@@ -181,22 +181,17 @@ Biblioteka statyczna libparted.
 rm -rf $RPM_BUILD_ROOT
 
 %{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT \
-	aclocaldir=%{_aclocaldir}
+	DESTDIR=$RPM_BUILD_ROOT
 
-%if %{with po4a}
-# not supported yet by am
-install -d $RPM_BUILD_ROOT%{_mandir}/pt_BR/man8
-install doc/pt_BR/*.8 $RPM_BUILD_ROOT%{_mandir}/pt_BR/man8
-%endif
+# obsoleted by pkg-config
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libparted*.la
 
 # missing in sources
 install -D %{SOURCE1} $RPM_BUILD_ROOT%{_aclocaldir}/parted.m4
 
 %{?with_nls:%find_lang %{name}}
 
-rm -f $RPM_BUILD_ROOT%{_infodir}/dir
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
+%{__rm} -f $RPM_BUILD_ROOT%{_infodir}/dir
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -219,7 +214,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man8/parted.8*
 %{_mandir}/man8/partprobe.8*
 %if %{with po4a}
-%lang(pt) %{_mandir}/pt_BR/man8/*
+# too little is translated as of 3.2
+#%lang(pt_BR) %{_mandir}/pt_BR/man8/parted.8*
+#%lang(pt_BR) %{_mandir}/pt_BR/man8/partprobe.8*
 %endif
 %{_infodir}/parted.info*
 
