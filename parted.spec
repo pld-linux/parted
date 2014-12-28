@@ -35,7 +35,7 @@ BuildRequires:	autoconf >= 2.63
 BuildRequires:	automake >= 1:1.11.6
 BuildRequires:	check >= 0.9.3
 BuildRequires:	device-mapper-devel >= 1.02.02
-BuildRequires:	gettext-devel >= 0.18
+BuildRequires:	gettext-tools >= 0.18
 BuildRequires:	libblkid-devel >= 2.17
 %if %{with selinux}
 BuildRequires:	libselinux-devel
