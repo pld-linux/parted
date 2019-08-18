@@ -16,7 +16,7 @@ Summary(ru.UTF-8):	Программа GNU манипуляции дисковы�
 Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
 Version:	3.2
-Release:	4
+Release:	5
 License:	GPL v3+
 Group:		Applications/System
 Source0:	http://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.xz
