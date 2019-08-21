@@ -103,6 +103,38 @@ Patch76:	0076-Increase-timeout-for-rmmod-scsi_debug-and-make-it-a-.patch
 Patch77:	0077-tests-t1701-rescue-fs-wait-for-the-device-to-appear.patch
 Patch78:	0078-lib%{name}-Fix-udev-cookie-leak-in-_dm_resize_partiti.patch
 Patch79:	0079-atari.c-Drop-xlocale.h-1476934.patch
+Patch80:	0080-libparted-labels-link-with-libiconv-if-needed.patch
+Patch81:	0081-Add-support-for-NVDIMM-devices.patch
+Patch82:	0082-linux-Include-sys-sysmacros.h-for-major-macro.patch
+Patch83:	0083-Fix-make-check.patch
+Patch84:	0084-tests-fix-t6100-mdraid-partitions.patch
+Patch85:	0085-Fix-set-and-disk_set-to-not-crash-when-no-flags-are-.patch
+Patch86:	0086-mkpart-Allow-negative-start-value-when-FS-TYPE-is-no.patch
+Patch87:	0087-Fix-resizepart-iec-unit-end-sector.patch
+Patch88:	0088-build-Remove-unused-traces-of-dynamic-loading.patch
+Patch89:	0089-Lift-512-byte-restriction-on-fat-resize.patch
+Patch90:	0090-Fix-atari-label-false-positives.patch
+Patch91:	0091-Modify-gpt-header-move-and-msdos-overlap-to-work-wit.patch
+Patch92:	0092-Switch-gpt-header-move-and-msdos-overlap-to-python3.patch
+Patch93:	0093-libparted-Fix-ending-CHS-address-in-PMBR.patch
+Patch94:	0094-Fix-the-length-of-several-strncpy-calls.patch
+Patch95:	0095-parted.c-Always-free-peek_word.patch
+Patch96:	0096-parted.c-Make-sure-dev_name-is-freed.patch
+Patch97:	0097-t6100-mdraid-partitions-Use-v0.90-metadata-for-the-t.patch
+Patch98:	0098-Fix-potential-command-line-buffer-overflow.patch
+Patch99:	0099-libparted-Add-support-for-MBR-id-GPT-GUID-and-detect.patch
+Patch100:	0100-Add-udf-to-t1700-probe-fs-and-to-the-manpage.patch
+Patch101:	0101-ped_unit_get_name-Resolve-conflicting-attributes-con.patch
+Patch102:	0102-Fix-warnings-from-GCC-7-s-Wimplicit-fallthrough.patch
+Patch103:	0103-Read-NVMe-model-names-from-sysfs.patch
+Patch104:	0104-parted-fix-crash-due-to-improper-partition-number-in.patch
+Patch105:	0105-parted-fix-wrong-error-label-jump-in-mkpart.patch
+Patch106:	0106-clean-the-disk-information-when-commands-fail-in-int.patch
+Patch107:	0107-parted-Remove-PED_ASSERT-from-ped_partition_set_name.patch
+Patch108:	0108-Added-support-for-Windows-recovery-partition-WINRE-o.patch
+Patch109:	0109-t6000-dm-Stop-using-private-lvm-root.patch
+Patch110:	0110-Avoid-sigsegv-in-case-2nd-nilfs2-superblock-magic-ac.patch
+Patch111:	0111-Tests-case-for-sigsegv-when-false-nilfs2-superblock-.patch
 
 Patch1001:	%{name}-no_wrap.patch
 Patch1002:	%{name}-BIG_FAT_WARNING.patch
@@ -309,6 +341,38 @@ Biblioteka statyczna libparted.
 %patch77 -p1
 %patch78 -p1
 %patch79 -p1
+%patch80 -p1
+%patch81 -p1
+%patch82 -p1
+%patch83 -p1
+%patch84 -p1
+%patch85 -p1
+%patch86 -p1
+%patch87 -p1
+%patch88 -p1
+%patch89 -p1
+%patch90 -p1
+%patch91 -p1
+%patch92 -p1
+%patch93 -p1
+%patch94 -p1
+%patch95 -p1
+%patch96 -p1
+%patch97 -p1
+%patch98 -p1
+%patch99 -p1
+%patch100 -p1
+%patch101 -p1
+%patch102 -p1
+%patch103 -p1
+%patch104 -p1
+%patch105 -p1
+%patch106 -p1
+%patch107 -p1
+%patch108 -p1
+%patch109 -p1
+%patch110 -p1
+%patch111 -p1
 
 %patch1001 -p1
 %patch1002 -p1
@@ -399,6 +463,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 %{_includedir}/parted
 %{_pkgconfigdir}/libparted.pc
+%{_pkgconfigdir}/libparted-fs-resize.pc
 %{_aclocaldir}/parted.m4
 
 %files static
