@@ -1,12 +1,14 @@
---- parted-1.6.6/doc/parted.texi~	Thu May  2 22:31:46 2002
-+++ parted-1.6.6/doc/parted.texi	Thu May  2 22:31:46 2002
-@@ -12,7 +12,8 @@
- @paragraphindent 4
+--- parted-3.3/doc/parted.texi.orig	2019-10-11 00:58:51.000000000 +0200
++++ parted-3.3/doc/parted.texi	2019-10-18 16:28:28.314051737 +0200
+@@ -29,9 +29,9 @@
+ @end ifplaintext
+ @end ifnottex
  
+-@dircategory System administration
++@dircategory Miscellaneous:
  @direntry
 -* parted: (parted).                         GNU partitioning software
-+@dircategory Miscellaneous:
 +* parted: (parted).			GNU partitioning software
  @end direntry
  
- @ifinfo
+ @titlepage
