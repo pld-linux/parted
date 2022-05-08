@@ -8,9 +8,9 @@
  libparted_fs_resize_la_LDFLAGS =		\
    -Wl,--version-script=$(sym_file)		\
    -version-info $(CURRENT):$(REVISION):$(AGE)
---- parted-3.1/libparted/Makefile.am.orig	2012-03-02 17:05:13.000000000 +0100
-+++ parted-3.1/libparted/Makefile.am	2012-03-06 19:00:48.832704671 +0100
-@@ -12,7 +12,7 @@
+--- parted-3.5/libparted/Makefile.am.orig	2022-04-18 20:38:45.000000000 +0200
++++ parted-3.5/libparted/Makefile.am	2022-05-08 08:36:04.349506967 +0200
+@@ -13,7 +13,7 @@ ARCH_SOURCE = arch/$(OS).c
  
  AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
  
@@ -19,8 +19,8 @@
  
  
  partedincludedir = \
-@@ -60,6 +60,9 @@
-   $(LIB_BLKID)		\
+@@ -60,6 +60,9 @@ libparted_la_LIBADD =	\
+   $(UUID_LIBS)		\
    $(INTLLIBS)
  
 +fs/libfs.la:
@@ -28,4 +28,4 @@
 +
  EXTRA_DIST	      = mbr.s
  
- INCLUDES = $(partedincludedir) $(INTLINCS)
+ AM_CPPFLAGS = $(partedincludedir) $(INTLINCS)

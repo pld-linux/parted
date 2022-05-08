@@ -21,11 +21,11 @@
          str_list_print_wrap (list, screen_width (), 0, 0, stdout);
          str_list_destroy (list);
  
---- parted-3.2/po/pl.po.orig	2006-05-27 21:38:39.582850750 +0200
-+++ parted-3.2/po/pl.po	2006-05-27 21:41:33.121696250 +0200
-@@ -1717,6 +1717,18 @@
+--- parted-3.5/po/pl.po.orig	2022-05-08 08:30:52.067865409 +0200
++++ parted-3.5/po/pl.po	2022-05-08 08:32:36.797298041 +0200
+@@ -2928,6 +2928,18 @@ msgstr ""
  
- #: parted/ui.c:71
+ #: parted/ui.c:167
  msgid ""
 +"\n"
 +"WARNING: unlike other partitioning software, Parted does *NOT* wait for\n"
@@ -37,8 +37,8 @@
 +"*NIE* nie czeka na wyjście z programu z zapisaniem zmian w tablicy partycji\n"
 +"- używając go eksperymentuje się na żywym organizmie dysku.\n"
 +
-+#: parted/ui.c:71
++#: parted/ui.c:167
 +msgid ""
  "Usage: parted [OPTION]... [DEVICE [COMMAND [PARAMETERS]...]...]\n"
- "Apply COMMANDs with PARAMETERS to DEVICE.  If no COMMAND(s) are given, run in\n"
- "interactive mode.\n"
+ "Apply COMMANDs with PARAMETERS to DEVICE.  If no COMMAND(s) are given, run "
+ "in\n"

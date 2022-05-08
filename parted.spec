@@ -15,15 +15,14 @@ Summary(pt_BR.UTF-8):	Ferramenta flexível de particionamento
 Summary(ru.UTF-8):	Программа GNU манипуляции дисковыми разделами
 Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
-Version:	3.3
+Version:	3.5
 Release:	1
 License:	GPL v3+
 Group:		Applications/System
 Source0:	https://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.xz
-# Source0-md5:	090655d05f3c471aa8e15a27536889ec
+# Source0-md5:	336fde60786d5855b3876ee49ef1e6b2
 # restored from git repository
 Source1:	%{name}.m4
-Patch92:	0092-Switch-gpt-header-move-and-msdos-overlap-to-python3.patch
 Patch109:	0109-t6000-dm-Stop-using-private-lvm-root.patch
 
 Patch1001:	%{name}-no_wrap.patch
@@ -34,7 +33,7 @@ Patch1005:	%{name}-man-pt.patch
 Patch1006:	%{name}-link.patch
 Patch1007:	static.patch
 URL:		http://www.gnu.org/software/parted/
-BuildRequires:	autoconf >= 2.63
+BuildRequires:	autoconf >= 2.71
 BuildRequires:	automake >= 1:1.11.6
 BuildRequires:	check >= 0.9.3
 BuildRequires:	device-mapper-devel >= 1.02.02
@@ -155,7 +154,6 @@ Biblioteka statyczna libparted.
 
 %prep
 %setup -q
-%patch92 -p1
 %patch109 -p1
 
 %patch1001 -p1

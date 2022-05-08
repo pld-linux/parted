@@ -1,16 +1,11 @@
-Only in parted-1.4.19-/parted: tags
-diff -ur parted-1.4.19/parted/ui.c parted-1.4.19-/parted/ui.c
---- parted-1.4.19/parted/ui.c	Tue Sep 18 23:16:37 2001
-+++ parted-1.4.19-/parted/ui.c	Sun Oct 28 15:39:50 2001
-@@ -91,6 +91,11 @@
+--- parted-3.5/parted/ui.c.orig	2022-05-08 08:11:19.070886745 +0200
++++ parted-3.5/parted/ui.c	2022-05-08 08:17:50.045435321 +0200
+@@ -222,7 +222,7 @@ screen_width ()
  {
- 	int	width = 0;
+         int    width = 0;
  
-+	/* don't wrap lines if we are not writing to terminal
-+	 * (crucial for scripting) */
-+	if (!isatty(fileno(stdout)))
-+		return 9999;
-+
+-        if (opt_script_mode || pretend_input_tty)
++        if (opt_script_mode || pretend_input_tty || !isatty (0))
+                 return 32768;    /* no wrapping ;) */
+ 
  /* HACK: don't specify termcap separately - it'll annoy the users. */
- #ifdef HAVE_LIBREADLINE
- 	width = tgetnum ("co");
