@@ -154,15 +154,15 @@ Biblioteka statyczna libparted.
 
 %prep
 %setup -q
-%patch109 -p1
+%patch -P109 -p1
 
-%patch1001 -p1
-%patch1002 -p1
+%patch -P1001 -p1
+%patch -P1002 -p1
 %{?with_uClibc:%patch1003 -p1}
-%patch1004 -p1
-%patch1005 -p1
-%patch1006 -p1
-%patch1007 -p1
+%patch -P1004 -p1
+%patch -P1005 -p1
+%patch -P1006 -p1
+%patch -P1007 -p1
 
 %{__rm} po/stamp-po
 
