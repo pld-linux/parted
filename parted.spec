@@ -15,12 +15,12 @@ Summary(pt_BR.UTF-8):	Ferramenta flexível de particionamento
 Summary(ru.UTF-8):	Программа GNU манипуляции дисковыми разделами
 Summary(uk.UTF-8):	Програма GNU маніпуляції дисковими розділами
 Name:		parted
-Version:	3.6
+Version:	3.7
 Release:	1
 License:	GPL v3+
 Group:		Applications/System
 Source0:	https://ftp.gnu.org/gnu/parted/%{name}-%{version}.tar.xz
-# Source0-md5:	93d2d8f22baebc5eb65b85da05a79e4e
+# Source0-md5:	b56ec0cf7bc89d61da1585f88fc8ef5e
 # restored from git repository
 Source1:	%{name}.m4
 Patch109:	0109-t6000-dm-Stop-using-private-lvm-root.patch
@@ -158,7 +158,7 @@ Biblioteka statyczna libparted.
 
 %patch -P1001 -p1
 %patch -P1002 -p1
-%{?with_uClibc:%patch1003 -p1}
+%{?with_uClibc:%patch -P1003 -p1}
 %patch -P1004 -p1
 %patch -P1005 -p1
 %patch -P1006 -p1

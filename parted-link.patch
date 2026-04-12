@@ -1,13 +1,14 @@
---- parted-3.1/libparted/fs/Makefile.am.orig	2012-02-26 16:03:17.000000000 +0100
-+++ parted-3.1/libparted/fs/Makefile.am	2012-03-06 18:52:58.519355591 +0100
-@@ -66,6 +66,7 @@
- AGE = 0
+--- parted-3.7/libparted/fs/Makefile.am.orig	2026-03-25 00:30:48.000000000 +0100
++++ parted-3.7/libparted/fs/Makefile.am	2026-04-12 20:34:46.186696895 +0200
+@@ -75,7 +75,7 @@
+ EXTRA_DIST += fsresize.sym
+ libparted_fs_resize_la_DEPENDENCIES = $(sym_file)
  
- sym_file = $(srcdir)/fsresize.sym
-+libparted_fs_resize_la_LIBADD = $(top_builddir)/libparted/libparted.la $(UUID_LIBS)
- libparted_fs_resize_la_LDFLAGS =		\
-   -Wl,--version-script=$(sym_file)		\
-   -version-info $(CURRENT):$(REVISION):$(AGE)
+-libparted_fs_resize_la_LIBADD  = $(UUID_LIBS)
++libparted_fs_resize_la_LIBADD  = $(top_builddir)/libparted/libparted.la $(UUID_LIBS)
+ libparted_fs_resize_la_SOURCES = \
+   r/filesys.c			\
+   r/fat/bootsector.c		\
 --- parted-3.5/libparted/Makefile.am.orig	2022-04-18 20:38:45.000000000 +0200
 +++ parted-3.5/libparted/Makefile.am	2022-05-08 08:36:04.349506967 +0200
 @@ -13,7 +13,7 @@ ARCH_SOURCE = arch/$(OS).c
@@ -19,13 +20,11 @@
  
  
  partedincludedir = \
-@@ -60,6 +60,9 @@ libparted_la_LIBADD =	\
+@@ -60,4 +60,7 @@ libparted_la_LIBADD =	\
    $(UUID_LIBS)		\
    $(INTLLIBS)
  
 +fs/libfs.la:
 +	$(MAKE) -C $(top_builddir)/libparted/fs libfs.la
 +
- EXTRA_DIST	      = mbr.s
- 
  AM_CPPFLAGS = $(partedincludedir) $(INTLINCS)
