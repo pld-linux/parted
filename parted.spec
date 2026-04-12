@@ -233,18 +233,18 @@ rm -rf $RPM_BUILD_ROOT
 %if %{without static}
 %files libs
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libparted.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libparted.so.2
-%attr(755,root,root) %{_libdir}/libparted-fs-resize.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libparted-fs-resize.so.0
+%{_libdir}/libparted.so.*.*.*
+%ghost %{_libdir}/libparted.so.2
+%{_libdir}/libparted-fs-resize.so.*.*.*
+%ghost %{_libdir}/libparted-fs-resize.so.0
 %endif
 
 %files devel
 %defattr(644,root,root,755)
-%doc doc/{API,FAT}
+%doc doc/{API.md,FAT}
 %if %{without static}
-%attr(755,root,root) %{_libdir}/libparted.so
-%attr(755,root,root) %{_libdir}/libparted-fs-resize.so
+%{_libdir}/libparted.so
+%{_libdir}/libparted-fs-resize.so
 %endif
 %{_includedir}/parted
 %{_pkgconfigdir}/libparted.pc
