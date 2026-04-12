@@ -7,6 +7,7 @@
 %bcond_with	uClibc		# add somewhat nasty uClibc patch, that
 #				# shouldn't cause problems, but who knows...
 %bcond_without	po4a		# do not use po4a (for pt_BR manual)
+%bcond_without	static_libs	# static libraries
 #
 Summary:	Flexible partitioning tool
 Summary(es.UTF-8):	Herramienta de particionamiento flexible
@@ -53,6 +54,7 @@ BuildRequires:	libuuid-devel
 BuildRequires:	pkgconfig
 %{?with_po4a:BuildRequires:	po4a}
 %{?with_readline:BuildRequires:	readline-devel >= 5.2}
+BuildRequires:	rpmbuild(macros) >= 1.527
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	texinfo >= 4.2
 BuildRequires:	xz
@@ -176,6 +178,7 @@ Biblioteka statyczna libparted.
 %configure \
 	%{!?with_nls:--disable-nls} \
 	--disable-silent-rules \
+	%{__enable_disable static_libs static} \
 	%{?with_selinux:--enable-selinux} \
 	%{?with_static:--without-pic} \
 	--with-readline%{!?with_readline:=no}
@@ -248,7 +251,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgconfigdir}/libparted-fs-resize.pc
 %{_aclocaldir}/parted.m4
 
+%if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libparted.a
 %{_libdir}/libparted-fs-resize.a
+%endif
